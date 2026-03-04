@@ -66,9 +66,9 @@ def build_tag_map() -> dict[str, str]:
         raise SystemExit(f'Failed to parse outline.yaml: {exc}') from exc
 
     tags: dict[str, str] = {}
-    slo = data.get('subject_learning_outcomes')
+    slo = data.get('slo')
     if isinstance(slo, list):
-        tags['subject_learning_outcomes'] = render_learning_outcomes(slo)
+        tags['slo'] = render_learning_outcomes(slo)
     return tags
 
 

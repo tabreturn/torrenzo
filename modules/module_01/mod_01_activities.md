@@ -1,6 +1,6 @@
 # Module 01 Activities
 
-{{ subject_learning_outcomes }}
+{{ slo }}
 
 ## Activity 1: Colour Hunt
 

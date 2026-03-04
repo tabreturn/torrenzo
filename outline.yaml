@@ -2,14 +2,14 @@ subject_descriptor: >
   Tropical Fruit Studies is a playful placeholder subject celebrating the
   delightful variety, color, and texture of fruits from around the world.
 
-  Students follow a light-hearted exploration of taste, seasonality, and
-  cultural traditions while learning to catalog their findings with basic
+  Students follow an light-hearted exploration of taste, seasonality, and
+  cultural traditions while learning to catalogue their findings with basic
   observation practices.
 
-subject_learning_outcomes:
+slo:
   - code: a
     description: >
-      Identify and describe three tropical fruits using sensory vocabulary like
+      Identify and describe tropical fruits using sensory vocabulary like
       aroma, sweetness, and texture.
 
   - code: b
@@ -24,6 +24,6 @@ subject_learning_outcomes:
 
   - code: d
     description: >
-      Share a brief playful write-up that compares two different fruits and
-      what makes each one unique in presentation and flavor.
+      Share a brief write-up that compares two different fruits and what 
+      makes each one unique in presentation and flavor.
 

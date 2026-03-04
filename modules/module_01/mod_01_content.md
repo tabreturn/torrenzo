@@ -1,6 +1,6 @@
 # Module 01: Fruit Observation Essentials
 
-{{ subject_learning_outcomes }}
+{{ slo }}
 
 ## Overview
 

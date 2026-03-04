@@ -15,7 +15,7 @@ Torrenzo performs the following transformations:
 These transformations rely on configuration defined in `outline.yaml`, which provides metadata such as:
 
 - **`subject_descriptor`** – A short overview of the subject, including its aims, key concepts, and the knowledge and skills students are expected to gain.
-- **`subject_learning_outcomes > code: <n>`** – The specific knowledge, skills, and capabilities students should be able to demonstrate upon successful completion of the subject.
+- **`slo > code: <n>`** – The specific knowledge, skills, and capabilities students should be able to demonstrate upon successful completion of the subject.
 - **`assessment_metadata`** – An overview of each assessment task, including its format, purpose, and submission requirements.
 
 ---
@@ -131,7 +131,7 @@ All outputs (HTML, PDF, etc.) are written to the `build/` directory, which is cl
 
 ## Configuration & styling
 
-- Maintain subject metadata in `outline.yaml`. Torrenzo injects values wherever placeholders such as `{{subject_learning_outcomes}}` appear.
+- Maintain subject metadata in `outline.yaml`. Torrenzo injects values wherever placeholders such as `{{slo}}` appear.
 - The CSS in `assessments/style.css` controls the styling of generated PDF briefs.
 
 ---

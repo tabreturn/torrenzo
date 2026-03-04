@@ -1,6 +1,6 @@
 # Module 02: Fruit Stories in Context
 
-{{ subject_learning_outcomes }}
+{{ slo }}
 
 ## Overview
 

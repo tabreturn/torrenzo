@@ -1,6 +1,6 @@
 # Module 02 Activities
 
-{{ subject_learning_outcomes }}
+{{ slo }}
 
 ## Activity 1: Orchard Interview
 
