@@ -44,10 +44,7 @@ All outputs (HTML, PDF, etc.) are written to the `build/` directory, which is cl
 ## Prerequisites
 
 - **Python 3.10+**
-- Dependencies installed via:
-  ```bash
-  pip install -r requirements.txt
-  ```
+- Dependencies installed via: `pip install -r requirements.txt`
 - A terminal (`cd` to the repository root); relative paths are resolved from there
 
 *(There is opportunity to add a GUI in future.)*
