@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-import html
+import json
 import re
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
-from markdown_pdf import MarkdownPdf, Section
+import yaml
+from markdown_it import MarkdownIt
 
 TAG_RE = re.compile(r"{{\s*([\w_]+)(?:\|([\w\-]+))?\s*}}")
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
@@ -27,14 +31,15 @@ def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str]:
 def build_metadata_table(metadata: dict[str, Any]) -> str:
     if not metadata:
         return ''
-    lines: list[str] = ['| Field | Details |', '| --- | --- |']
+    lines: list[str] = ['<table>', '<thead><tr><th>Field</th><th>Details</th></tr></thead>', '<tbody>']
     for key, value in metadata.items():
         field = key.replace('_', ' ').title()
         if isinstance(value, list):
-            detail = '<br>'.join(html.escape(str(item)) for item in value)
+            detail = '<br>'.join(str(item) for item in value)
         else:
-            detail = html.escape(str(value))
-        lines.append(f'| {field} | {detail} |')
+            detail = str(value)
+        lines.append(f'<tr><td>{field}</td><td>{detail}</td></tr>')
+    lines.append('</tbody></table>')
     return '\n'.join(lines)
 
 
@@ -65,12 +70,38 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body = apply_tags(body, tags)
 
-    styled_content = f"<style>{pdf_css}</style>\n{body}"
-    pdf = MarkdownPdf()
-    section = Section(styled_content, root=str(input_path.parent), paper_size='A4')
-    pdf.add_section(section)
+    md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
+    _ = md
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    pdf.save(str(output_path))
+    with tempfile.TemporaryDirectory() as tmpdir:
+        md_temp = Path(tmpdir) / 'input.md'
+        md_temp.write_text(body, encoding='utf-8')
 
-    return True, f"{input_path} -> {output_path}"
+        css_path = Path(tmpdir) / 'style.css'
+        css_path.write_text(pdf_css, encoding='utf-8')
+
+        pdf_options = json.dumps({
+            "format": "A4",
+            "margin": {"top": "25mm", "bottom": "20mm", "left": "20mm", "right": "20mm"},
+            "displayHeaderFooter": True,
+            "headerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'>ver.2026-03-04</div>",
+            "footerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'><span class=\"pageNumber\"></span>/<span class=\"totalPages\"></span></div>",
+        })
+
+        cmd_npm = [
+            'npx', 'md-to-pdf',
+            str(md_temp),
+            '--stylesheet', str(css_path),
+            '--pdf-options', pdf_options,
+            '--basedir', str(input_path.parent),
+        ]
+        result = subprocess.run(cmd_npm, capture_output=True, text=True)
+
+        pdf_temp = md_temp.with_suffix('.pdf')
+        if result.returncode == 0 and pdf_temp.exists():
+            shutil.move(str(pdf_temp), output_path)
+
+    success = result.returncode == 0 and output_path.exists()
+    msg = f"{input_path} -> {output_path}" if success else f"{input_path} -> {output_path} failed: {result.stderr.strip()}"
+    return success, msg

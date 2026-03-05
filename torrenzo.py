@@ -85,6 +85,7 @@ def build_tag_map() -> dict[str, str]:
 
 def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
     briefs_pattern = 'assessments/assessment_*/ass_*_brief.md'
+    content_pattern = 'modules/module_*/mod_*_content.md'
     activities_pattern = 'modules/module_*/mod_*_activities.md'
     resources_pattern = 'modules/module_*/mod_*_resources.bib'
 
@@ -94,9 +95,22 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             input_pattern=briefs_pattern,
             output_dir=Path('.'),
             renderer='md_to_pdf',
-            context={'tags': tags, 'pdf_css': PDF_USER_CSS},
+            context={
+                'tags': tags,
+                'pdf_css': PDF_USER_CSS,
+                'header_html': '<div class="header">ver.2026-03-04</div>',
+                'footer_html': '<div class="footer"></div>',
+            },
             output_ext='.pdf',
             output_namer=lambda p: f"{p.parent.name}.pdf",
+        ),
+        RenderJob(
+            name='module_content',
+            input_pattern=content_pattern,
+            output_dir=Path('.'),
+            renderer='md_to_html',
+            context={'tags': tags},
+            output_ext='.html',
         ),
         RenderJob(
             name='module_activities',

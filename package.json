@@ -1,0 +1,24 @@
+{
+  "name": "torrenzo",
+  "version": "1.0.0",
+  "description": "*Lightweight publishing pipeline for digital learning content*",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tabreturn/torrenzo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tabreturn/torrenzo/issues"
+  },
+  "homepage": "https://github.com/tabreturn/torrenzo#readme",
+  "dependencies": {
+    "md-to-pdf": "^5.2.5"
+  }
+}

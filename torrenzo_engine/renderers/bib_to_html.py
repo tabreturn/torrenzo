@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import html
+import re
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
@@ -8,6 +10,21 @@ from pybtex.plugin import find_plugin
 
 APA_STYLE = "apa7"
 FALLBACK_STYLE = "unsrt"
+
+
+URL_LATEX_RE = re.compile(r"\\\\url\s+([^\\\s<]+)")
+URL_PLAIN_RE = re.compile(r"((?:https?|ftp)://[^\s<]+)")
+
+
+def linkify_urls(text: str) -> str:
+    def repl(match: re.Match[str]) -> str:
+        url = match.group(1)
+        safe = html.escape(url, quote=True)
+        return f"<a href=\"{safe}\">{safe}</a>"
+
+    text = text.replace("\\url", "")
+    text = URL_LATEX_RE.sub(repl, text)
+    return URL_PLAIN_RE.sub(repl, text)
 
 
 def render_entry_to_html(entry) -> str:
@@ -24,7 +41,8 @@ def render_entry_to_html(entry) -> str:
     parts = []
     for item in formatted:
         parts.append(item.text.render(backend))
-    return "\n".join(parts)
+    html_text = "\n".join(parts)
+    return linkify_urls(html_text)
 
 
 def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:

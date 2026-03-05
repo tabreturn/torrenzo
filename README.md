@@ -25,16 +25,13 @@ An `outline.yaml` provides the project/subject configuration:
 
 1. Ensure [prerequisites](#prerequisites) are installed.
 2. [Populate subject content](#populating-content) (`outline.yaml`, `assessments/`, and `modules/`).
-3. Run Torrenzo from the repository root:
-
-```bash
-python torrenzo.py
+3. Run Torrenzo from the repository root: `python torrenzo.py`
 ```
 
 By default, Torrenzo scans the current directory. To target another workspace:
 
 ```bash
-python torrenzo.py ../other-subject
+python3 torrenzo.py ../other-subject
 ```
 
 All outputs (HTML, PDF, etc.) are written to the `build/` directory, which is cleared at the start of each run.
@@ -44,10 +41,29 @@ All outputs (HTML, PDF, etc.) are written to the `build/` directory, which is cl
 ## Prerequisites
 
 - **Python 3.10+**
-- Dependencies installed via: `pip install -r requirements.txt`
-- A terminal (`cd` to the repository root); relative paths are resolved from there
+- **Node 18+** with `npm`
 
-*(There is opportunity to add a GUI in future.)*
+### Python Setup
+To create and activate a virtual environment, then install dependencies:
+```bash
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+
+### Node Setup
+Required for PDF generation via `md-to-pdf`. To install Node dependencies locally:
+```bash
+npm install
+```
+
+### Working Directory
+All relative paths assume execution from the repository root. Set your working directory using:
+```bash
+cd <repository-root>
+```
+
+> 💡 A GUI may be added in a future release.
 
 ---
 
@@ -137,4 +153,3 @@ Torrenzo can accommodate additional transformers without touching the core pipel
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
 - [ ] ...
-
