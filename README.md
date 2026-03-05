@@ -1,118 +1,30 @@
-
 # Torrenzo
 
-> **Torrenzo** converts structured Markdown learning content into LMS-ready HTML and printable assessment briefs.
+*Lightweight publishing pipeline for digital learning content*
 
-A content transformer that serves as a lightweight publishing pipeline for digital learning content. It traverses a structured course directory and generates LMS-ready materials and assessment briefs.
+Traverses structured subject directories and outputs LMS-ready HTML content and PDF assessment briefs from Markdown, BibTeX, and other source material.
 
-Torrenzo performs the following transformations:
+Torrenzo currently performs the following transformations:
 
-1. Renders each `assessments/assessment_<n>/ass_<n>_brief.md` into a **PDF**
-2. Converts `modules/module_<n>/mod_<n>_content.md` into LMS-ready **HTML**
-3. Converts `modules/module_<n>/mod_<n>_activities.md` into LMS-ready **HTML**
-4. Converts `modules/module_<n>/mod_<n>_resources.bib` into LMS-ready **HTML**
+| Input                                         | Output |
+|-----------------------------------------------|--------|
+| `assessments/assessment_<n>/ass_<n>_brief.md` | PDF    |
+| `modules/module_<n>/mod_<n>_content.md`       | HTML   |
+| `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
+| `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
-These transformations rely on configuration defined in `outline.yaml`, which provides metadata such as:
+An `outline.yaml` provides the project/subject configuration:
 
-- **`subject_descriptor`** – A short overview of the subject, including its aims, key concepts, and the knowledge and skills students are expected to gain.
-- **`slo > code: <n>`** – The specific knowledge, skills, and capabilities students should be able to demonstrate upon successful completion of the subject.
-- **`assessment_metadata`** – An overview of each assessment task, including its format, purpose, and submission requirements.
-
----
-
-## Diagrams
-
-### Content pipeline
-
-```mermaid
-flowchart LR
-
-A[Course Repository] --> B[Markdown Content]
-B --> C[torrenzo.py]
-
-C --> D[Inject Metadata<br>outline.yaml]
-C --> E[Render Assessment Briefs]
-C --> F[Convert Module Content]
-
-E --> G[PDF Output]
-F --> H[LMS HTML Output]
-
-G --> I[build/]
-H --> I[build/]
-```
-
-### Repository architecture
-
-```mermaid
-flowchart TD
-
-A[Course Root]
-
-A --> B[outline.yaml]
-
-A --> C[assessments]
-C --> C1[assessment_1]
-C1 --> C2[ass_1_brief.md]
-C1 --> C3[assets]
-
-A --> D[modules]
-D --> D1[module_1]
-D1 --> D2[mod_1_content.md]
-D1 --> D3[mod_1_activities.md]
-D1 --> D4[mod_1_resources.bib]
-D1 --> D5[assets]
-
-A --> E[torrenzo.py]
-
-E --> F[build]
-```
-
-Torrenzo treats course content as a structured repository. Markdown files contain the primary content, while `outline.yaml` provides subject metadata.
-
-During the build process, Torrenzo injects metadata and transforms content into:
-
-- PDF assessment briefs  
-- LMS-ready HTML module content  
-- HTML resource lists  
-
-All outputs are written to the `build/` directory.
-
----
-
-## Prerequisites
-
-- **Python 3.10+**
-- Dependencies installed via:
-
-```bash
-pip install -r requirements.txt
-```
-
-- A terminal located at the repository root (relative paths are resolved from there)
-
-*(A GUI may be added in the future.)*
-
----
-
-## Repository structure
-
-- `torrenzo.py` — CLI driver that orchestrates build preparation, metadata injection, PDF generation, and HTML conversion
-- `outline.yaml` — Metadata source used to populate learning outcomes and other subject information in generated outputs
-- `assessments/` — Contains assessment briefs in `assessment_<n>/ass_<n>_brief.md`, along with assets referenced by the briefs
-- `modules/` — Contains module content and activities in `module_<n>/`
-- `build/` — Generated PDFs and HTML fragments (deleted and recreated on every run)
-
-> If you have a plugin-style architecture implemented, you may also have:
->
-> - `torrenzo/pipeline.py` — Job discovery and execution
-> - `torrenzo/renderers/` — Renderer implementations (`md_to_pdf`, `md_to_html`, etc.)
+- **`subject_descriptor`** -- A short overview of the subject: its aims, key concepts, and the knowledge and skills students will gain.
+- **`slo > code: <n>`** -- Subject Learning Outcomes; the specific knowledge, skills, and capabilities students should demonstrate upon successful completion.
+- **`assessment_metadata`** -- High-level submission requirements, including format, length, SLOs, and weighting.
 
 ---
 
 ## Usage
 
-1. Ensure prerequisites are installed.
-2. Populate course content (`outline.yaml`, `assessments/`, and `modules/`).
+1. Ensure [prerequisites](#prerequisites) are installed.
+2. [Populate subject content](#populating-content) (`outline.yaml`, `assessments/`, and `modules/`).
 3. Run Torrenzo from the repository root:
 
 ```bash
@@ -129,57 +41,88 @@ All outputs (HTML, PDF, etc.) are written to the `build/` directory, which is cl
 
 ---
 
-## Configuration & styling
+## Prerequisites
 
-- Maintain subject metadata in `outline.yaml`. Torrenzo injects values wherever placeholders such as `{{slo}}` appear.
-- The CSS in `assessments/style.css` controls the styling of generated PDF briefs.
+- **Python 3.10+**
+- Dependencies installed via:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- A terminal (`cd` to the repository root); relative paths are resolved from there
+
+*(There is opportunity to add a GUI in future.)*
 
 ---
 
-## Renderer pipeline (plugin architecture)
+## Repository architecture
 
-Torrenzo’s build process can be modelled as a set of **render jobs**:
-
-- a file pattern (input)
-- an output location
-- a renderer responsible for the transformation
-- a shared metadata context (from `outline.yaml`)
-
-This makes it easy to extend Torrenzo with new targets (e.g., Marp slides, DOCX, quizzes) without inflating the CLI driver.
-
-### Example build targets
-
-```yaml
-build_targets:
-  - name: assessment_briefs
-    input: "assessments/assessment_*/ass_*_brief.md"
-    output_dir: "build/assessments"
-    renderer: "md_to_pdf"
-
-  - name: module_content
-    input: "modules/module_*/mod_*_content.md"
-    output_dir: "build/modules"
-    renderer: "md_to_html"
-
-  - name: module_activities
-    input: "modules/module_*/mod_*_activities.md"
-    output_dir: "build/modules"
-    renderer: "md_to_html"
-
-  - name: module_resources
-    input: "modules/module_*/mod_*_resources.bib"
-    output_dir: "build/modules"
-    renderer: "bib_to_html"
+```text
+subject-root/
+├── outline.yaml        # subject configuration
+├── assessments/        # assessment briefs → PDF
+│   ├── assessment_1/
+│   │   ├── ass_1_brief.md
+│   │   └── assets/
+│   ├── ...
+│   └── assessment_n/
+│       ├── ass_n_brief.md
+│       └── assets/
+├── modules/            # module content → HTML
+│   ├── module_1/
+│   │   ├── mod_1_content.md
+│   │   ├── mod_1_activities.md
+│   │   ├── mod_1_resources.bib
+│   │   └── assets/
+│   ├── ...
+│   └── module_n/
+│       ├── mod_n_content.md
+│       ├── mod_n_activities.md
+│       ├── mod_n_resources.bib
+│       └── assets/
+├── torrenzo.py         # run to build
+└── build/              # generated output
 ```
 
-### Diagnostics
+### Populating content
 
-Renderers should ideally report consistent diagnostics such as:
+Subject content is organised into two directories -- `assessments/` and `modules/` -- following strict naming conventions that Torrenzo uses to locate and process files.
 
-- missing placeholders / metadata keys
-- missing assets referenced by Markdown
-- invalid Markdown front matter / schema issues
-- failed conversions (with file + reason)
+**`outline.yaml`** is the metadata source for all generated outputs. Among other data, it must define:
+
+- `subject_descriptor` -- a short overview of the subject
+- `slo` -- Subject Learning Outcomes, each identified by a code (a, b, c, etc.)
+- `assessment_metadata` -- submission requirements per assessment (format, length, weighting, SLOs, etc.)
+
+Torrenzo injects these values wherever placeholders such as `{{subject_descriptor}}` appear in source Markdown files. The CSS in `assessments/style.css` controls the styling of generated PDF briefs.
+
+**Assessment briefs** are placed in `assessments/assessment_<n>/ass_<n>_brief.md`. Any assets the brief references (images, etc.) go in the adjacent `assets/` directory.
+
+**Module files** follow the same pattern under `modules/module_<n>/`:
+
+- `mod_<n>_content.md` -- primary module content
+- `mod_<n>_activities.md` -- activity pages
+- `mod_<n>_resources.bib` -- reference list in BibTeX format
+- `assets/` -- supporting files referenced by the module
+
+During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Note that `build/` deletes its contents to recreate them entirely on every run.
+
+---
+
+## Transformers
+
+Torrenzo uses a plugin-style architecture with an extensible set of transformers:
+
+| Transformer                                | Conversion      |
+|--------------------------------------------|-----------------|
+| `torrenzo_engine/renderers/bib_to_html.py` | BibTeX → HTML   |
+| `torrenzo_engine/renderers/md_to_html.py`  | Markdown → HTML |
+| `torrenzo_engine/renderers/md_to_pdf.py`   | Markdown → PDF  |
+
+Torrenzo can accommodate additional transformers without touching the core pipeline. This makes it amenable to extending with new targets (e.g., Marp slides, DOCX, quizzes) without inflating the CLI driver. Potential candidates include:
+
+- `.docx` → HTML (via predefined Word stylesheets for consistent visual output and semantic structure)
+- Marp `.md` → PDF (slide decks)
+- Extended Markdown features for module pages (accordions, nav tabs, etc.)
 
 ---
 
@@ -187,9 +130,11 @@ Renderers should ideally report consistent diagnostics such as:
 
 - [ ] Refine CSS styles for assessment briefs
 - [ ] Improve brief templates (page numbers, versioning in headers, etc.)
-- [ ] Capture and expose build diagnostics (invalid Markdown front matter, missing metadata)
+- [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
+
+### 'Maybe' goals
+
 - [ ] Build a GUI (desktop or web interface)
 - [ ] Add support for Word documents (via semantic styles)
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
-

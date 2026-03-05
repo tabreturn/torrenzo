@@ -9,8 +9,8 @@ subject_descriptor: >
 slo:
   - code: a
     description: >
-      Identify and describe tropical fruits using sensory vocabulary like
-      aroma, sweetness, and texture.
+      Identify and describe tropical fruits using sensory vocabulary like aroma,
+      sweetness, and texture.
 
   - code: b
     description: >
@@ -24,6 +24,6 @@ slo:
 
   - code: d
     description: >
-      Share a brief write-up that compares two different fruits and what 
-      makes each one unique in presentation and flavor.
+      Share a brief write-up that compares two different fruits and what makes 
+      each one unique in presentation and flavor.
 
