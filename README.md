@@ -131,6 +131,7 @@ Torrenzo can accommodate additional transformers without touching the core pipel
 - [ ] Refine CSS styles for assessment briefs
 - [ ] Improve brief templates (page numbers, versioning in headers, etc.)
 - [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
+- [ ] ...
 
 ### 'Maybe' goals
 
@@ -138,3 +139,5 @@ Torrenzo can accommodate additional transformers without touching the core pipel
 - [ ] Add support for Word documents (via semantic styles)
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
+- [ ] ...
+
