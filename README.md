@@ -13,11 +13,18 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
 | `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
-An `outline.yaml` provides the project/subject configuration:
+An `outline.yaml` provides the project/subject configuration, which includes:
 
-- **`subject_descriptor`** -- A short overview of the subject: its aims, key concepts, and the knowledge and skills students will gain.
-- **`slo > code: <n>`** -- Subject Learning Outcomes; the specific knowledge, skills, and capabilities students should demonstrate upon successful completion.
-- **`assessment_metadata`** -- High-level submission requirements, including format, length, SLOs, and weighting.
+- **`subject`** (`id`, `title`)  
+  Basic subject identity used in rendered outputs.
+- **`subject_descriptor`**  
+  A short overview of the subject: its aims, key concepts, and the knowledge and skills students will gain.
+- **`slo`** entries with **`id`** and **`description`**
+  Subject Learning Outcomes; the specific knowledge, skills, and capabilities students should demonstrate upon successful completion.
+- **`assessment`** (or `assessments`) keyed by `id`
+  High-level submission requirements pulled into briefs via `{{ assessment|<id>|... }}` tags (e.g., `meta_table`, individual fields, and SLO-derived `slo`).
+
+- All tag keys mirror YAML names (except the `assessment|<id>|...` prefix). For outcomes use `slo` (preferred) or `learning_outcomes` if present.
 
 ---
 
@@ -102,9 +109,10 @@ Subject content is organised into two directories -- `assessments/` and `modules
 
 **`outline.yaml`** is the metadata source for all generated outputs. Among other data, it must define:
 
+- `subject` -- basic identifiers (id/title)
 - `subject_descriptor` -- a short overview of the subject
-- `slo` -- Subject Learning Outcomes, each identified by a code (a, b, c, etc.)
-- `assessment_metadata` -- submission requirements per assessment (format, length, weighting, SLOs, etc.)
+- `slo` -- Subject Learning Outcomes, each identified by an id (a, b, c, etc.)
+- `assessment` (or `assessments`) -- submission requirements per assessment (format, length, weighting, SLOs, etc.) using `assessment|<id>` as the tag prefix (e.g., `{{ assessment|1|title }}`) with `slo`/`learning_outcomes` accepted for outcomes, and `meta_table` for the rendered table
 
 Torrenzo injects these values wherever placeholders such as `{{subject_descriptor}}` appear in source Markdown files. The CSS in `assessments/style.css` controls the styling of generated PDF briefs.
 

@@ -1,19 +1,8 @@
----
-subject_code_and_title: "FRU101 — Tropical Fruit Studies"
-assessment: "Playful Fruit Journal"
-individual_group: "Individual"
-length: "Two short reflections plus media folder"
-learning_outcomes:
-  - "(a) Record sensory impressions in a readable, friendly tone."
-  - "(c) Compare two fruits and describe what makes each memorable."
-submission: "Due by 23h55 local time on the final weekend of the learning block"
-weighting: "10%"
-total_marks: "25 marks"
----
-
 # Assessment 2 Brief (Playful Placeholder)
 
-<<metadata_table>>
+{{ assessment|2|slo }}
+
+{{ assessment|2|meta_table }}
 
 # Task Summary
 

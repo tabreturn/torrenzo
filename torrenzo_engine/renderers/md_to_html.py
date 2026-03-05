@@ -5,15 +5,15 @@ from typing import Any, Dict, Tuple
 
 from markdown_it import MarkdownIt
 
+from .md_to_pdf import apply_tags
+
 
 def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:
     tags = context.get("tags", {})
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
     raw = input_path.read_text(encoding="utf-8")
 
-    # simple tag replacement pre-pass
-    for key, value in tags.items():
-        raw = raw.replace(f"{{{{{key}}}}}", value)
+    raw = apply_tags(raw, tags)
 
     html_body = md.render(raw)
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -11,7 +11,7 @@ from typing import Any, Dict, Tuple
 import yaml
 from markdown_it import MarkdownIt
 
-TAG_RE = re.compile(r"{{\s*([\w_]+)(?:\|([\w\-]+))?\s*}}")
+TAG_RE = re.compile(r"{{\s*([^{}]+?)\s*}}")
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 METADATA_TOKEN = "<<metadata_table>>"
 
@@ -45,17 +45,24 @@ def build_metadata_table(metadata: dict[str, Any]) -> str:
 
 def apply_tags(text: str, tags: dict[str, str]) -> str:
     def replace_tag(match: re.Match[str]) -> str:
-        name = match.group(1)
-        detail = match.group(2)
-        lookup_key = name if detail is None else f'{name}|{detail}'
-        snippet = tags.get(lookup_key)
-        if snippet is None:
-            if detail is None:
-                return match.group(0)
-            snippet = tags.get(name)
-            if snippet is None:
-                return match.group(0)
-        return snippet
+        content = match.group(1)
+        parts = [part.strip() for part in content.split('|') if part.strip()]
+        if not parts:
+            return match.group(0)
+
+        lookup_keys: list[str] = []
+        if len(parts) == 1:
+            lookup_keys.append(parts[0])
+        else:
+            lookup_keys.append('|'.join(parts))
+            if parts[0].lower() == 'assessment':
+                lookup_keys.append('|'.join(parts[1:]))
+
+        for key in lookup_keys:
+            snippet = tags.get(key)
+            if snippet is not None:
+                return snippet
+        return match.group(0)
 
     return TAG_RE.sub(replace_tag, text)
 

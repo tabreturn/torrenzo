@@ -1,24 +1,8 @@
----
-subject_code_and_title: "FRU101 — Tropical Fruit Studies"
-assessment: "Seasonal Fruit Catalog"
-individual_group: "Individual"
-length: "One page of notes plus a small media folder"
-learning_outcomes:
-  - "(a) Observe and describe three seasonal fruits using sensory language."
-  - "(b) Curate a concise visual record that highlights colour, shape, and texture."
-submission: "Due by 23h55 local time on the final weekend of the learning block"
-weighting: "10%"
-total_marks: "25 marks"
----
-
 # Assessment 1 Brief (Playful Placeholder)
 
-- {{ slo|a }}
-- {{ slo|b }}
-- {{ slo|c }}
-- {{ slo|d }}
+{{ assessment|1|slo }}
 
-<<metadata_table>>
+{{ assessment|1|meta_table }}
 
 # Task Summary
 
