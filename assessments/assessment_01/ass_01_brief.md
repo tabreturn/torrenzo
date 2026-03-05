@@ -1,5 +1,7 @@
 # Assessment 1 Brief (Playful Placeholder)
 
+![placeholer img](./assets/placeholder.png)
+
 {{ assessment|1|slo }}
 
 {{ assessment|1|meta_table }}

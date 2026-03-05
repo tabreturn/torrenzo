@@ -11,6 +11,8 @@ from typing import Any, Dict, Tuple
 import yaml
 from markdown_it import MarkdownIt
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 TAG_RE = re.compile(r"{{\s*([^{}]+?)\s*}}")
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 METADATA_TOKEN = "<<metadata_table>>"
@@ -81,33 +83,42 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     _ = md
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory() as tmpdir:
-        md_temp = Path(tmpdir) / 'input.md'
-        md_temp.write_text(body, encoding='utf-8')
 
-        css_path = Path(tmpdir) / 'style.css'
-        css_path.write_text(pdf_css, encoding='utf-8')
+    css_path = (PROJECT_ROOT / 'assessments' / 'style.css').resolve()
+    style_dir = PROJECT_ROOT / 'assessments'
 
-        pdf_options = json.dumps({
-            "format": "A4",
-            "margin": {"top": "25mm", "bottom": "20mm", "left": "20mm", "right": "20mm"},
-            "displayHeaderFooter": True,
-            "headerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'>ver.2026-03-04</div>",
-            "footerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'><span class=\"pageNumber\"></span>/<span class=\"totalPages\"></span></div>",
-        })
+    temp_root = Path(tempfile.mkdtemp(prefix='torrenzo_pdf_'))
+    workdir = temp_root / input_path.parent.name
+    shutil.copytree(input_path.parent, workdir)
 
-        cmd_npm = [
-            'npx', 'md-to-pdf',
-            str(md_temp),
-            '--stylesheet', str(css_path),
-            '--pdf-options', pdf_options,
-            '--basedir', str(input_path.parent),
-        ]
-        result = subprocess.run(cmd_npm, capture_output=True, text=True)
+    processed_md = workdir / input_path.name
+    processed_md.write_text(body, encoding='utf-8')
 
-        pdf_temp = md_temp.with_suffix('.pdf')
-        if result.returncode == 0 and pdf_temp.exists():
-            shutil.move(str(pdf_temp), output_path)
+    pdf_options = json.dumps({
+        "format": "A4",
+        "margin": {"top": "25mm", "bottom": "20mm", "left": "20mm", "right": "20mm"},
+        "displayHeaderFooter": True,
+        "headerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'>ver.2026-03-04</div>",
+        "footerTemplate": "<div style='font-size:10px;width:100%;text-align:center;'><span class=\"pageNumber\"></span>/<span class=\"totalPages\"></span></div>",
+    })
+
+    local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / 'md-to-pdf'
+    if local_bin.exists():
+        cmd_npm = [str(local_bin.resolve()), processed_md.name]
+    else:
+        cmd_npm = ['npx', 'md-to-pdf', processed_md.name]
+
+    cmd_npm.extend([
+        '--stylesheet', str(css_path),
+        '--pdf-options', pdf_options,
+        '--basedir', str(workdir),
+    ])
+
+    result = subprocess.run(cmd_npm, capture_output=True, text=True, cwd=str(workdir))
+
+    pdf_temp = workdir / f"{processed_md.stem}.pdf"
+    if result.returncode == 0 and pdf_temp.exists():
+        shutil.move(str(pdf_temp), output_path)
 
     success = result.returncode == 0 and output_path.exists()
     msg = f"{input_path} -> {output_path}" if success else f"{input_path} -> {output_path} failed: {result.stderr.strip()}"
