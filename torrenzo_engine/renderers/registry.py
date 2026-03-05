@@ -40,3 +40,7 @@ class RendererRegistry:
 
     def clear(self) -> None:
         self._registry.clear()
+
+
+def register_renderer(registry: RendererRegistry, name: str, factory: RendererFactory) -> None:
+    registry.register(name, factory)

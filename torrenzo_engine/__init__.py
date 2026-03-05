@@ -1,4 +1,4 @@
-from .pipeline import Pipeline
-from .renderers import register_renderer
+from .pipeline import Pipeline, RenderJob
+from .renderers import RendererRegistry, register_renderer
 
-__all__ = ["Pipeline", "register_renderer"]
+__all__ = ["Pipeline", "RenderJob", "RendererRegistry", "register_renderer"]

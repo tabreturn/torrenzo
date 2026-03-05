@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Protocol
 
-from .renderers.registry import RendererRegistry, RendererFactory
+from .renderers.registry import RendererRegistry
 
 
 class DiagnosticLevel(str):
@@ -20,6 +20,8 @@ class RenderJob:
     output_dir: Path
     renderer: str
     context: Dict[str, Any]
+    output_ext: str = ''
+    output_namer: Callable[[Path], str] | None = None
 
 
 class Pipeline:
@@ -40,7 +42,13 @@ class Pipeline:
             renderer_factory = self.registry.get(job.renderer)
             renderer = renderer_factory(None)
             for input_path in sorted(self.root.glob(job.input_pattern)):
-                output_path = output_dir / input_path.with_suffix('.pdf').name
+                if job.output_namer:
+                    output_name = job.output_namer(input_path)
+                elif job.output_ext:
+                    output_name = input_path.with_suffix(job.output_ext).name
+                else:
+                    output_name = input_path.name
+                output_path = output_dir / output_name
                 success, msg = renderer(input_path, output_path, job.context)
                 diagnostics.append(f"{job.name}: {msg}")
         return diagnostics
