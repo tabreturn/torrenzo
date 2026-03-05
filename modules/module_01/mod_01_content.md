@@ -1,6 +1,9 @@
 # Module 01: Fruit Observation Essentials
 
-{{ slo }}
+- {{ slo|a }}
+- {{ slo|b }}
+- {{ slo|c }}
+- {{ slo|d }}
 
 ## Overview
 

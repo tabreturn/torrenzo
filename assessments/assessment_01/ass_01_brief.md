@@ -13,6 +13,11 @@ total_marks: "25 marks"
 
 # Assessment 1 Brief (Playful Placeholder)
 
+- {{ slo|a }}
+- {{ slo|b }}
+- {{ slo|c }}
+- {{ slo|d }}
+
 <<metadata_table>>
 
 # Task Summary

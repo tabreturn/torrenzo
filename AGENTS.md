@@ -21,7 +21,7 @@
 - `torrenzo.py`: now the CLI/orchestration entry point; it loads configs, extends context, and delegates work to the `torrenzo_engine` pipeline instead of directly converting files.
 - `torrenzo_engine/`: contains the new renderer registry and pipeline that discover render jobs and execute plugin renderers.
 - `torrenzo_engine/renderers/`: each renderer (e.g., `md_to_pdf`, `md_to_html`, `bib_to_html`) lives here and returns success diagnostics.
-- `outline.yaml`: metadata describing subject learning outcomes; tags from this file are injected into generated HTML via `{{slo}}`.
+- `outline.yaml`: metadata describing subject learning outcomes; tags from this file are injected into generated HTML via `{{slo}}` (list) or `{{slo|<code>}}` (single outcome).
 - `assessments/`: contains `ass_<n>_brief.md` files. Each brief is rendered to PDF in `build/`.
 - `modules/`: includes `mod_<n>_activities.md` files. Each activity is converted to LMS-ready HTML fragments.
 - `build/`: generated output. The pipeline recreates this directory on each run, so treat it as ephemeral.
