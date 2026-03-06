@@ -162,11 +162,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ---
 
-## Fix
-
-- [ ] YAML tags replaced in assessment markdown
-
-## Todo
+## To-Do
 
 - [ ] Consider leveraging Obsidian's tag syntax to better support WYSIWYG-style editing workflows
 - [ ] Refine CSS styles for assessment briefs

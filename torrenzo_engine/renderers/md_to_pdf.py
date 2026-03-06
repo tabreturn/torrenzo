@@ -87,55 +87,62 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     workdir = input_path.parent
     style_src = PROJECT_ROOT / 'assessments' / 'style'
     style_dst = workdir / 'style'
-
-    created_style = False
-    if style_src.exists():
-        if style_dst.exists():
-            shutil.rmtree(style_dst, ignore_errors=True)
-        shutil.copytree(style_src, style_dst)
-        created_style = True
-
     config_src = style_src / 'config.js'
     if not config_src.exists():
         return False, f"Missing config.js for {input_path}"
-    config_content = config_src.read_text(encoding='utf-8')
 
     logo_path = style_src / 'logo.svg'
-    if logo_path.exists():
-        svg_markup = logo_path.read_text(encoding='utf-8').strip()
-        config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', svg_markup)
-    else:
-        config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', '')
+    created_style = False
+    temp_md_path: Path | None = None
+    result: subprocess.CompletedProcess[str] | None = None
+    success = False
+    msg = ''
 
-    config_dst = style_dst / 'config.js'
-    config_dst.write_text(config_content, encoding='utf-8')
-    config_path = config_dst
+    try:
+        if style_src.exists():
+            if style_dst.exists():
+                shutil.rmtree(style_dst, ignore_errors=True)
+            shutil.copytree(style_src, style_dst)
+            created_style = True
 
-    original_md = input_path.read_text(encoding='utf-8')
-    input_path.write_text(body, encoding='utf-8')
+        config_content = config_src.read_text(encoding='utf-8')
+        if logo_path.exists():
+            svg_markup = logo_path.read_text(encoding='utf-8').strip()
+            config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', svg_markup)
+        else:
+            config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', '')
 
-    local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
-    cmd = [
-        str(local_bin.resolve()) if local_bin.exists() else 'npx',
-        'md-to-pdf' if not local_bin.exists() else input_path.name,
-    ]
-    if local_bin.exists():
-        cmd = [str(local_bin.resolve()), input_path.name]
-    else:
-        cmd = ['npx', 'md-to-pdf', input_path.name]
-    cmd.extend(['--stylesheet', 'style/style.css', '--config-file', 'style/config.js'])
+        config_dst = style_dst / 'config.js'
+        config_dst.write_text(config_content, encoding='utf-8')
 
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workdir))
+        with tempfile.NamedTemporaryFile('w', delete=False, dir=workdir, suffix='.md', encoding='utf-8') as temp_md:
+            temp_md.write(body)
+            temp_md_path = Path(temp_md.name)
 
-    input_path.write_text(original_md, encoding='utf-8')
+        local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
+        if local_bin.exists():
+            cmd = [str(local_bin.resolve()), temp_md_path.name]
+        else:
+            cmd = ['npx', 'md-to-pdf', temp_md_path.name]
+        cmd.extend(['--stylesheet', 'style/style.css', '--config-file', 'style/config.js'])
 
-    pdf_temp = workdir / f"{input_path.stem}.pdf"
-    if result.returncode == 0 and pdf_temp.exists():
-        shutil.move(str(pdf_temp), output_path)
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workdir))
 
-    if created_style and style_dst.exists():
-        shutil.rmtree(style_dst, ignore_errors=True)
+        pdf_temp = workdir / f"{temp_md_path.stem}.pdf"
+        if result.returncode == 0 and pdf_temp.exists():
+            shutil.move(str(pdf_temp), output_path)
 
-    success = result.returncode == 0 and output_path.exists()
-    msg = f"{input_path} -> {output_path}" if success else f"{input_path} -> {output_path} failed: {result.stderr.strip()}"
+        success = result.returncode == 0 and output_path.exists()
+        if success:
+            msg = f"{input_path} -> {output_path}"
+        else:
+            msg = f"{input_path} -> {output_path} failed: {result.stderr.strip()}"
+    except FileNotFoundError as exc:
+        msg = f"{input_path} -> {output_path} failed: {exc}"
+    finally:
+        if temp_md_path and temp_md_path.exists():
+            temp_md_path.unlink(missing_ok=True)
+        if created_style and style_dst.exists():
+            shutil.rmtree(style_dst, ignore_errors=True)
+
     return success, msg

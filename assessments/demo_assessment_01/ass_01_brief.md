@@ -1,21 +1,10 @@
-# Assessment 1 Brief (Playful Placeholder)
+# Assessment {{ assessment|1|title }}
 
 ![placeholer img](./assets/placeholder.png)
 
-<p><strong>a</strong> Identify and describe tropical fruits using sensory vocabulary like aroma, sweetness, and texture.</p><br><p><strong>b</strong> Sketch fruit compositions with simple labels and captions to record seasonal availability.</p><br><p><strong>c</strong> Organize a digital collection of fruit images and notes, applying a consistent tagging scheme for easy reference.</p>
+{{ slo }}
 
-<table>
-<thead><tr><th>Field</th><th>Details</th></tr></thead>
-<tbody>
-<tr><td>Id</td><td>1</td></tr>
-<tr><td>Title</td><td>Seasonal Fruit Catalog</td></tr>
-<tr><td>Individual Group</td><td>Individual</td></tr>
-<tr><td>Length</td><td>One page of notes plus a small media folder</td></tr>
-<tr><td>Slo</td><td><p><strong>a</strong> Identify and describe tropical fruits using sensory vocabulary like aroma, sweetness, and texture.</p><br><p><strong>b</strong> Sketch fruit compositions with simple labels and captions to record seasonal availability.</p><br><p><strong>c</strong> Organize a digital collection of fruit images and notes, applying a consistent tagging scheme for easy reference.</p></td></tr>
-<tr><td>Submission</td><td>Due by 23h55 GMT on the final weekend of the learning block</td></tr>
-<tr><td>Weighting</td><td>10%</td></tr>
-<tr><td>Total Marks</td><td>25</td></tr>
-</tbody></table>
+{{ assessment|1|meta_table }}
 
 # Task Summary
 
