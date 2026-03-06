@@ -90,7 +90,12 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     original_md = input_path.read_text(encoding='utf-8')
     input_path.write_text(body, encoding='utf-8')
 
-    cmd = ['../../node_modules/.bin/md-to-pdf', input_path.name]
+    local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
+    if local_bin.exists():
+        cmd = [str(local_bin.resolve()), input_path.name]
+    else:
+        cmd = ['npx', 'md-to-pdf', input_path.name]
+
     if css_path.exists():
         cmd.extend(['--stylesheet', str(css_path)])
 
