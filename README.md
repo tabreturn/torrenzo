@@ -2,6 +2,8 @@
 
 *Lightweight publishing pipeline for digital learning content*
 
+![banner](README_banner.png)
+
 ---
 
 ## What Does It Do?
@@ -46,6 +48,8 @@ An `outline.yaml` provides the project/subject configuration, which includes:
 By default, Torrenzo scans the current directory. To target another workspace use: `python3 torrenzo.py ../other-subject`
 
 Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which is cleared at the start of each run).
+
+> 💡 Markdown editors like [Obsidian](https://obsidian.md) can provide a well-suited environment for writing, organising, and navigating Torrenzo content.
 
 ---
 
@@ -158,8 +162,13 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ---
 
+## FIX A.S.A.P.
+
+- [ ] YAML tags replaced in assessment markdown
+
 ## TODO
 
+- [ ] Consider leveraging Obsidian's tag syntax to better support WYSIWYG-style editing workflows
 - [ ] Refine CSS styles for assessment briefs
 - [x] Improve brief templates (page numbers, versioning in headers, etc.)
 - [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
@@ -168,7 +177,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ### 'Maybe' Goals
 
-- [ ] Build a GUI (desktop or web interface)
+- [ ] Build Obsidian extension/plugin to support workflow (configuration, build, etc.)
 - [ ] Add support for Word documents (via semantic styles)
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
