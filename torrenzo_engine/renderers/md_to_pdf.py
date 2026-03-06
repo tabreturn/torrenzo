@@ -85,7 +85,15 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     workdir = input_path.parent
-    css_path = workdir / 'style' / 'style.css'
+    style_src = PROJECT_ROOT / 'assessments' / 'style'
+    style_dst = workdir / 'style'
+
+    created_style = False
+    if style_src.exists():
+        if style_dst.exists():
+            shutil.rmtree(style_dst, ignore_errors=True)
+        shutil.copytree(style_src, style_dst)
+        created_style = True
 
     original_md = input_path.read_text(encoding='utf-8')
     input_path.write_text(body, encoding='utf-8')
@@ -103,6 +111,9 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     pdf_temp = workdir / f"{input_path.stem}.pdf"
     if result.returncode == 0 and pdf_temp.exists():
         shutil.move(str(pdf_temp), output_path)
+
+    if created_style and style_dst.exists():
+        shutil.rmtree(style_dst, ignore_errors=True)
 
     success = result.returncode == 0 and output_path.exists()
     msg = f"{input_path} -> {output_path}" if success else f"{input_path} -> {output_path} failed: {result.stderr.strip()}"

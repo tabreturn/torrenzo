@@ -1,54 +1,48 @@
 # AGENT NOTES
 
-
 ## Repository Snapshot
 
-- Python-based tooling centered around `torrenzo.py`, which transforms Markdown briefs and module activities into PDFs and simple LMS HTML.
-- Content sources live under `assessments/` (briefs) and `modules/` (module activities and assets).
-- No tests or lint pipelines are defined; the repo focuses on content processing rather than a traditional application/service stack.
-
+- Python CLI (`torrenzo.py`) orchestrates render jobs that transform Markdown briefs and module files into PDFs/HTML via the `torrenzo_engine` pipeline and renderer registry.
+- Content sources live under `assessments/` (briefs and assets) and `modules/` (module content, activities, references, assets); outputs land in `build/`.
+- No automated tests or linters; validation is manual.
 
 ## Setup & Dependencies
 
-- Requires Python 3 with `PyYAML` (installed via `requirements.txt`).
-- No Node.js/npm installation is required; PDFs render via the Python `markdown_pdf` package bundled in requirements.
-- Run `pip install -r requirements.txt` before executing scripts.
-- Agent to use local env if one exists in torrenzo root.
+- Python 3.10+ with requirements from `requirements.txt` (includes `PyYAML`, `markdown_pdf`, etc.).
+- Node 18+ with `npm`; run `npm install` for `md-to-pdf` used in PDF rendering.
+- Use a local virtualenv if present in the repo root.
 
+## Usage & Build Behavior
+
+- Run from repo root: `python torrenzo.py` (optionally `python torrenzo.py <other-root>` to target a different subject directory).
+- All outputs write to `build/`, which is cleared at the start of each run.
 
 ## Directory Layout & Naming
 
-- `torrenzo.py`: now the CLI/orchestration entry point; it loads configs, extends context, and delegates work to the `torrenzo_engine` pipeline instead of directly converting files.
-- `torrenzo_engine/`: contains the new renderer registry and pipeline that discover render jobs and execute plugin renderers.
-- `torrenzo_engine/renderers/`: each renderer (e.g., `md_to_pdf`, `md_to_html`, `bib_to_html`) lives here and returns success diagnostics.
-- `outline.yaml`: metadata describing subject learning outcomes; tags from this file are injected into generated HTML via `{{slo}}` (list) or `{{slo|<code>}}` (single outcome).
-- `assessments/`: contains `ass_<n>_brief.md` files. Each brief is rendered to PDF in `build/`.
-- `modules/`: includes `mod_<n>_activities.md` files. Each activity is converted to LMS-ready HTML fragments.
-- `build/`: generated output. The pipeline recreates this directory on each run, so treat it as ephemeral.
-
+- `torrenzo.py`: CLI entry; builds tag map from `outline.yaml`, registers renderers, constructs job specs, and runs the pipeline.
+- `torrenzo_engine/`: renderer registry and pipeline execution.
+- `torrenzo_engine/renderers/`: individual renderers (`md_to_pdf`, `md_to_html`, `bib_to_html`).
+- `outline.yaml`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via tags like `{{slo}}`, `{{slo|<code>}}`, and `{{ assessment|<id>|... }}`.
+- `assessments/assessment_<n>/ass_<n>_brief.md`: briefs → PDF (assets alongside).
+- `modules/module_<n>/mod_<n>_content.md`: module content → HTML.
+- `modules/module_<n>/mod_<n>_activities.md`: activities → HTML.
+- `modules/module_<n>/mod_<n>_resources.bib`: references → HTML.
+- `build/`: generated output; ephemeral.
 
 ## Code Patterns & Conventions
 
-- The CLI now loads job specs and contexts, then feeds them to the renderer-based pipeline: jobs describe an input glob, output path, renderer name, and optional metadata injection.
-- Renderers are registered with `RendererRegistry`; each renderer is responsible for reading its input, producing output under `build/`, and returning a success flag plus human-readable diagnostics.
-- Markdown processing remains regex- and state-machine-driven:
-  - Inline formatting uses `inline_format` with regex replacements for **bold**, *italic*, `code`, and `{{tag}}` placeholders.
-  - Paragraph/list/code block detection happens line-by-line in `convert_markdown_to_lms_html`, with explicit flush helpers.
-- Image references are turned into `<img>` tags; all text is HTML-escaped before structured markup is inserted.
-- Naming uses `snake_case` for functions and constant-style uppercase for regex/patterns (`BRIEF_PATTERN`, `IMAGE_RE`).
-
+- Job specs define input globs, output dirs/exts/naming, renderer key, and optional context.
+- Renderers are registered by name; registry returns a renderer factory, invoked per job.
+- Inline formatting/tag replacement occurs in renderer implementations; HTML is escaped before markup insertion.
+- Naming uses `snake_case` functions and constant-style uppercase for patterns/regex.
 
 ## Testing & Validation Approach
 
-- No automated test suite; validation is manual.
-- Run the build command and inspect `build/` for PDFs/HTMLs. If `npx` is missing or the Markdown filename patterns aren’t matched, the pipeline exits with clear errors.
-
+- No automated suite; run the build (`python torrenzo.py`) and inspect `build/` artifacts.
 
 ## Gotchas & Notes
 
-- If `npx` is unavailable, `ensure_npx_available` raises and nothing is generated; install Node.js/NPM to resolve.
-- Briefs only process when files match `ass_*_brief.md`, and activities require `mod_*_activities.md`. Files outside those patterns are ignored.
-- `prepare_build_dir` wipes the entire `build/` directory on every run—do not store persistent files there between builds.
-- The script now wires through the renderer registry; new outputs are added by registering new renderer names and job specs.
-- The pipeline requires at least one matching job; otherwise, it exits with an informative SystemExit that references the configured job patterns.
-
+- `build/` is wiped each run (`prepare_build_dir`).
+- PDF rendering depends on Node/npm for `md-to-pdf`; failure to have `npx`/Node halts PDF generation.
+- File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_content.md`, `mod_*_activities.md`, `mod_*_resources.bib`) or files are skipped.
+- New outputs require registering renderer names and adding job specs.

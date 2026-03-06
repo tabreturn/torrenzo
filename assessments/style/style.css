@@ -1,0 +1,413 @@
+@page {
+    size: A4;
+    margin: 18mm 18mm 20mm 18mm;
+}
+
+:root {
+    --text: #5e1222;
+    --muted: #8f2940;
+    --border: #cfd8e3;
+    --border-strong: #aebccc;
+    --accent: #0f766e;
+    --accent-soft: #e6f4f1;
+    --header-footer-bg: #f8fafc;
+    --header-footer-text: #52606d;
+    --heading: #881329;
+    --subheading: #6f1830;
+    --code-bg: #f4f7fa;
+    --table-head-bg: #f3f6f9;
+    --quote-bg: #faf6f7;
+}
+
+@font-face {
+    font-family: "InterVariable";
+    src: url("style/InterVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "InterVariable-Italic";
+    src: url("style/InterVariable-Italic.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Bungee";
+    src: url("style/BungeeRegular.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "RecursiveVariable";
+    src: url("style/RecursiveVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    font-size: 10.5pt;
+}
+
+body {
+    font-family: "InterVariable", sans-serif;
+    line-height: 1.55;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    hyphens: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Running header / footer */
+.header,
+.footer {
+    width: 100%;
+    font-size: 9pt;
+    color: var(--header-footer-text);
+    background: var(--header-footer-bg);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.header {
+    position: running(pageHeader);
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer {
+    position: running(pageFooter);
+    padding: 5px 0 0 0;
+    border-top: 1px solid var(--border);
+}
+
+@page {
+    @top-center {
+        content: element(pageHeader);
+    }
+    @bottom-center {
+        content: element(pageFooter);
+    }
+}
+
+.page-number::after {
+    content: counter(page) " / " counter(pages);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid-page;
+    color: var(--heading);
+}
+
+h1, h2 {
+    font-family: "Bungee", sans-serif;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: 24pt;
+    line-height: 1.05;
+    margin: 0 0 14pt 0;
+    padding-bottom: 8pt;
+    border-bottom: 2px solid var(--heading);
+}
+
+h2 {
+    font-size: 15pt;
+    line-height: 1.15;
+    margin: 22pt 0 10pt 0;
+    color: var(--subheading);
+}
+
+h3, h4, h5, h6 {
+    font-family: "InterVariable", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin: 16pt 0 6pt 0;
+}
+
+h3 {
+    font-size: 12.5pt;
+}
+
+h4 {
+    font-size: 11.5pt;
+    color: var(--subheading);
+}
+
+h5, h6 {
+    font-size: 10.5pt;
+    color: var(--muted);
+}
+
+p {
+    margin: 0 0 10pt 0;
+}
+
+.lead,
+p.lead {
+    font-size: 11.5pt;
+    line-height: 1.65;
+    color: var(--subheading);
+}
+
+small {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+strong {
+    font-weight: 700;
+    color: #4b0c19;
+}
+
+em {
+    font-family: "InterVariable-Italic", "InterVariable", sans-serif;
+    font-style: italic;
+}
+
+/* Links */
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 0.6px solid rgba(15, 118, 110, 0.35);
+}
+
+a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: var(--muted);
+    word-break: break-all;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Lists */
+ul, ol {
+    margin: 0 0 10pt 1.25rem;
+    padding: 0;
+}
+
+li {
+    margin: 3pt 0;
+    padding-left: 2pt;
+}
+
+li > ul,
+li > ol {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
+}
+
+/* Quotes */
+blockquote {
+    margin: 14pt 0;
+    padding: 8pt 12pt;
+    border-left: 4px solid var(--muted);
+    background: var(--quote-bg);
+    color: var(--subheading);
+    page-break-inside: avoid;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Rules */
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16pt 0;
+}
+
+/* Code */
+code {
+    font-family: "RecursiveVariable", monospace;
+    background: var(--code-bg);
+    border: 1px solid #e2e8f0;
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: #1e293b;
+}
+
+pre {
+    margin: 12pt 0 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+pre code {
+    display: block;
+    padding: 10pt 12pt;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    color: #1f2937;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.45;
+    font-size: 9pt;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 14pt 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+table th,
+table td {
+    border: 1px solid var(--border);
+    padding: 7pt 8pt;
+    text-align: left;
+    vertical-align: top;
+}
+
+table th {
+    background: var(--table-head-bg);
+    color: #243b53;
+    font-weight: 700;
+    border-bottom: 1.2px solid var(--border-strong);
+}
+
+table tr:nth-child(even) td {
+    background: #fcfdfe;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tfoot {
+    display: table-footer-group;
+}
+
+/* Figures and media */
+img,
+svg {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figure {
+    margin: 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figcaption {
+    margin-top: 6pt;
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+/* Section wrappers */
+main {
+    page-break-after: always;
+    break-after: page;
+}
+
+main:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+}
+
+section,
+article {
+    page-break-inside: auto;
+}
+
+/* Utility classes for print polish */
+.kicker {
+    display: inline-block;
+    margin-bottom: 8pt;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.subtitle {
+    margin-top: -4pt;
+    margin-bottom: 14pt;
+    font-size: 11pt;
+    color: var(--muted);
+}
+
+.meta {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+.callout {
+    margin: 12pt 0;
+    padding: 10pt 12pt;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.caption {
+    font-size: 8.5pt;
+    color: var(--muted);
+}
+
+/* Avoid awkward breaks */
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+    page-break-before: avoid;
+}
+
+p,
+li,
+blockquote,
+table,
+pre,
+figure {
+    break-inside: avoid-page;
+}
+
+/* Optional title-page treatment */
+.title-page {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: page;
+}
+
+.title-page h1 {
+    font-size: 28pt;
+    margin-bottom: 12pt;
+}
+
+.title-page .subtitle {
+    font-size: 13pt;
+    max-width: 75%;
+}
