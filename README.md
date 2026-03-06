@@ -77,7 +77,7 @@ npm install
 
 ---
 
-## Repository architecture
+## Repository Architecture
 
 Torrenzo provides a ready-to-use structure for a single subject.
 
@@ -110,7 +110,7 @@ subject-root/
 └── build/              # generated output
 ```
 
-### Populating content
+### Populating Content
 
 Subject content is organised into two directories -- `assessments/` and `modules/` -- following strict naming conventions that Torrenzo uses to locate and process files.
 
@@ -126,7 +126,7 @@ Subject content is organised into two directories -- `assessments/` and `modules
 
 During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` deletes its contents to recreate them entirely with each run.
 
-### Module styling
+### Module Styling
 
 An optional global stylesheet lives at `modules/style/style.css`. Its rules are inlined into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
 
@@ -166,7 +166,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Consolidate on Python (or Node?) to maintain a single dependency stack
 - [ ] ...
 
-### 'Maybe' goals
+### 'Maybe' Goals
 
 - [ ] Build a GUI (desktop or web interface)
 - [ ] Add support for Word documents (via semantic styles)
