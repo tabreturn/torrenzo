@@ -95,9 +95,21 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         shutil.copytree(style_src, style_dst)
         created_style = True
 
-    config_path = style_dst / 'config.js'
-    if not config_path.exists():
+    config_src = style_src / 'config.js'
+    if not config_src.exists():
         return False, f"Missing config.js for {input_path}"
+    config_content = config_src.read_text(encoding='utf-8')
+
+    logo_path = style_src / 'logo.svg'
+    if logo_path.exists():
+        svg_markup = logo_path.read_text(encoding='utf-8').strip()
+        config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', svg_markup)
+    else:
+        config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', '')
+
+    config_dst = style_dst / 'config.js'
+    config_dst.write_text(config_content, encoding='utf-8')
+    config_path = config_dst
 
     original_md = input_path.read_text(encoding='utf-8')
     input_path.write_text(body, encoding='utf-8')
