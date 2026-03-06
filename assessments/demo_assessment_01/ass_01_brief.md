@@ -1,11 +1,8 @@
-# Assessment {{ assessment|1|title }}
+# Assessment [[assessment|1|title]]
 
 ![placeholer img](./assets/placeholder.png)
 
-{{ slo }}
-
-{{ assessment|1|meta_table }}
-
+![[outline#^slo-a]]
 # Task Summary
 
 Gather sensory impressions and create a simple catalog entry for three tropical fruits. Each entry should combine short descriptive text with a thumbnail image (photograph, drawing, or clipart) and note any notable traits (aroma, sweetness, texture, or provenance).

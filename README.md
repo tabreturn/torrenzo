@@ -23,7 +23,7 @@ Torrenzo currently performs the following transformations:
 
 ## Configuration
 
-An `outline.yaml` provides the project/subject configuration, which includes:
+Use `outline.yaml` (default) **or** `outline.md` (YAML frontmatter + Obsidian-friendly body) for project/subject configuration, including:
 
 - **`subject` (with `id`, `title`)**  
   Basic subject identity used in rendered outputs.
@@ -35,7 +35,7 @@ An `outline.yaml` provides the project/subject configuration, which includes:
   Subject Learning Outcomes; the specific knowledge, skills, and capabilities students.
 
 - **`assessment` (each with an `id` and other values)**  
-  Submission requirements, tagged in markdown using `{{ assessment|<id>|... }}` pattern.
+  Submission requirements, tagged in markdown using `[[assessment|<id>|...]]` pattern.
 
 ---
 

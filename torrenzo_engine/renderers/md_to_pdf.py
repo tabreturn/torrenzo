@@ -14,6 +14,7 @@ from markdown_it import MarkdownIt
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 TAG_RE = re.compile(r"{{\s*([^{}]+?)\s*}}")
+WIKI_TAG_RE = re.compile(r"!?\[\[\s*([^\[\]]+?)\s*\]\]")
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 METADATA_TOKEN = "<<metadata_table>>"
 
@@ -46,11 +47,10 @@ def build_metadata_table(metadata: dict[str, Any]) -> str:
 
 
 def apply_tags(text: str, tags: dict[str, str]) -> str:
-    def replace_tag(match: re.Match[str]) -> str:
-        content = match.group(1)
+    def replace_content(content: str, original: str) -> str:
         parts = [part.strip() for part in content.split('|') if part.strip()]
         if not parts:
-            return match.group(0)
+            return original
 
         lookup_keys: list[str] = []
         if len(parts) == 1:
@@ -64,9 +64,11 @@ def apply_tags(text: str, tags: dict[str, str]) -> str:
             snippet = tags.get(key)
             if snippet is not None:
                 return snippet
-        return match.group(0)
+        return original
 
-    return TAG_RE.sub(replace_tag, text)
+    text = TAG_RE.sub(lambda m: replace_content(m.group(1), m.group(0)), text)
+    text = WIKI_TAG_RE.sub(lambda m: replace_content(m.group(1), m.group(0)), text)
+    return text
 
 
 def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:

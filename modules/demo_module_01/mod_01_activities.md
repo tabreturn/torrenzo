@@ -1,6 +1,6 @@
 # Module 01 Activities
 
-{{ slo }}
+[[slo]]
 
 ## Activity 1: Colour Hunt
 

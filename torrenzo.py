@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -103,14 +104,32 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
             tags[f'assessment|{assessment_id}|meta_table'] = '\n'.join(lines)
     return tags
 
-def build_tag_map() -> dict[str, str]:
-    outline_path = PROJECT_ROOT / 'outline.yaml'
-    if not outline_path.exists():
-        raise SystemExit('outline.yaml is required at the project root')
+def load_outline() -> dict[str, Any]:
+    yaml_path = PROJECT_ROOT / 'outline.yaml'
+    md_path = PROJECT_ROOT / 'outline.md'
+
+    if yaml_path.exists():
+        try:
+            return yaml.safe_load(yaml_path.read_text(encoding='utf-8')) or {}
+        except yaml.YAMLError as exc:
+            raise SystemExit(f'Failed to parse outline.yaml: {exc}') from exc
+
+    if not md_path.exists():
+        raise SystemExit('outline.yaml or outline.md is required at the project root')
+
+    text = md_path.read_text(encoding='utf-8')
+    frontmatter_match = re.match(r"\A---\n(.*?)\n---\n(.*)\Z", text, re.S)
+    if not frontmatter_match:
+        raise SystemExit('outline.md must start with YAML frontmatter enclosed by --- markers')
+
     try:
-        data = yaml.safe_load(outline_path.read_text(encoding='utf-8')) or {}
+        return yaml.safe_load(frontmatter_match.group(1)) or {}
     except yaml.YAMLError as exc:
-        raise SystemExit(f'Failed to parse outline.yaml: {exc}') from exc
+        raise SystemExit(f'Failed to parse outline.md frontmatter: {exc}') from exc
+
+
+def build_tag_map() -> dict[str, str]:
+    data = load_outline()
 
     tags: dict[str, str] = {}
     slos = data.get('slo') or data.get('slos')
