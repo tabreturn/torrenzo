@@ -28,6 +28,7 @@
 - `modules/module_<n>/mod_<n>_activities.md`: activities → HTML.
 - `modules/module_<n>/mod_<n>_resources.bib`: references → HTML.
 - `build/`: generated output; ephemeral.
+- Branding: `assessments/style/` is copied alongside each brief; `logo.svg` is injected into the PDF header via `assessments/style/config.js` at build time—swap that file to change the header logo.
 
 ## Code Patterns & Conventions
 

@@ -127,6 +127,11 @@ Torrenzo injects these values wherever placeholders such as `{{subject_descripto
 
 During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Note that `build/` deletes its contents to recreate them entirely on every run.
 
+
+### Assessment Branding
+
+- Assessment branding assets live in `assessments/style/`. On each run, the build copies that folder next to each `ass_<n>_brief.md` and injects `logo.svg` into the PDF header; update `logo.svg` (must be an SVG) and other styling using the CSS and `config.js` file.
+
 ---
 
 ## Transformers
