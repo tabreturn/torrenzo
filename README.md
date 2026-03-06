@@ -81,29 +81,31 @@ npm install
 
 Torrenzo provides a ready-to-use structure for a single subject.
 
+Any `demo_`-prefixed items are included for illustration. You can delete them if you wish; otherwise they build normally and appear in the `build/` output.
+
 ```text
 subject-root/
 ├── outline.yaml        # subject configuration
 ├── assessments/        # assessment briefs → PDF
-│   ├── assessment_1/
+│   ├── demo_assessment_1/
 │   │   ├── ass_1_brief.md
 │   │   └── assets/
-│   ├── ...
-│   └── assessment_n/
-│       ├── ass_n_brief.md
-│       └── assets/
+│   ├── assessment_<n>/   # your real content (gitignored)
+│   │   ├── ass_<n>_brief.md
+│   │   └── assets/
+│   └── ...
 ├── modules/            # module content → HTML
-│   ├── module_1/
+│   ├── demo_module_1/
 │   │   ├── mod_1_content.md
 │   │   ├── mod_1_activities.md
 │   │   ├── mod_1_resources.bib
 │   │   └── assets/
-│   ├── ...
-│   └── module_n/
-│       ├── mod_n_content.md
-│       ├── mod_n_activities.md
-│       ├── mod_n_resources.bib
-│       └── assets/
+│   ├── module_<n>/       # your real content (gitignored)
+│   │   ├── mod_<n>_content.md
+│   │   ├── mod_<n>_activities.md
+│   │   ├── mod_<n>_resources.bib
+│   │   └── assets/
+│   └── ...
 ├── torrenzo.py         # run to build
 └── build/              # generated output
 ```
@@ -122,7 +124,7 @@ Subject content is organised into two directories -- `assessments/` and `modules
   - `mod_<n>_resources.bib` -- for references (in BibTeX format)
   - `assets/` -- holds and supporting files (images, etc.) that form part of each module
 
-During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Note that `build/` deletes its contents to recreate them entirely with each run.
+During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` deletes its contents to recreate them entirely with each run.
 
 ### Module styling
 

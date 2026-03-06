@@ -48,6 +48,7 @@ class Pipeline:
                     output_name = input_path.with_suffix(job.output_ext).name
                 else:
                     output_name = input_path.name
+
                 output_path = output_dir / output_name
                 success, msg = renderer(input_path, output_path, job.context)
                 diagnostics.append(f"{job.name}: {msg}")

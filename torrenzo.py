@@ -129,10 +129,10 @@ def build_tag_map() -> dict[str, str]:
     return tags
 
 def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
-    briefs_pattern = 'assessments/assessment_*/ass_*_brief.md'
-    content_pattern = 'modules/module_*/mod_*_content.md'
-    activities_pattern = 'modules/module_*/mod_*_activities.md'
-    resources_pattern = 'modules/module_*/mod_*_resources.bib'
+    briefs_pattern = 'assessments/*/ass_*_brief.md'
+    content_pattern = 'modules/*/mod_*_content.md'
+    activities_pattern = 'modules/*/mod_*_activities.md'
+    resources_pattern = 'modules/*/mod_*_resources.bib'
 
     return [
         RenderJob(
@@ -156,6 +156,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='md_to_html',
             context={'tags': tags},
             output_ext='.html',
+            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_activities',
@@ -164,6 +165,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='md_to_html',
             context={'tags': tags},
             output_ext='.html',
+            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_resources',
@@ -172,6 +174,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='bib_to_html',
             context={},
             output_ext='.html',
+            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
     ]
 

@@ -4,18 +4,20 @@
 
 - Python CLI (`torrenzo.py`) orchestrates render jobs that transform Markdown briefs and module files into PDFs/HTML via the `torrenzo_engine` pipeline and renderer registry.
 - Content sources live under `assessments/` (briefs and assets) and `modules/` (module content, activities, references, assets); outputs land in `build/`.
+- Demo/sample content is checked in under `assessments/demo_assessment_*` and `modules/demo_module_*`; user-created `assessment_*` / `module_*` are gitignored but still built.
+- Outputs land in `build/`; demo inputs produce filenames prefixed with `demo_`, others keep their base names.
 - No automated tests or linters; validation is manual.
 
 ## Setup & Dependencies
 
-- Python 3.10+ with requirements from `requirements.txt` (includes `PyYAML`, `markdown_pdf`, etc.).
-- Node 18+ with `npm`; run `npm install` for `md-to-pdf` used in PDF rendering.
+- Python 3.10+ with requirements from `requirements.txt` (includes `PyYAML`, `premailer`, etc.).
+- Node 18+ with `npm`; run `npm install` for `md-to-pdf` used in PDF rendering (PDF only; HTML renderers are pure-Python + pip deps).
 - Use a local virtualenv if present in the repo root.
 
 ## Usage & Build Behavior
 
 - Run from repo root: `python torrenzo.py` (optionally `python torrenzo.py <other-root>` to target a different subject directory).
-- All outputs write to `build/`, which is cleared at the start of each run.
+- All outputs write to `build/`, which is cleared at the start of each run. Demo inputs keep `demo_` prefixes in output filenames; non-demo inputs do not.
 
 ## Directory Layout & Naming
 
@@ -23,10 +25,13 @@
 - `torrenzo_engine/`: renderer registry and pipeline execution.
 - `torrenzo_engine/renderers/`: individual renderers (`md_to_pdf`, `md_to_html`, `bib_to_html`).
 - `outline.yaml`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via tags like `{{slo}}`, `{{slo|<code>}}`, and `{{ assessment|<id>|... }}`.
-- `assessments/assessment_<n>/ass_<n>_brief.md`: briefs → PDF (assets alongside).
-- `modules/module_<n>/mod_<n>_content.md`: module content → HTML.
-- `modules/module_<n>/mod_<n>_activities.md`: activities → HTML.
-- `modules/module_<n>/mod_<n>_resources.bib`: references → HTML.
+- `assessments/demo_assessment_<n>/ass_<n>_brief.md`: demo briefs → PDF (assets alongside).
+- `assessments/assessment_<n>/ass_<n>_brief.md`: user briefs → PDF (gitignored by default unless demo-prefixed).
+- `modules/demo_module_<n>/mod_<n>_content.md`: demo module content → HTML.
+- `modules/demo_module_<n>/mod_<n>_activities.md`: demo activities → HTML.
+- `modules/demo_module_<n>/mod_<n>_resources.bib`: demo references → HTML.
+- `modules/module_<n>/...`: user modules (gitignored) also built; they output without the `demo_` prefix.
+- `modules/style/style.css`: optional global stylesheet inlined into module HTML; legacy attributes stripped; output HTML is body-only for LMS pasting.
 - `build/`: generated output; ephemeral.
 - Branding: `assessments/style/` is copied alongside each brief; `logo.svg` is injected into the PDF header via `assessments/style/config.js` at build time—swap that file to change the header logo.
 
