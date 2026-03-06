@@ -157,6 +157,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Refine CSS styles for assessment briefs
 - [x] Improve brief templates (page numbers, versioning in headers, etc.)
 - [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
+- [ ] Consolidate on Python (or Node?) to maintain a single dependency stack
 - [ ] ...
 
 ### 'Maybe' goals
