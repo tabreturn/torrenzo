@@ -95,14 +95,23 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         shutil.copytree(style_src, style_dst)
         created_style = True
 
+    config_path = style_dst / 'config.js'
+    if not config_path.exists():
+        return False, f"Missing config.js for {input_path}"
+
     original_md = input_path.read_text(encoding='utf-8')
     input_path.write_text(body, encoding='utf-8')
 
     local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
+    cmd = [
+        str(local_bin.resolve()) if local_bin.exists() else 'npx',
+        'md-to-pdf' if not local_bin.exists() else input_path.name,
+    ]
     if local_bin.exists():
-        cmd = [str(local_bin.resolve()), input_path.name, '--stylesheet', 'style/style.css']
+        cmd = [str(local_bin.resolve()), input_path.name]
     else:
-        cmd = ['npx', 'md-to-pdf', input_path.name, '--stylesheet', 'style/style.css']
+        cmd = ['npx', 'md-to-pdf', input_path.name]
+    cmd.extend(['--stylesheet', 'style/style.css', '--config-file', 'style/config.js'])
 
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workdir))
 
