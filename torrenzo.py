@@ -17,7 +17,7 @@ from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, rende
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
-PDF_USER_CSS = (PROJECT_ROOT / 'assessments' / 'style.css').read_text(encoding='utf-8')
+PDF_USER_CSS = ''
 
 def prepare_build_dir() -> None:
     if BUILD_DIR.exists():

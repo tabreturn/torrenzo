@@ -85,19 +85,16 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     workdir = input_path.parent
-    css_path = workdir / 'style.css'
+    css_path = workdir / 'style' / 'style.css'
 
     original_md = input_path.read_text(encoding='utf-8')
     input_path.write_text(body, encoding='utf-8')
 
     local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
     if local_bin.exists():
-        cmd = [str(local_bin.resolve()), input_path.name]
+        cmd = [str(local_bin.resolve()), input_path.name, '--stylesheet', 'style/style.css']
     else:
-        cmd = ['npx', 'md-to-pdf', input_path.name]
-
-    if css_path.exists():
-        cmd.extend(['--stylesheet', str(css_path)])
+        cmd = ['npx', 'md-to-pdf', input_path.name, '--stylesheet', 'style/style.css']
 
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workdir))
 
