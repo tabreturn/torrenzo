@@ -1,0 +1,2708 @@
+keep same font-faces, but adapt theis stylesheet to be attractive for print media/pdfs
+
+@page {
+    size: A4;
+    margin: 20mm 20mm 20mm 20mm;
+}
+
+:root {
+    --text: #881329;
+    --muted: #BF2A45;
+    --border: #d8e2ec;
+    --accent: #0f766e;
+    --header-footer-bg: #f8fafc;
+    --header-footer-text: #3e4c59;
+}
+
+@font-face {
+    font-family: "InterVariable";
+    src: url("style/InterVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "InterVariable-Italic";
+    src: url("style/InterVariable-Italic.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Bungee";
+    src: url("style/BungeeRegular.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "RecursiveVariable";
+    src: url("style/RecursiveVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family:"InterVariable", sans-serif;
+    line-height: 1.6;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Bungee";
+    margin: 0 0 10px 0;
+    line-height: 1.25;
+    page-break-after: avoid;
+}
+
+p {
+    margin: 0 0 12px 0;
+}
+
+ul, ol {
+    margin: 0 0 12px 20px;
+    padding: 0 0 0 10px;
+}
+
+li {
+    margin: 4px 0;
+}
+
+strong {
+    font-weight: 700;
+}
+
+em {
+    font-style: italic;
+}
+
+code {
+    font-family: "RecursiveVariable";
+    background: #f1f5f9;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 90%;
+}
+
+pre code {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #e2e8f0;
+    overflow-x: auto;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 14px 0;
+    page-break-inside: avoid;
+}
+
+table th,
+table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: left;
+}
+
+table th {
+    background: #eef2f7;
+    color: #111827;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+}
+
+.header,
+.footer {
+    position: running(header-footer);
+    width: 100%;
+    font-size: 11px;
+    color: var(--header-footer-text);
+    background: var(--header-footer-bg);
+    padding: 6px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer {
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+}
+
+.page-number::after {
+    content: counter(page) " / " counter(pages);
+    font-variant-numeric: tabular-nums;
+}
+
+main {
+    page-break-after: always;
+}
+
+main:last-of-type {
+    page-break-after: auto;
+}
+
+
+Here’s a print-optimized version that keeps your font faces but makes the layout feel more editorial, cleaner on paper, and safer for PDF generation:
+
+@page {
+    size: A4;
+    margin: 18mm 18mm 20mm 18mm;
+}
+
+:root {
+    --text: #5e1222;
+    --muted: #8f2940;
+    --border: #cfd8e3;
+    --border-strong: #aebccc;
+    --accent: #0f766e;
+    --accent-soft: #e6f4f1;
+    --header-footer-bg: #f8fafc;
+    --header-footer-text: #52606d;
+    --heading: #881329;
+    --subheading: #6f1830;
+    --code-bg: #f4f7fa;
+    --table-head-bg: #f3f6f9;
+    --quote-bg: #faf6f7;
+}
+
+@font-face {
+    font-family: "InterVariable";
+    src: url("style/InterVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "InterVariable-Italic";
+    src: url("style/InterVariable-Italic.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Bungee";
+    src: url("style/BungeeRegular.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "RecursiveVariable";
+    src: url("style/RecursiveVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    font-size: 10.5pt;
+}
+
+body {
+    font-family: "InterVariable", sans-serif;
+    line-height: 1.55;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    hyphens: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Running header / footer */
+.header,
+.footer {
+    width: 100%;
+    font-size: 9pt;
+    color: var(--header-footer-text);
+    background: var(--header-footer-bg);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.header {
+    position: running(pageHeader);
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer {
+    position: running(pageFooter);
+    padding: 5px 0 0 0;
+    border-top: 1px solid var(--border);
+}
+
+@page {
+    @top-center {
+        content: element(pageHeader);
+    }
+    @bottom-center {
+        content: element(pageFooter);
+    }
+}
+
+.page-number::after {
+    content: counter(page) " / " counter(pages);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid-page;
+    color: var(--heading);
+}
+
+h1, h2 {
+    font-family: "Bungee", sans-serif;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: 24pt;
+    line-height: 1.05;
+    margin: 0 0 14pt 0;
+    padding-bottom: 8pt;
+    border-bottom: 2px solid var(--heading);
+}
+
+h2 {
+    font-size: 15pt;
+    line-height: 1.15;
+    margin: 22pt 0 10pt 0;
+    color: var(--subheading);
+}
+
+h3, h4, h5, h6 {
+    font-family: "InterVariable", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin: 16pt 0 6pt 0;
+}
+
+h3 {
+    font-size: 12.5pt;
+}
+
+h4 {
+    font-size: 11.5pt;
+    color: var(--subheading);
+}
+
+h5, h6 {
+    font-size: 10.5pt;
+    color: var(--muted);
+}
+
+p {
+    margin: 0 0 10pt 0;
+}
+
+.lead,
+p.lead {
+    font-size: 11.5pt;
+    line-height: 1.65;
+    color: var(--subheading);
+}
+
+small {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+strong {
+    font-weight: 700;
+    color: #4b0c19;
+}
+
+em {
+    font-family: "InterVariable-Italic", "InterVariable", sans-serif;
+    font-style: italic;
+}
+
+/* Links */
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 0.6px solid rgba(15, 118, 110, 0.35);
+}
+
+a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: var(--muted);
+    word-break: break-all;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Lists */
+ul, ol {
+    margin: 0 0 10pt 1.25rem;
+    padding: 0;
+}
+
+li {
+    margin: 3pt 0;
+    padding-left: 2pt;
+}
+
+li > ul,
+li > ol {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
+}
+
+/* Quotes */
+blockquote {
+    margin: 14pt 0;
+    padding: 8pt 12pt;
+    border-left: 4px solid var(--muted);
+    background: var(--quote-bg);
+    color: var(--subheading);
+    page-break-inside: avoid;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Rules */
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16pt 0;
+}
+
+/* Code */
+code {
+    font-family: "RecursiveVariable", monospace;
+    background: var(--code-bg);
+    border: 1px solid #e2e8f0;
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: #1e293b;
+}
+
+pre {
+    margin: 12pt 0 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+pre code {
+    display: block;
+    padding: 10pt 12pt;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    color: #1f2937;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.45;
+    font-size: 9pt;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 14pt 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+table th,
+table td {
+    border: 1px solid var(--border);
+    padding: 7pt 8pt;
+    text-align: left;
+    vertical-align: top;
+}
+
+table th {
+    background: var(--table-head-bg);
+    color: #243b53;
+    font-weight: 700;
+    border-bottom: 1.2px solid var(--border-strong);
+}
+
+table tr:nth-child(even) td {
+    background: #fcfdfe;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tfoot {
+    display: table-footer-group;
+}
+
+/* Figures and media */
+img,
+svg {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figure {
+    margin: 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figcaption {
+    margin-top: 6pt;
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+/* Section wrappers */
+main {
+    page-break-after: always;
+    break-after: page;
+}
+
+main:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+}
+
+section,
+article {
+    page-break-inside: auto;
+}
+
+/* Utility classes for print polish */
+.kicker {
+    display: inline-block;
+    margin-bottom: 8pt;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.subtitle {
+    margin-top: -4pt;
+    margin-bottom: 14pt;
+    font-size: 11pt;
+    color: var(--muted);
+}
+
+.meta {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+.callout {
+    margin: 12pt 0;
+    padding: 10pt 12pt;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.caption {
+    font-size: 8.5pt;
+    color: var(--muted);
+}
+
+/* Avoid awkward breaks */
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+    page-break-before: avoid;
+}
+
+p,
+li,
+blockquote,
+table,
+pre,
+figure {
+    break-inside: avoid-page;
+}
+
+/* Optional title-page treatment */
+.title-page {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: page;
+}
+
+.title-page h1 {
+    font-size: 28pt;
+    margin-bottom: 12pt;
+}
+
+.title-page .subtitle {
+    font-size: 13pt;
+    max-width: 75%;
+}
+
+What changed:
+
+    softened the palette for paper while keeping your burgundy/teal identity
+
+    made headings feel more intentional and editorial
+
+    improved page-break behavior for tables, code, figures, and headings
+
+    converted header/footer setup to proper paged-media running elements
+
+    made links printable by appending URLs
+
+    switched code blocks from dark screen styling to a cleaner print-friendly light style
+
+    added utility classes like .lead, .callout, .subtitle, and .title-page for better PDF layouts
+
+One important note: position: running(...) with @top-center / @bottom-center works in paged-media engines like Prince, Vivliostyle, or WeasyPrint, but not in normal browsers’ print engines consistently. If you’re targeting Chrome “Print to PDF,” I’d tune this for browser-compatible print CSS instead.
+
+how to add header/footer while running from cmd?
+
+
+skip to:contentpackage searchsign in
+❤
+
+    Pro
+    Teams
+    Pricing
+    Documentation
+
+npm
+md-to-pdf
+TypeScript icon, indicating that this package has built-in type declarations
+5.2.5 • Public • Published 3 months ago
+
+Markdown to PDF
+
+GitHub Workflow Status NPM version
+
+Screenshot of markdown file and resulting PDF
+
+A simple and hackable CLI tool for converting markdown to pdf. It uses Marked to convert markdown to html and Puppeteer (headless Chromium) to further convert the html to pdf. It also uses highlight.js for code highlighting. The whole source code of this tool is only ~250 lines of JS ~500 lines of Typescript and ~100 lines of CSS, so it is easy to clone and customize.
+
+Highlights:
+
+    Concurrently convert multiple Markdown files
+    Watch mode
+    Use your own or remote stylesheets/scripts
+    Front-matter for configuration
+    Headers and Footers
+    Page Breaks
+    Syntax highlighting in code blocks
+    Extend the options of the underlying tools
+    Programmatic API
+    Supports stdio
+    Convert HTML (or inline HTML) to PDF
+
+Installation
+
+Option 1: NPM
+
+npm i -g md-to-pdf
+
+Option 2: Git
+
+If you want to have your own copy to hack around with, clone the repository instead:
+
+git clone "https://github.com/simonhaenisch/md-to-pdf"
+cd md-to-pdf
+npm link # or npm i -g
+
+Then the commands md-to-pdf and md2pdf (as a shorthand) will be globally available in your cli. Use npm start to start the TypeScript compiler (tsc) in watch mode.
+Update
+
+If you installed via npm, run npm i -g md-to-pdf@latest in your CLI. If you cloned this repository instead, you can simply do a git pull to get the latest changes from the master branch, then do npm run build to re-build. Unless there have been changes to packages (i. e. package-lock.json), you don't need to re-install the package (because NPM 5+ uses symlinks, at least on Unix systems).
+Usage
+
+$ md-to-pdf [options] path/to/file.md
+
+Options:
+
+  -h, --help ............... Output usage information
+  -v, --version ............ Output version
+  -w, --watch .............. Watch the current file(s) for changes
+  --watch-options .......... Options for Chokidar's watch call
+  --basedir ................ Base directory to be served by the file server
+  --stylesheet ............. Path to a local or remote stylesheet (can be passed multiple times)
+  --css .................... String of styles
+  --document-title ......... Name of the HTML Document.
+  --body-class ............. Classes to be added to the body tag (can be passed multiple times)
+  --page-media-type ........ Media type to emulate the page with (default: screen)
+  --highlight-style ........ Style to be used by highlight.js (default: github)
+  --marked-options ......... Set custom options for marked (as a JSON string)
+  --pdf-options ............ Set custom options for the generated PDF (as a JSON string)
+  --launch-options ......... Set custom launch options for Puppeteer
+  --gray-matter-options .... Set custom options for gray-matter
+  --port ................... Set the port to run the http server on
+  --md-file-encoding ....... Set the file encoding for the markdown file
+  --stylesheet-encoding .... Set the file encoding for the stylesheet
+  --as-html ................ Output as HTML instead
+  --config-file ............ Path to a JSON or JS configuration file
+  --devtools ............... Open the browser with devtools instead of creating PDF
+
+The pdf is generated into the same directory as the source file and uses the same filename (with .pdf extension) by default. Multiple files can be specified by using shell globbing, e. g.:
+
+md-to-pdf ./**/*.md
+
+(If you use bash, you might need to enable the globstar shell option to make recursive globbing work.)
+
+Alternatively, you can pipe the markdown in from stdin and redirect its stdout into a target file:
+
+cat file.md | md-to-pdf > path/to/output.pdf
+
+Tip: You can concatenate multiple files using cat file1.md file2.md.
+
+The current working directory (process.cwd()) serves as the base directory of the file server by default. This can be adjusted with the --basedir flag (or equivalent config option). Note that because of the file server, if you convert a file that's outside the current folder, you'll have to move the base directory up as well (e. g. md-to-pdf ../path/to/file.md --basedir ..).
+Watch Mode
+
+Watch mode (--watch) uses Chokidar's watch method on the markdown file. If you're having issues, you can adjust the watch options via the config (watch_options) or --watch-options CLI arg. The awaitWriteFinish option might be particularly useful if you use editor plugins (e. g. TOC generators) that modify and save the file after the initial save. Check out the Chokidar docs for a full list of options.
+
+Note that Preview on macOS does not automatically reload the preview when the file has changed (or at least not reliably). There are PDF viewers available that can check for file changes and offer auto-reload (e. g. Skim's "Sync" feature).
+Programmatic API
+
+The programmatic API is very simple: it only exposes one function that accepts either a path to or content of a markdown file, and an optional config object (which can be used to specify the output file destination).
+
+const fs = require('fs');
+const { mdToPdf } = require('md-to-pdf');
+
+(async () => {
+	const pdf = await mdToPdf({ path: 'readme.md' }).catch(console.error);
+
+	if (pdf) {
+		fs.writeFileSync(pdf.filename, pdf.content);
+	}
+})();
+
+The function throws an error if anything goes wrong, which can be handled by catching the rejected promise. If you set the dest option in the config, the file will be written to the specified location straight away:
+
+await mdToPdf({ content: '# Hello, World' }, { dest: 'path/to/output.pdf' });
+
+Page Break
+
+Place an element with class page-break to force a page break at a certain point of the document (uses the CSS rule page-break-after: always), e. g.:
+
+<div class="page-break"></div>
+
+Header/Footer
+
+Use headerTemplate and footerTemplate of Puppeteer's page.pdf() options. If either of the two is set, then displayHeaderFooter will be enabled by default. It's possible to inject a few dynamic values like page numbers by using certain class names, as stated in the Puppeteer docs. Please note that for some reason the font-size defaults to 1pt, and you need to make sure to have enough page margin, otherwise your header/footer might be overlayed by your content. If you add a <style/> tag in either of the templates, it will be applied to both header and footer.
+
+Example markdown frontmatter config that prints the date in the header and the page number in the footer:
+
+---
+pdf_options:
+  format: a4
+  margin: 30mm 20mm
+  printBackground: true
+  headerTemplate: |-
+    <style>
+      section {
+        margin: 0 auto;
+        font-family: system-ui;
+        font-size: 11px;
+      }
+    </style>
+    <section>
+      <span class="title"></span>
+      <span class="date"></span>
+    </section>
+  footerTemplate: |-
+    <section>
+      <div>
+        Page <span class="pageNumber"></span>
+        of <span class="totalPages"></span>
+      </div>
+    </section>
+---
+
+Refer to the Puppeteer docs for more info about header and footer templates.
+Formulas
+
+This can be achieved with MathJax. A simple example can be found in /src/test/mathjax.
+Default and Advanced Options
+
+For default and advanced options see the following links. The default highlight.js styling for code blocks is github. The default PDF options are the A4 format and some margin (see lib/config.ts for the full default config).
+
+    Marked Advanced Options
+    Puppeteer PDF Options
+    Puppeteer Launch Options
+    highlight.js Styles
+
+Options
+Option 	Examples
+--basedir 	path/to/folder
+--stylesheet 	path/to/style.css, https://example.org/stylesheet.css
+--css 	body { color: tomato; }
+--document-title 	Read me
+--body-class 	markdown-body
+--page-media-type 	print
+--highlight-style 	monokai, solarized-light
+--marked-options 	'{ "gfm": false }'
+--pdf-options 	'{ "format": "Letter", "margin": "20mm", "printBackground": true }'
+--launch-options 	'{ "args": ["--no-sandbox"] }'
+--gray-matter-options 	null
+--port 	3000
+--md-file-encoding 	utf-8, windows1252
+--stylesheet-encoding 	utf-8, windows1252
+--config-file 	path/to/config.json
+
+margin: instead of an object (as stated in the Puppeteer docs), it is also possible to pass a CSS-like string, e. g. 1em (all), 1in 2in (top/bottom right/left), 10mm 20mm 30mm (top right/left bottom) or 1px 2px 3px 4px (top right bottom left).
+
+highlight-style: if you set a highlight style with a background color, make sure that "printBackground": true is set in the pdf options.
+
+The options can also be set with front-matter or a config file (except --md-file-encoding can't be set by front-matter). In that case, remove the leading two hyphens (--) from the cli argument name and replace the hyphens (-) with underscores (_). --stylesheet and --body-class can be passed multiple times (i. e. to create an array). It's possible to set the output path for the PDF as dest in the config. If the same config option exists in multiple places, the priority (from low to high) is: defaults, config file, front-matter, cli arguments.
+
+The JS engine for front-matter is disabled by default for security reasons. You can enable it by overwriting the default gray-matter options (--gray-matter-options null, or gray_matter_options: undefined in the API).
+
+Example front-matter:
+
+---
+dest: ./path/to/output.pdf
+stylesheet:
+  - path/to/style.css
+body_class: markdown-body
+highlight_style: monokai
+pdf_options:
+  format: A5
+  margin: 10mm
+  printBackground: true
+---
+
+# Content
+
+The config file can be a Javascript file that exports a config object, which gives you the full power of the eco-system (e. g. for advanced header/footer templates); or it can also be a .json if you like it simple.
+
+Example config.js:
+
+module.exports = {
+	stylesheet: ['path/to/style.css', 'https://example.org/stylesheet.css'],
+	css: body { color: tomato; },
+	body_class: 'markdown-body',
+	marked_options: {
+		headerIds: false,
+		smartypants: true,
+	},
+	pdf_options: {
+		format: 'A5',
+		margin: '20mm',
+		printBackground: true,
+	},
+	stylesheet_encoding: 'utf-8',
+};
+
+Example config.json:
+
+{
+	"highlight_style": "monokai",
+	"body_class": ["dark", "content"]
+}
+
+Github Styles
+
+Here is an example front-matter for how to get Github-like output:
+
+---
+stylesheet: https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css
+body_class: markdown-body
+css: |-
+  .page-break { page-break-after: always; }
+  .markdown-body { font-size: 11px; }
+  .markdown-body pre > code { white-space: pre-wrap; }
+---
+
+Security Considerations
+Local file server
+
+By default, this tool serves the current working directory via a http server on localhost on a relatively random port (or the port you specify), and that server gets shut down when the process exits (or as soon as it is killed). Please be aware that for the duration of the process this server will be accessible on your local network, and therefore all files within the served folder that the process has permission to read. So as a suggestion, maybe don't run this in watch mode in your system's root folder. 😉
+Don't trust markdown content you don't control
+
+If you intend to use this tool to convert user-provided markdown content, please be aware that - as always - you should sanitize it before processing it with md-to-pdf.
+Customization/Development
+
+After cloning and linking/installing globally (npm link), just run the transpiler in watch mode (npm start). Then you can start making changes to the files and Typescript will transpile them on save. NPM 5+ uses symlinks for locally installed global packages, so all changes are reflected immediately without needing to re-install the package (except when there have been changes to required packages, then re-install using npm i). This also means that you can just do a git pull to get the latest version onto your machine.
+
+Ideas, feature requests and PRs are welcome. Just keep it simple! 🤓
+Credits
+
+I want to thank the following people:
+
+    imcvampire for handing over the npm package name.
+    Sindre Sorhus and Vercel (formerly Zeit) for inspiration on how to write CLI tools.
+    Josh Bruce for reviving Marked.
+
+License
+
+MIT.
+Readme
+Keywords
+
+    markdown-to-pdf
+    cli
+    pdf-generation
+    documentation
+    assignments
+    homework
+    markdown
+    pdf
+    puppeteer
+    headless-chrome
+    html-to-pdf
+
+Package Sidebar
+Install
+
+npm i md-to-pdf
+Repository
+
+github.com/simonhaenisch/md-to-pdf
+Homepage
+
+github.com/simonhaenisch/md-to-pdf#readme
+Weekly Downloads
+
+71,758
+Version
+
+5.2.5
+License
+
+MIT
+Unpacked Size
+
+56.4 kB
+Total Files
+
+34
+Last publish
+
+3 months ago
+Collaborators
+
+    simonhaenisch
+
+Analyze security with SocketCheck bundle sizeView package healthExplore dependencies
+Report malware
+Footer
+Support
+
+    Help
+    Advisories
+    Status
+    Contact npm
+
+Company
+
+    About
+    Blog
+    Press
+
+Terms & Policies
+
+    Policies
+    Terms of Use
+    Code of Conduct
+    Privacy
+
+Viewing md-to-pdf version 5.2.5
+
+With md-to-pdf, headers and footers come from Puppeteer’s headerTemplate / footerTemplate, passed inside pdf_options. There are three practical ways to add them when running from the command line.
+1. Best method: use Markdown front-matter
+
+Put the header/footer config at the top of your .md file.
+
+---
+pdf_options:
+  format: A4
+  margin: 25mm 20mm
+  printBackground: true
+  headerTemplate: |-
+    <style>
+      .hdr {
+        font-family: InterVariable;
+        font-size: 10px;
+        width: 100%;
+        text-align: center;
+        color: #555;
+      }
+    </style>
+    <div class="hdr">
+      <span class="title"></span>
+      — 
+      <span class="date"></span>
+    </div>
+
+  footerTemplate: |-
+    <style>
+      .ftr {
+        font-family: InterVariable;
+        font-size: 10px;
+        width: 100%;
+        text-align: center;
+        color: #777;
+      }
+    </style>
+    <div class="ftr">
+      Page <span class="pageNumber"></span>
+      / <span class="totalPages"></span>
+    </div>
+---
+
+# My Document
+
+Then run:
+
+md-to-pdf doc.md --stylesheet style.css --page-media-type print
+
+Important:
+
+    Margins must be large enough or the header/footer will overlap content.
+
+    displayHeaderFooter is automatically enabled when templates exist.
+
+2. Pass it directly via CLI
+
+You can embed it inside --pdf-options.
+
+Example:
+
+md-to-pdf doc.md \
+  --stylesheet style.css \
+  --page-media-type print \
+  --pdf-options '{
+    "format":"A4",
+    "margin":"25mm 20mm",
+    "printBackground":true,
+    "headerTemplate":"<div style=\"font-size:10px;width:100%;text-align:center\"> <span class=\"title\"></span> </div>",
+    "footerTemplate":"<div style=\"font-size:10px;width:100%;text-align:center\">Page <span class=\"pageNumber\"></span> / <span class=\"totalPages\"></span></div>"
+  }'
+
+This works but becomes messy quickly.
+3. Best for real projects: config file
+
+Create pdf.config.js.
+
+module.exports = {
+  stylesheet: ['style.css'],
+  page_media_type: 'print',
+  pdf_options: {
+    format: 'A4',
+    margin: '25mm 20mm',
+    printBackground: true,
+
+    headerTemplate: `
+      <style>
+        .hdr{
+          font-family: InterVariable;
+          font-size:10px;
+          width:100%;
+          text-align:center;
+          color:#666;
+        }
+      </style>
+      <div class="hdr">
+        <span class="title"></span>
+      </div>
+    `,
+
+    footerTemplate: `
+      <div style="font-family:InterVariable;font-size:10px;text-align:center;width:100%">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+Run:
+
+md-to-pdf doc.md --config-file pdf.config.js
+
+Available dynamic values
+
+These Puppeteer classes automatically get replaced:
+class	value
+.pageNumber	current page
+.totalPages	total pages
+.date	print date
+.title	document title
+.url	page URL
+
+Example:
+
+Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+
+Important gotcha
+
+Puppeteer header/footer do not inherit your stylesheet, so fonts must be declared again if you want custom fonts.
+
+Example inside headerTemplate:
+
+<style>
+@font-face {
+  font-family: InterVariable;
+  src: url("style/InterVariable.ttf") format("truetype");
+}
+</style>
+
+✅ Recommendation
+
+For your workflow:
+
+md-to-pdf mydoc.md \
+  --stylesheet print.css \
+  --page-media-type print \
+  --config-file pdf.config.js
+
+This keeps:
+
+    Markdown clean
+
+    styles in CSS
+
+    headers/footers in config
+
+If you want, I can also show a really clean book-style header/footer layout (running chapter title left, page number right) that works extremely well with md-to-pdf.
+
+ListrError: Something went wrong
+    at /home/me/Desktop/gt/torrenzo/node_modules/listr/index.js:102:18
+    at async main (/home/me/Desktop/gt/torrenzo/node_modules/md-to-pdf/dist/cli.js:120:5) {
+  errors: [
+    SyntaxError: Unexpected token 's', "style/config.js" is not valid JSON
+        at JSON.parse (<anonymous>)
+        at convertMdToPdf (/home/me/Desktop/gt/torrenzo/node_modules/md-to-pdf/dist/lib/md-to-pdf.js:47:51)
+  ],
+  context: [Object: null prototype] {}
+}
+
+That error means md-to-pdf is trying to parse the literal string style/config.js as JSON, which usually happens because the file path was passed to a flag that expects JSON text, not a config file path. The stack trace says the parse failed inside JSON.parse(...), and the docs say --config-file accepts a path, while --pdf-options expects a JSON string.
+
+Most likely, you ran something like this:
+
+md-to-pdf file.md --pdf-options style/config.js
+
+That is wrong, because --pdf-options expects something like:
+
+--pdf-options '{"format":"A4","margin":"25mm 20mm"}'
+
+not a filename. The docs also say the config file can be a .js or .json file, but you must pass it with --config-file.
+
+Use one of these instead.
+Correct: JS config file
+
+md-to-pdf file.md --config-file style/config.js
+
+Correct: inline JSON for just PDF options
+
+md-to-pdf file.md --pdf-options '{"format":"A4","margin":"25mm 20mm","printBackground":true}'
+
+Correct: stylesheet path
+
+md-to-pdf file.md --stylesheet style/print.css
+
+A working style/config.js would look like this:
+
+module.exports = {
+  stylesheet: ['style/print.css'],
+  page_media_type: 'print',
+  pdf_options: {
+    format: 'A4',
+    margin: '25mm 20mm',
+    printBackground: true,
+    headerTemplate: `
+      <style>
+        .hdr {
+          width: 100%;
+          font-size: 10px;
+          text-align: center;
+          color: #666;
+        }
+      </style>
+      <div class="hdr">
+        <span class="title"></span>
+      </div>
+    `,
+    footerTemplate: `
+      <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+Then run:
+
+md-to-pdf file.md --config-file style/config.js
+
+Two other gotchas from the docs:
+
+    header/footer need enough top/bottom margin or they overlap content
+
+    for print styling, use --page-media-type print or set page_media_type: 'print' in config
+
+If you paste the exact command you ran, I’ll rewrite it into the correct form.
+
+nice -- i see page number footer but no header
+
+This is a common Puppeteer quirk. If the footer appears but the header doesn’t, it’s almost always one of these three issues.
+1. Top margin too small (most common)
+
+Puppeteer does not reserve space automatically. If the top margin is too small, the header gets clipped.
+
+Make sure the top margin is ≥ 20–30 mm.
+
+pdf_options: {
+  format: 'A4',
+  margin: {
+    top: '30mm',
+    bottom: '25mm',
+    left: '20mm',
+    right: '20mm'
+  },
+  printBackground: true,
+}
+
+or:
+
+margin: '30mm 20mm 25mm 20mm'
+
+(top right bottom left)
+2. Header needs explicit width + margin
+
+Headers sometimes render off-page unless centered properly.
+
+Use something like this:
+
+headerTemplate: `
+<style>
+.header {
+  width: 100%;
+  font-size: 10px;
+  padding: 0 20px;
+  text-align: center;
+  color: #666;
+}
+</style>
+
+<div class="header">
+  <span class="title"></span>
+</div>
+`,
+
+3. displayHeaderFooter
+
+Normally md-to-pdf enables it automatically, but sometimes you must set it manually.
+
+pdf_options: {
+  displayHeaderFooter: true
+}
+
+Working minimal example
+
+This always works:
+
+module.exports = {
+  stylesheet: ['style/print.css'],
+  page_media_type: 'print',
+
+  pdf_options: {
+    format: 'A4',
+    margin: {
+      top: '30mm',
+      bottom: '25mm',
+      left: '20mm',
+      right: '20mm'
+    },
+    printBackground: true,
+    displayHeaderFooter: true,
+
+    headerTemplate: `
+      <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+        <span class="title"></span>
+      </div>
+    `,
+
+    footerTemplate: `
+      <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+Run:
+
+md-to-pdf doc.md --config-file style/config.js
+
+Quick debugging trick
+
+Replace the header with something obvious:
+
+HEADER TEST
+
+If that appears, the problem is CSS/layout. If not, it’s margin.
+
+💡 Tip: Puppeteer headers support three alignment blocks which look really good in PDFs:
+
+<div style="width:100%;font-size:10px;padding:0 20px;">
+  <span style="float:left">Torrenzo Docs</span>
+  <span style="float:right"><span class="pageNumber"></span></span>
+</div>
+
+If you want, I can also show you a very nice “book-style” header layout (chapter title on left, page number on right) that works perfectly with md-to-pdf.
+
+i see the footer, but no header?
+
+module.exports = {
+  stylesheet: ['style.css'],
+  page_media_type: 'print',
+  pdf_options: {
+    format: 'A4',
+    margin: '25mm 20mm',
+    printBackground: true,
+
+    headerTemplate: 
+      <style>
+        .hdr{
+          font-family: InterVariable;
+          font-size:10px;
+          width:100%;
+          text-align:center;
+          color:#666;
+        }
+      </style>
+      <div class="hdr">
+        <span class="title">header</span>
+      </div>
+    ,
+
+    footerTemplate: 
+      <div style="font-family:InterVariable;font-size:10px;text-align:center;width:100%">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    
+  }
+}
+
+Yes — the most likely problem is this line:
+
+<span class="title">header</span>
+
+In Puppeteer, .title is a special placeholder class that gets replaced with the document title, not your literal text. If no document title is set, that span can render blank. Puppeteer documents title, date, url, pageNumber, and totalPages as injected classes inside headerTemplate / footerTemplate.
+
+So your header is probably there, but its only visible content is being replaced with nothing.
+
+Use plain text instead:
+
+module.exports = {
+  stylesheet: ['style.css'],
+  page_media_type: 'print',
+  pdf_options: {
+    format: 'A4',
+    margin: '30mm 20mm 25mm 20mm',
+    printBackground: true,
+    displayHeaderFooter: true,
+
+    headerTemplate: `
+      <div style="width:100%; font-size:10px; text-align:center; color:#666;">
+        header
+      </div>
+    `,
+
+    footerTemplate: `
+      <div style="width:100%; font-size:10px; text-align:center; color:#666;">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+If you want the actual document title, use:
+
+<span class="title"></span>
+
+with no inner text. That class is specifically reserved for the injected title value.
+
+Two more things worth changing:
+
+    Increase the top margin. Puppeteer headers/footers need enough page margin or they can get clipped/overlap content. md-to-pdf’s own docs call this out.
+
+    Set displayHeaderFooter: true explicitly even though md-to-pdf often enables it when templates are present. Puppeteer’s underlying PDF option is off by default.
+
+A good diagnostic test is this minimal header:
+
+headerTemplate: `<div style="font-size:10px; width:100%; text-align:center;">HEADER TEST</div>`
+
+If that shows, the issue was the .title placeholder, not the header mechanism itself.
+
+can i use my style styles on this?
+
+Short answer: not automatically.
+Puppeteer does not load your page stylesheet inside headerTemplate / footerTemplate. The header/footer are rendered in a separate mini HTML document, so your style.css is ignored there.
+
+So this won’t work:
+
+<div class="hdr">Header</div>
+
+even if .hdr exists in style.css.
+
+You have three workable options.
+1. Inline the styles (most common)
+
+Put a <style> block inside the template.
+
+headerTemplate: `
+<style>
+.hdr {
+  font-family: InterVariable, sans-serif;
+  font-size: 10px;
+  width: 100%;
+  text-align: center;
+  color: #666;
+}
+</style>
+
+<div class="hdr">
+  Header
+</div>
+`
+
+This is the most reliable method.
+2. Inline styles directly
+
+Simplest option:
+
+headerTemplate: `
+<div style="font-family:InterVariable;font-size:10px;width:100%;text-align:center;color:#666;">
+  Header
+</div>
+`
+
+3. Inject your font again (important)
+
+Even if your main document loads fonts, the header/footer won’t inherit them.
+
+So you may need:
+
+<style>
+@font-face {
+  font-family: InterVariable;
+  src: url("style/InterVariable.ttf") format("truetype");
+}
+</style>
+
+inside the template.
+Example using your fonts
+
+headerTemplate: `
+<style>
+@font-face {
+  font-family: InterVariable;
+  src: url("style/InterVariable.ttf") format("truetype");
+}
+
+.hdr {
+  font-family: InterVariable;
+  font-size: 10px;
+  width: 100%;
+  text-align: center;
+  color: #666;
+}
+</style>
+
+<div class="hdr">
+  Torrenzo Documentation
+</div>
+`,
+
+Tip: good header layout
+
+Puppeteer headers work nicely with this pattern:
+
+<div style="width:100%;font-size:10px;padding:0 20px;">
+  <span style="float:left">Torrenzo Docs</span>
+  <span style="float:right">Page <span class="pageNumber"></span></span>
+</div>
+
+✅ Best practice
+
+    Keep page styling in style.css
+
+    Put header/footer styles inside the template
+
+This is how most Puppeteer PDF pipelines work.
+
+If you want, I can also show a much cleaner way to reuse your CSS variables (--text, --accent, etc.) inside the header/footer, so your PDF theme stays consistent.
+
+surely this is overill?
+
+@page {
+    size: A4;
+    margin: 18mm 18mm 20mm 18mm;
+}
+
+:root {
+    --text: #5e1222;
+    --muted: #8f2940;
+    --border: #cfd8e3;
+    --border-strong: #aebccc;
+    --accent: #0f766e;
+    --accent-soft: #e6f4f1;
+    --header-footer-bg: #f8fafc;
+    --header-footer-text: #52606d;
+    --heading: #881329;
+    --subheading: #6f1830;
+    --code-bg: #f4f7fa;
+    --table-head-bg: #f3f6f9;
+    --quote-bg: #faf6f7;
+    --logo-url: url("style/logo.png");
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 12mm;
+    left: 12mm;
+    width: 32mm;
+    height: 12mm;
+    background: var(--logo-url) no-repeat left center / contain;
+}
+
+@font-face {
+    font-family: "InterVariable";
+    src: url("style/InterVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "InterVariable-Italic";
+    src: url("style/InterVariable-Italic.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Bungee";
+    src: url("style/BungeeRegular.ttf") format("truetype");
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "RecursiveVariable";
+    src: url("style/RecursiveVariable.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    font-size: 10.5pt;
+}
+
+body {
+    font-family: "InterVariable", sans-serif;
+    line-height: 1.55;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    hyphens: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Running header / footer */
+.header,
+.footer {
+    width: 100%;
+    font-size: 9pt;
+    color: var(--header-footer-text);
+    background: var(--header-footer-bg);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.header {
+    position: running(pageHeader);
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.footer {
+    position: running(pageFooter);
+    padding: 5px 0 0 0;
+    border-top: 1px solid var(--border);
+}
+
+
+.page-number::after {
+    content: counter(page) " / " counter(pages);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid-page;
+    color: var(--heading);
+}
+
+h1, h2 {
+    font-family: "Bungee", sans-serif;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: 24pt;
+    line-height: 1.05;
+    margin: 0 0 14pt 0;
+    padding-bottom: 8pt;
+    border-bottom: 2px solid var(--heading);
+}
+
+h2 {
+    font-size: 15pt;
+    line-height: 1.15;
+    margin: 22pt 0 10pt 0;
+    color: var(--subheading);
+}
+
+h3, h4, h5, h6 {
+    font-family: "InterVariable", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin: 16pt 0 6pt 0;
+}
+
+h3 {
+    font-size: 12.5pt;
+}
+
+h4 {
+    font-size: 11.5pt;
+    color: var(--subheading);
+}
+
+h5, h6 {
+    font-size: 10.5pt;
+    color: var(--muted);
+}
+
+p {
+    margin: 0 0 10pt 0;
+}
+
+.lead,
+p.lead {
+    font-size: 11.5pt;
+    line-height: 1.65;
+    color: var(--subheading);
+}
+
+small {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+strong {
+    font-weight: 700;
+    color: #4b0c19;
+}
+
+em {
+    font-family: "InterVariable-Italic", "InterVariable", sans-serif;
+    font-style: italic;
+}
+
+/* Links */
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 0.6px solid rgba(15, 118, 110, 0.35);
+}
+
+a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: var(--muted);
+    word-break: break-all;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Lists */
+ul, ol {
+    margin: 0 0 10pt 1.25rem;
+    padding: 0;
+}
+
+li {
+    margin: 3pt 0;
+    padding-left: 2pt;
+}
+
+li > ul,
+li > ol {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
+}
+
+/* Quotes */
+blockquote {
+    margin: 14pt 0;
+    padding: 8pt 12pt;
+    border-left: 4px solid var(--muted);
+    background: var(--quote-bg);
+    color: var(--subheading);
+    page-break-inside: avoid;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Rules */
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16pt 0;
+}
+
+/* Code */
+code {
+    font-family: "RecursiveVariable", monospace;
+    background: var(--code-bg);
+    border: 1px solid #e2e8f0;
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: #1e293b;
+}
+
+pre {
+    margin: 12pt 0 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+pre code {
+    display: block;
+    padding: 10pt 12pt;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    color: #1f2937;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.45;
+    font-size: 9pt;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 14pt 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+table th,
+table td {
+    border: 1px solid var(--border);
+    padding: 7pt 8pt;
+    text-align: left;
+    vertical-align: top;
+}
+
+table th {
+    background: var(--table-head-bg);
+    color: #243b53;
+    font-weight: 700;
+    border-bottom: 1.2px solid var(--border-strong);
+}
+
+table tr:nth-child(even) td {
+    background: #fcfdfe;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tfoot {
+    display: table-footer-group;
+}
+
+/* Figures and media */
+img,
+svg {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figure {
+    margin: 14pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figcaption {
+    margin-top: 6pt;
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+/* Section wrappers */
+main {
+    page-break-after: always;
+    break-after: page;
+}
+
+main:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+}
+
+section,
+article {
+    page-break-inside: auto;
+}
+
+/* Utility classes for print polish */
+.kicker {
+    display: inline-block;
+    margin-bottom: 8pt;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.subtitle {
+    margin-top: -4pt;
+    margin-bottom: 14pt;
+    font-size: 11pt;
+    color: var(--muted);
+}
+
+.meta {
+    font-size: 8.75pt;
+    color: var(--muted);
+}
+
+.callout {
+    margin: 12pt 0;
+    padding: 10pt 12pt;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.caption {
+    font-size: 8.5pt;
+    color: var(--muted);
+}
+
+/* Avoid awkward breaks */
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+    page-break-before: avoid;
+}
+
+p,
+li,
+blockquote,
+table,
+pre,
+figure {
+    break-inside: avoid-page;
+}
+
+/* Optional title-page treatment */
+.title-page {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: page;
+}
+
+.title-page h1 {
+    font-size: 28pt;
+    margin-bottom: 12pt;
+}
+
+.title-page .subtitle {
+    font-size: 13pt;
+    max-width: 75%;
+}
+
+Yes — for md-to-pdf/Puppeteer, this is overkill.
+
+A lot of it is good CSS, but some parts are either unnecessary or won’t help in this pipeline.
+
+What is worth keeping:
+
+    @page
+
+    your :root color variables
+
+    @font-face
+
+    body, headings, paragraphs, lists
+
+    tables, blockquotes, code, images
+
+    a few page-break guards
+
+What is probably not worth keeping:
+
+    .header, .footer, position: running(...)
+
+    .page-number::after { counter(page) ... }
+
+    complex paged-media features intended for Prince/WeasyPrint-style engines
+
+    too many utility classes unless your markdown actually uses them
+
+The main reason: md-to-pdf uses Chromium via Puppeteer, not a full paged-media engine. So these parts are effectively dead weight:
+
+.header {
+    position: running(pageHeader);
+}
+
+.footer {
+    position: running(pageFooter);
+}
+
+and also:
+
+.page-number::after {
+    content: counter(page) " / " counter(pages);
+}
+
+Those won’t drive the actual PDF header/footer in Puppeteer. Your real header/footer must come from headerTemplate and footerTemplate.
+
+Also this can be fragile:
+
+body::before {
+    position: fixed;
+    ...
+}
+
+It can work for a repeated logo/watermark effect, but in browser PDF rendering fixed elements sometimes behave a bit unexpectedly across pages. Test it before relying on it.
+
+For md-to-pdf, I’d trim this down to a lean print stylesheet like this:
+
+@page {
+    size: A4;
+    margin: 18mm 18mm 20mm 18mm;
+}
+
+:root {
+    --text: #5e1222;
+    --muted: #8f2940;
+    --border: #cfd8e3;
+    --border-strong: #aebccc;
+    --accent: #0f766e;
+    --accent-soft: #e6f4f1;
+    --heading: #881329;
+    --subheading: #6f1830;
+    --code-bg: #f4f7fa;
+    --table-head-bg: #f3f6f9;
+    --quote-bg: #faf6f7;
+}
+
+@font-face {
+    font-family: "InterVariable";
+    src: url("style/InterVariable.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "InterVariable-Italic";
+    src: url("style/InterVariable-Italic.ttf") format("truetype");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Bungee";
+    src: url("style/BungeeRegular.ttf") format("truetype");
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: "RecursiveVariable";
+    src: url("style/RecursiveVariable.ttf") format("truetype");
+}
+
+html {
+    font-size: 10.5pt;
+}
+
+body {
+    font-family: "InterVariable", sans-serif;
+    line-height: 1.55;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    hyphens: auto;
+}
+
+h1, h2 {
+    font-family: "Bungee", sans-serif;
+    text-transform: uppercase;
+    line-height: 1.15;
+    color: var(--heading);
+    page-break-after: avoid;
+}
+
+h1 {
+    font-size: 24pt;
+    margin: 0 0 14pt;
+    padding-bottom: 8pt;
+    border-bottom: 2px solid var(--heading);
+}
+
+h2 {
+    font-size: 15pt;
+    margin: 22pt 0 10pt;
+    color: var(--subheading);
+}
+
+h3, h4, h5, h6 {
+    font-family: "InterVariable", sans-serif;
+    font-weight: 700;
+    color: var(--subheading);
+    margin: 16pt 0 6pt;
+    page-break-after: avoid;
+}
+
+p {
+    margin: 0 0 10pt;
+}
+
+ul, ol {
+    margin: 0 0 10pt 1.25rem;
+    padding: 0;
+}
+
+li {
+    margin: 3pt 0;
+}
+
+blockquote {
+    margin: 14pt 0;
+    padding: 8pt 12pt;
+    border-left: 4px solid var(--muted);
+    background: var(--quote-bg);
+    color: var(--subheading);
+}
+
+code {
+    font-family: "RecursiveVariable", monospace;
+    background: var(--code-bg);
+    border: 1px solid #e2e8f0;
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    font-size: 0.92em;
+}
+
+pre {
+    margin: 12pt 0 14pt;
+    page-break-inside: avoid;
+}
+
+pre code {
+    display: block;
+    padding: 10pt 12pt;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 9pt;
+    line-height: 1.45;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 14pt;
+    font-size: 9.5pt;
+}
+
+th, td {
+    border: 1px solid var(--border);
+    padding: 7pt 8pt;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: var(--table-head-bg);
+    color: #243b53;
+    font-weight: 700;
+    border-bottom: 1.2px solid var(--border-strong);
+}
+
+thead {
+    display: table-header-group;
+}
+
+img, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16pt 0;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: var(--muted);
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+That gives you:
+
+    your fonts
+
+    your palette
+
+    attractive headings
+
+    good tables/code/quotes
+
+    sane print output
+
+    no dead paged-media features
+
+Then keep header/footer styling in config.js, like this:
+
+module.exports = {
+  stylesheet: ['style.css'],
+  page_media_type: 'print',
+  pdf_options: {
+    format: 'A4',
+    margin: '30mm 18mm 20mm 18mm',
+    printBackground: true,
+    displayHeaderFooter: true,
+
+    headerTemplate: `
+      <style>
+        .hdr {
+          width: 100%;
+          font-family: InterVariable, sans-serif;
+          font-size: 10px;
+          color: #52606d;
+          padding: 0 18mm;
+          box-sizing: border-box;
+        }
+        .rule {
+          border-bottom: 1px solid #cfd8e3;
+          padding-bottom: 4px;
+        }
+        .left { float: left; }
+        .right { float: right; }
+      </style>
+      <div class="hdr">
+        <div class="rule">
+          <span class="left">Torrenzo</span>
+          <span class="right"></span>
+        </div>
+      </div>
+    `,
+
+    footerTemplate: `
+      <style>
+        .ftr {
+          width: 100%;
+          font-family: InterVariable, sans-serif;
+          font-size: 10px;
+          color: #52606d;
+          text-align: center;
+          box-sizing: border-box;
+        }
+      </style>
+      <div class="ftr">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+So the clean rule is:
+
+    document styling → style.css
+
+    PDF header/footer styling → headerTemplate / footerTemplate
+
+That split will save you a lot of frustration. If you want, I can collapse your current stylesheet into a tight “best possible for md-to-pdf” version.
+
+i need my logo at th page top
+
+Yes — and the best way with md-to-pdf/Puppeteer is to put the logo in the headerTemplate, not in the document CSS.
+
+Your earlier body::before approach can work, but it’s fragile in Chromium PDFs and can overlap content. The header template is more reliable.
+Recommended solution
+
+Put the logo directly in the header HTML.
+
+module.exports = {
+  stylesheet: ['style.css'],
+  page_media_type: 'print',
+
+  pdf_options: {
+    format: 'A4',
+    margin: '35mm 18mm 20mm 18mm',
+    printBackground: true,
+    displayHeaderFooter: true,
+
+    headerTemplate: `
+      <style>
+        .hdr {
+          width: 100%;
+          padding: 0 18mm;
+          box-sizing: border-box;
+          font-family: InterVariable, sans-serif;
+        }
+
+        .logo {
+          height: 14px;
+        }
+
+        .rule {
+          border-bottom: 1px solid #cfd8e3;
+          margin-top: 6px;
+        }
+      </style>
+
+      <div class="hdr">
+        <img class="logo" src="http://localhost:3000/style/logo.png">
+        <div class="rule"></div>
+      </div>
+    `,
+
+    footerTemplate: `
+      <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </div>
+    `
+  }
+}
+
+Important detail
+
+Puppeteer cannot load relative paths like style/logo.png inside header/footer.
+
+You must use a URL, because md-to-pdf runs a small local server.
+
+So either:
+
+http://localhost:<port>/style/logo.png
+
+or use a data URI (most reliable):
+
+data:image/png;base64,...
+
+Easiest reliable method (recommended)
+
+Convert the logo to base64:
+
+base64 -w 0 style/logo.png
+
+Then:
+
+<img src="data:image/png;base64,....">
+
+That way Puppeteer always embeds it.
+Nice clean header example
+
+<div style="width:100%;padding:0 18mm;">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <img src="data:image/png;base64,..." style="height:14px;">
+    <span style="font-size:10px;color:#52606d;">Torrenzo Docs</span>
+  </div>
+  <div style="border-bottom:1px solid #cfd8e3;margin-top:6px;"></div>
+</div>
+
+This produces a very professional PDF header:
+
+[logo]                                   Torrenzo Docs
+────────────────────────────────────────────────────────
+
+If you want
+
+I can also show a clean “docs-style layout” used by many technical manuals:
+
+logo        project name
+─────────────── rule
+content
+...
+─────────────── rule
+page number
+
+It looks much nicer than most Markdown → PDF outputs.
+
+ i was thin jsut use the style.css fot it
+
+Yes — you can, and it’s actually the simplest solution if you don’t need it inside Puppeteer’s header system.
+
+Put the logo directly in your style.css and let the document layout handle it.
+
+Your earlier approach was already close. The clean version looks like this:
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 12mm;
+    left: 18mm;
+    width: 32mm;
+    height: 10mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+Then just ensure your page margin leaves room for it:
+
+@page {
+    size: A4;
+    margin: 30mm 18mm 20mm 18mm;
+}
+
+That gives you:
+
+[logo]                 page header space
+
+content starts here...
+
+Why this works well
+
+Chromium (which md-to-pdf uses via Puppeteer) treats position: fixed elements as repeating on every page when printing.
+
+So the logo will appear at the top of every page automatically.
+Advantages vs headerTemplate
+
+Using CSS instead of Puppeteer headers:
+
+    simpler
+
+    uses your existing stylesheet
+
+    no duplicated fonts/styles
+
+    relative paths like style/logo.png work
+
+    easier to theme
+
+When NOT to do this
+
+Use Puppeteer headers only if you need:
+
+    page numbers at top
+
+    running chapter titles
+
+    different first-page headers
+
+For just a logo, CSS is the cleanest.
+One improvement I recommend
+
+Add a subtle divider so the page feels structured:
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 24mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+That produces a professional layout like:
+
+[logo]
+────────────────────────────
+
+content...
+
+Final minimal solution
+
+@page {
+    size: A4;
+    margin: 30mm 18mm 20mm 18mm;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 12mm;
+    left: 18mm;
+    width: 32mm;
+    height: 10mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 24mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+If you'd like, I can also show a very nice trick that aligns the logo with the text column perfectly across all pages, which avoids the slight “floaty” look many PDF headers get.
+
+okay -- sort works.  i need logo more top and left, and more margin a top of each page
+
+You control those with two things:
+
+    the page margin (@page)
+
+    the logo position (body::before)
+
+Right now your logo is positioned relative to the page, not the text column, so you can safely move it further up/left while increasing the page margin.
+1. Increase top margin
+
+This moves the content down.
+
+@page {
+    size: A4;
+    margin: 40mm 18mm 20mm 18mm;
+}
+
+So the text now starts 40 mm from the top.
+2. Move the logo higher and left
+
+Adjust the fixed positioning.
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 8mm;
+    left: 10mm;
+
+    width: 36mm;
+    height: 12mm;
+
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+Typical good values:
+
+top: 6–10mm
+left: 8–12mm
+
+3. Optional divider line
+
+Align the divider with the content margin.
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 28mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+Result layout
+
+  [logo]
+
+  ─────────────────────────────
+
+  document title
+  text text text
+
+Example full header setup
+
+@page {
+    size: A4;
+    margin: 40mm 18mm 20mm 18mm;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 8mm;
+    left: 10mm;
+    width: 36mm;
+    height: 12mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 28mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+Tip for perfect alignment
+
+If you want the logo perfectly aligned with the text column, use:
+
+left: 18mm
+
+because that matches the page margin.
+
+If you want, I can also show a very clean documentation-style header layout used by tools like:
+
+    Stripe docs
+
+    Rust book
+
+    Kubernetes docs
+
+It looks much nicer than the typical Markdown→PDF output.
+
+nah - -log appearing over content
+
+That means the logo is fixed to the page, but your content starts too high.
+
+So you need to increase the top page margin enough to reserve space for the logo.
+
+Use this pattern:
+
+@page {
+    size: A4;
+    margin: 42mm 18mm 20mm 18mm;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 8mm;
+    left: 10mm;
+    width: 36mm;
+    height: 12mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+The key point is:
+
+    top: 8mm puts the logo near the top
+
+    height: 12mm makes the logo 12mm tall
+
+    margin-top: 42mm gives the page content enough room below it
+
+A safe rule is:
+
+top margin >= logo top offset + logo height + extra breathing room
+
+So with:
+
+    top: 8mm
+
+    height: 12mm
+
+you want at least about:
+
+    8 + 12 + 10 = 30mm
+
+But in practice, use 36–45mm to avoid collisions with headings.
+
+Try this:
+
+@page {
+    size: A4;
+    margin: 45mm 18mm 20mm 18mm;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 6mm;
+    left: 10mm;
+    width: 36mm;
+    height: 12mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+If you also have a divider line, keep it inside that reserved header area:
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 24mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+Working combo:
+
+@page {
+    size: A4;
+    margin: 45mm 18mm 20mm 18mm;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 6mm;
+    left: 10mm;
+    width: 36mm;
+    height: 12mm;
+    background: url("style/logo.png") no-repeat left center / contain;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 24mm;
+    left: 18mm;
+    right: 18mm;
+    border-bottom: 1px solid var(--border);
+}
+
+If it still overlaps, the fastest fix is just:
+
+    reduce logo height a bit
+
+    increase @page top margin more
+
+For example:
+
+@page { margin: 50mm 18mm 20mm 18mm; }
+
+The overlap is not because the logo is wrong; it’s because fixed elements don’t push document flow down. Only the @page top margin does that.
+
+okay nm -- new plan. gimme an svg of an ornage
+
+Assuming you meant orange the fruit.
+
+If you want it flatter, more minimal, or brand-styled for print, I can make a second version.
+
+great! nect to it, write UNI
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 512" role="img" aria-label="Orange fruit next to the word UNI">
+  <defs>
+    <radialGradient id="orangeSkin" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#ffcc66"/>
+      <stop offset="55%" stop-color="#ff9f1c"/>
+      <stop offset="100%" stop-color="#e66a00"/>
+    </radialGradient>
+    <radialGradient id="highlight" cx="30%" cy="25%" r="30%">
+      <stop offset="0%" stop-color="#fff6d5" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fff6d5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="leaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4caf50"/>
+      <stop offset="100%" stop-color="#1b7f3a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Orange -->
+  <g transform="translate(0 0)">
+    <circle cx="256" cy="280" r="170" fill="url(#orangeSkin)" stroke="#c95500" stroke-width="10"/>
+    <ellipse cx="205" cy="215" rx="68" ry="52" fill="url(#highlight)"/>
+
+    <path d="M248 120 C244 92, 255 72, 278 58 C286 53, 298 56, 300 67 C303 79, 294 92, 284 101 C274 110, 264 116, 248 120 Z"
+          fill="#6b3f1a"/>
+
+    <path d="M272 92
+             C325 62, 386 72, 414 120
+             C370 136, 319 136, 280 115
+             C270 110, 264 99, 272 92 Z"
+          fill="url(#leaf)" stroke="#166534" stroke-width="8" stroke-linejoin="round"/>
+
+    <path d="M292 96 C330 90, 362 98, 390 118"
+          fill="none" stroke="#9be28c" stroke-width="5" stroke-linecap="round"/>
+
+    <g fill="#f28c00" opacity="0.28">
+      <circle cx="190" cy="310" r="6"/>
+      <circle cx="220" cy="345" r="5"/>
+      <circle cx="265" cy="360" r="5"/>
+      <circle cx="310" cy="330" r="6"/>
+      <circle cx="340" cy="285" r="5"/>
+      <circle cx="160" cy="255" r="5"/>
+      <circle cx="285" cy="245" r="4"/>
+      <circle cx="225" cy="265" r="4"/>
+      <circle cx="338" cy="235" r="4"/>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="470" y="325"
+        font-family="Inter, Arial, sans-serif"
+        font-size="140"
+        font-weight="800"
+        letter-spacing="4"
+        fill="#881329">
+    UNI
+  </text>
+</svg>
+
+

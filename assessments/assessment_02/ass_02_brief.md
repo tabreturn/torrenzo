@@ -1,8 +1,19 @@
 # Assessment 2 Brief (Playful Placeholder)
 
-{{ assessment|2|slo }}
+<p><strong>a</strong> Identify and describe tropical fruits using sensory vocabulary like aroma, sweetness, and texture.</p><br><p><strong>c</strong> Organize a digital collection of fruit images and notes, applying a consistent tagging scheme for easy reference.</p>
 
-{{ assessment|2|meta_table }}
+<table>
+<thead><tr><th>Field</th><th>Details</th></tr></thead>
+<tbody>
+<tr><td>Id</td><td>2</td></tr>
+<tr><td>Title</td><td>Playful Fruit Journal</td></tr>
+<tr><td>Individual Group</td><td>Individual</td></tr>
+<tr><td>Length</td><td>Two short reflections plus media folder</td></tr>
+<tr><td>Slo</td><td><p><strong>a</strong> Identify and describe tropical fruits using sensory vocabulary like aroma, sweetness, and texture.</p><br><p><strong>c</strong> Organize a digital collection of fruit images and notes, applying a consistent tagging scheme for easy reference.</p></td></tr>
+<tr><td>Submission</td><td>Due by 23h55 GMT on the final weekend of the learning block</td></tr>
+<tr><td>Weighting</td><td>10%</td></tr>
+<tr><td>Total Marks</td><td>25</td></tr>
+</tbody></table>
 
 # Task Summary
 
