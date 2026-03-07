@@ -11,12 +11,6 @@ pip-log.txt
 # Build
 build/
 
-# User subject content (leave demos tracked)
-/modules/module_*/
-/assessments/assessment_*/
-!/modules/demo_module_*/**
-!/assessments/demo_assessment_*/**
-
 # macOS
 .DS_Store
 .AppleDouble

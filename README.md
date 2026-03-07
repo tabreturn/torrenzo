@@ -102,12 +102,11 @@ Any `demo_`-prefixed items are included for illustration. You can delete them if
 
 ```text
 subject-root/
-├── outline.md          # subject configuration (YAML)
 ├── assessments/        # assessment briefs → PDF
 │   ├── demo_assessment_1/
 │   │   ├── ass_1_brief.md
 │   │   └── assets/
-│   ├── assessment_<n>/   # your real content (gitignored)
+│   ├── assessment_<n>/
 │   │   ├── ass_<n>_brief.md
 │   │   └── assets/
 │   └── ...
@@ -117,14 +116,15 @@ subject-root/
 │   │   ├── mod_1_activities.md
 │   │   ├── mod_1_resources.bib
 │   │   └── assets/
-│   ├── module_<n>/       # your real content (gitignored)
+│   ├── module_<n>/
 │   │   ├── mod_<n>_content.md
 │   │   ├── mod_<n>_activities.md
 │   │   ├── mod_<n>_resources.bib
 │   │   └── assets/
 │   └── ...
-├── torrenzo.py         # run to build
-└── build/              # generated output
+├── build/              # generated output
+├── outline.md          # subject configuration (YAML)
+└── torrenzo.py         # run to build
 ```
 
 ### Populating Content
