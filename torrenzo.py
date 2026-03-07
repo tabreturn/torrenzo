@@ -346,15 +346,6 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
         RenderJob(
-            name='module_resources',
-            input_pattern=resources_pattern,
-            output_dir=Path('modules_html'),
-            renderer='bib_to_html',
-            context={},
-            output_ext='.html',
-            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
-        ),
-        RenderJob(
             name='module_assets',
             input_pattern='modules/*/assets/**/*',
             output_dir=Path('modules_assets'),

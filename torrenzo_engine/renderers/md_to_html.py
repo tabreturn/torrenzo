@@ -82,9 +82,12 @@ def sanitize_html_attributes(html_text: str) -> str:
 
 
 def load_bibliography(input_path: Path) -> dict[str, Any]:
-    module_dir = input_path.parent
+    modules_root = input_path.parent.parent
     entries: dict[str, Any] = {}
-    for bib_path in sorted(module_dir.glob("mod_*_resources*.bib")):
+    bib_paths = [modules_root / "references.bib", *sorted(modules_root.glob("mod_*_resources*.bib"))]
+    for bib_path in bib_paths:
+        if not bib_path.exists():
+            continue
         try:
             bib_data = parse_file(str(bib_path))
         except Exception:
