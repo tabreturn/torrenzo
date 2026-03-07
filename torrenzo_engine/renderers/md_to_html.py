@@ -166,7 +166,7 @@ def render_references(keys_in_order: list[str], bib_entries: dict[str, Any]) -> 
     return "\n".join(["<h2>References</h2>", "<ul>", *items, "</ul>"])
 
 
-def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:
+def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str, list[str]]:
     tags = context.get("tags", {})
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
     raw = input_path.read_text(encoding="utf-8")
@@ -195,10 +195,13 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
             html_body = sanitize_html_attributes(html_body)
             html_body = strip_html_wrapper(html_body)
         except Exception as exc:
-            return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}"
+            return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}", []
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html_body, encoding="utf-8")
 
-    msg_suffix = f" (missing citations: {', '.join(missing_keys)})" if missing_keys else ""
-    return True, f"{input_path} -> {output_path}{msg_suffix}"
+    warnings: list[str] = []
+    if missing_keys:
+        warnings.append(f"Missing citations: {', '.join(missing_keys)}")
+
+    return True, f"{input_path} -> {output_path}", warnings

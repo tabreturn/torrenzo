@@ -7,6 +7,26 @@ from typing import Any, Callable, Dict, Iterable, List, Protocol
 from .renderers.registry import RendererRegistry
 
 
+RESET = "\033[0m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+RED = "\033[31m"
+BOLD = "\033[1m"
+
+
+def fmt(level: str, message: str) -> str:
+    if level == "info":
+        return f"{GREEN}✓{RESET} {message}"
+    if level == "warning":
+        return f"{YELLOW}!{RESET} {message}"
+    return f"{RED}✗{RESET} {message}"
+
+
+def order_levels(entries: List[tuple[str, str]]) -> List[tuple[str, str]]:
+    level_rank = {"info": 0, "error": 1, "warning": 2}
+    return sorted(entries, key=lambda item: level_rank.get(item[0], 3))
+
+
 class DiagnosticLevel(str):
     INFO = 'info'
     WARNING = 'warning'
@@ -35,7 +55,7 @@ class Pipeline:
             yield spec
 
     def execute(self, job_specs: Iterable[RenderJob]) -> List[str]:
-        diagnostics: List[str] = []
+        entries: List[tuple[str, str]] = []
         for job in self.iter_jobs(job_specs):
             output_dir = self.build_dir / job.output_dir
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -50,6 +70,16 @@ class Pipeline:
                     output_name = input_path.name
 
                 output_path = output_dir / output_name
-                success, msg = renderer(input_path, output_path, job.context)
-                diagnostics.append(f"{job.name}: {msg}")
-        return diagnostics
+                result = renderer(input_path, output_path, job.context)
+                if isinstance(result, tuple) and len(result) == 3:
+                    success, msg, render_warnings = result
+                    for warning in render_warnings:
+                        entries.append(("warning", f"{job.name}: {input_path.name}: {warning}"))
+                else:
+                    success, msg = result
+                level = "info" if success else "error"
+                entries.append((level, f"{job.name}: {msg}"))
+
+        ordered_entries = order_levels(entries)
+        formatted = [fmt(level, message) for level, message in ordered_entries]
+        return formatted
