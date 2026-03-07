@@ -136,10 +136,12 @@ Subject content is organised into two directories -- `assessments/` and `modules
 - **Assessment briefs** are defined using `assessments/assessment_<n>/ass_<n>_brief.md`. Any assets the brief references (images, etc.) go in its adjacent `assets/` directory.
 
 - **Module files** follow a similar naming pattern (`modules/module_<n>/`), and comprise a:
-  - `mod_<n>_content.md` -- for primary module content
+  - `mod_<n>_content.md` -- for primary module content page(s)
   - `mod_<n>_activities.md` -- for activity page(s)
   - `mod_<n>_resources.bib` -- for references (in BibTeX format)
   - `assets/` -- any supporting files (images, etc.) that form part of each module
+
+> 💡 For multiple content or activities pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`.
 
 During the build process, Torrenzo injects `outline.md` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` is cleared and regenerated on each run.
 

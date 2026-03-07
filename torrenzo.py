@@ -308,8 +308,8 @@ def build_tag_map() -> dict[str, str]:
 
 def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
-    content_pattern = 'modules/*/mod_*_content.md'
-    activities_pattern = 'modules/*/mod_*_activities.md'
+    content_pattern = 'modules/*/mod_*_content*.md'
+    activities_pattern = 'modules/*/mod_*_activit*.md'
     resources_pattern = 'modules/*/mod_*_resources.bib'
 
     return [
