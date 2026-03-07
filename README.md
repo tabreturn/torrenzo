@@ -193,6 +193,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Add support for common page elements (e.g., tabbed navigation components)
 - [ ] Determine whether Canvas Files can be linked to directly (e.g., images or other file asset paths)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
+- [ ] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [ ] ...
 
 ### 'Maybe' Goals
