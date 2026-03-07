@@ -1,0 +1,24 @@
+/* Hide dev/build folders */
+.nav-folder-title[data-path*="__pycache__"],
+.nav-folder[data-path*="__pycache__"],
+.nav-folder-title[data-path*="build"],
+.nav-folder[data-path*="build"],
+.nav-folder-title[data-path*="env"],
+.nav-folder[data-path*="env"],
+.nav-folder-title[data-path*="modules"],
+.nav-folder[data-path*="modules"],
+.nav-folder-title[data-path*="node_modules"],
+.nav-folder[data-path*="node_modules"],
+.nav-folder-title[data-path*="torrenzo_engine"],
+.nav-folder[data-path*="torrenzo_engine"] {
+  display: none;
+}
+
+/* Hide specific files */
+.nav-file-title[data-path="AGENTS.md"],
+.nav-file-title[data-path="package.json"],
+.nav-file-title[data-path="package-lock.json"],
+.nav-file-title[data-path="requirements.txt"],
+.nav-file-title[data-path="torrenzo.py"] {
+  display: none;
+}

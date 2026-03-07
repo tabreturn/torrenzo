@@ -1,0 +1,10 @@
+{
+  "userIgnoreFilters": [
+    "__pycache__/",
+    "build/",
+    "env/",
+    "modules/",
+    "node_modules/",
+    "torrenzo_engine/"
+  ]
+}

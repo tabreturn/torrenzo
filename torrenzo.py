@@ -78,6 +78,8 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
             continue
         table_rows: list[tuple[str, str]] = []
         for key, value in fields.items():
+            if str(key).startswith('_'):
+                continue
             normalized_key = 'slo' if key in ('learning_outcomes', 'lo', 'slo') else key
             if normalized_key == 'slo':
                 outcomes: list[str] = []
@@ -85,12 +87,14 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
                     for code in value:
                         code_str = str(code).strip()
                         if code_str in slos_by_id:
-                            snippet = render_single_learning_outcome(slos_by_id[code_str])
-                            if snippet:
-                                outcomes.append(snippet)
+                            desc = html.escape(str(slos_by_id[code_str].get('description', '')).strip())
+                            if desc:
+                                outcomes.append(f'<li>{desc}</li>')
+                            else:
+                                outcomes.append(f'<li>{html.escape(code_str)}</li>')
                         else:
-                            outcomes.append(html.escape(code_str))
-                detail = '<br>'.join(outcomes)
+                            outcomes.append(f'<li>{html.escape(code_str)}</li>')
+                detail = f"<ul>{''.join(outcomes)}</ul>" if outcomes else ''
                 normalized_key = 'slo'
             else:
                 detail = format_metadata_value(value)
@@ -101,40 +105,40 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
             for label, detail in table_rows:
                 lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
             lines.append('</tbody></table>')
-            tags[f'assessment|{assessment_id}|meta_table'] = '\n'.join(lines)
+            table_markup = '\n'.join(lines)
+            tags[f'assessment|{assessment_id}|meta_table'] = table_markup
+            tags[f"assessment|{fields.get('_key', assessment_id)}|meta_table"] = table_markup
     return tags
 
 def load_outline() -> dict[str, Any]:
-    yaml_path = PROJECT_ROOT / 'outline.yaml'
     md_path = PROJECT_ROOT / 'outline.md'
-
-    if yaml_path.exists():
-        try:
-            return yaml.safe_load(yaml_path.read_text(encoding='utf-8')) or {}
-        except yaml.YAMLError as exc:
-            raise SystemExit(f'Failed to parse outline.yaml: {exc}') from exc
-
     if not md_path.exists():
-        raise SystemExit('outline.yaml or outline.md is required at the project root')
-
+        raise SystemExit('outline.md is required at the project root')
     text = md_path.read_text(encoding='utf-8')
-    frontmatter_match = re.match(r"\A---\n(.*?)\n---\n(.*)\Z", text, re.S)
-    if not frontmatter_match:
-        raise SystemExit('outline.md must start with YAML frontmatter enclosed by --- markers')
-
+    frontmatter_match = re.match(r"\A---\n(.*?)\n---\n", text, re.S)
+    yaml_text = frontmatter_match.group(1) if frontmatter_match else text
     try:
-        return yaml.safe_load(frontmatter_match.group(1)) or {}
+        data = yaml.safe_load(yaml_text) or {}
     except yaml.YAMLError as exc:
-        raise SystemExit(f'Failed to parse outline.md frontmatter: {exc}') from exc
+        raise SystemExit(f'Failed to parse outline.md: {exc}') from exc
+    return data
 
 
 def build_tag_map() -> dict[str, str]:
     data = load_outline()
 
     tags: dict[str, str] = {}
-    slos = data.get('slo') or data.get('slos')
-    if isinstance(slos, list):
+    slos_obj = data.get('slo') or data.get('slos') or {}
+    if isinstance(slos_obj, dict):
+        slos = [{'id': k, 'description': v} for k, v in slos_obj.items()]
+    elif isinstance(slos_obj, list):
+        slos = slos_obj
+    else:
+        slos = []
+
+    if slos:
         tags['slo'] = render_learning_outcomes(slos)
+        tags['^slo'] = tags['slo']
         for outcome in slos:
             code = str(outcome.get('id', '')).strip()
             if not code:
@@ -142,9 +146,164 @@ def build_tag_map() -> dict[str, str]:
             snippet = render_single_learning_outcome(outcome)
             if snippet:
                 tags[f'slo|{code}'] = snippet
+                tags[f'slo-{code}'] = snippet
+                tags[f'^slo-{code}'] = snippet
 
-    assessments = data.get('assessment') or data.get('assessments')
+    assessments_obj = data.get('assessment') or data.get('assessments') or {}
+    if isinstance(assessments_obj, dict):
+        assessments_list = []
+        for key, val in assessments_obj.items():
+            if isinstance(val, dict):
+                entry = dict(val)
+                entry.setdefault('id', str(entry.get('id') or key))
+                entry['_key'] = str(key).strip()
+                assessments_list.append(entry)
+        assessments = assessments_list
+    else:
+        assessments = assessments_obj if isinstance(assessments_obj, list) else []
+
+    slos_lookup = {str(item.get('id', '')).strip(): item for item in slos if isinstance(item, dict)}
+
     tags.update(build_assessment_metadata_tags(assessments, slos))
+    if isinstance(assessments, list):
+        for entry in assessments:
+            aid = str(entry.get('id', '')).strip()
+            key = str(entry.get('_key', aid)).strip()
+            if not aid:
+                continue
+            title = str(entry.get('title', '')).strip()
+            tags[f'assess-{aid}-number'] = aid
+            tags[f'ass-{aid}-number'] = aid
+            tags[f'^assess-{aid}-number'] = aid
+            tags[f'^ass-{aid}-number'] = aid
+            tags[f'outline.assessment.{aid}.number'] = aid
+            tags[f'outline.assessment.{key}.number'] = aid
+            tags[f'outline.assessment.{aid}.id'] = aid
+            tags[f'outline.assessment.{key}.id'] = aid
+            if title:
+                tags[f'assess-{aid}'] = title
+                tags[f'assess-{aid}-title'] = title
+                tags[f'ass-{aid}'] = title
+                tags[f'ass-{aid}-title'] = title
+                tags[f'^assess-{aid}'] = title
+                tags[f'^assess-{aid}-title'] = title
+                tags[f'^ass-{aid}'] = title
+                tags[f'^ass-{aid}-title'] = title
+                tags[f'outline.assessment.{aid}.title'] = title
+                tags[f'outline.assessment.{key}.title'] = title
+            meta_key = f'assessment|{aid}|meta_table'
+            alt_meta_key = f'assessment|{key}|meta_table'
+            if meta_key in tags:
+                table = tags[meta_key]
+            elif alt_meta_key in tags:
+                table = tags[alt_meta_key]
+            else:
+                table = ''
+            if table:
+                tags[f'assess-{aid}-meta'] = table
+                tags[f'ass-{aid}-meta'] = table
+                tags[f'^assess-{aid}-meta'] = table
+                tags[f'^ass-{aid}-meta'] = table
+                tags[f'^assess-{aid}-meta-table'] = table
+                tags[f'^ass-{aid}-meta-table'] = table
+                tags[f'outline.assessment.{aid}.metatable'] = table
+                tags[f'outline.assessment.{key}.metatable'] = table
+
+    def to_table(value: Any, prefix: str, slos_lookup: dict[str, Any] | None) -> str | None:
+        if isinstance(value, dict):
+            rows = []
+            for k, v in value.items():
+                if str(k).startswith('_'):
+                    continue
+                child_prefix = f"{prefix}.{k}"
+                if isinstance(v, list) and all(isinstance(item, (str, int, float)) for item in v):
+                    if slos_lookup and (child_prefix.endswith('.learning_outcomes') or child_prefix.endswith('.slo') or '.learning_outcomes.' in child_prefix or '.slo.' in child_prefix):
+                        snippets: list[str] = []
+                        for item in v:
+                            code = str(item).strip()
+                            if code in slos_lookup:
+                                desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
+                                if desc:
+                                    snippets.append(f'<li>{desc}</li>')
+                                else:
+                                    snippets.append(f'<li>{html.escape(code)}</li>')
+                            else:
+                                snippets.append(f'<li>{html.escape(code)}</li>')
+                        detail = f"<ul>{''.join(snippets)}</ul>" if snippets else ''
+                    else:
+                        detail = '<br>'.join(html.escape(str(item).strip()) for item in v)
+                else:
+                    nested = to_table(v, child_prefix, slos_lookup)
+                    detail = nested if nested is not None else html.escape(str(v))
+                rows.append((str(k).replace('_', ' ').title(), detail))
+            if rows:
+                lines = ['<table>', '<thead><tr><th>Field</th><th>Details</th></tr></thead>', '<tbody>']
+                for label, detail in rows:
+                    lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
+                lines.append('</tbody></table>')
+                return '\n'.join(lines)
+        if isinstance(value, list):
+            if value and all(isinstance(item, (dict, list)) for item in value):
+                lines = ['<table>', '<thead><tr><th>Item</th><th>Details</th></tr></thead>', '<tbody>']
+                for idx, item in enumerate(value):
+                    lines.append(f'<tr><td>{idx}</td><td>{to_table(item, f"{prefix}.{idx}", slos_lookup) or html.escape(str(item))}</td></tr>')
+                lines.append('</tbody></table>')
+                return '\n'.join(lines)
+            if all(isinstance(item, (str, int, float)) for item in value):
+                if slos_lookup and (prefix.endswith('.learning_outcomes') or prefix.endswith('.slo') or '.learning_outcomes.' in prefix or '.slo.' in prefix):
+                    snippets = []
+                    for item in value:
+                        code = str(item).strip()
+                        if code in slos_lookup:
+                            desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
+                            if desc:
+                                snippets.append(f'<li>{desc}</li>')
+                            else:
+                                snippets.append(f'<li>{html.escape(code)}</li>')
+                        else:
+                            snippets.append(f'<li>{html.escape(code)}</li>')
+                    return f"<ul>{''.join(snippets)}</ul>" if snippets else ''
+                return '<br>'.join(html.escape(str(item).strip()) for item in value)
+        return None
+
+    def flatten(obj: Any, prefix: str, slos_lookup: dict[str, Any] | None) -> None:
+        if isinstance(obj, dict):
+            table_value = to_table(obj, prefix, slos_lookup)
+            if table_value:
+                tags[prefix] = table_value
+            for k, v in obj.items():
+                flatten(v, f"{prefix}.{k}", slos_lookup)
+        elif isinstance(obj, list):
+            if all(isinstance(item, (str, int, float)) for item in obj):
+                if slos_lookup and (prefix.endswith('.learning_outcomes') or prefix.endswith('.slo') or '.learning_outcomes.' in prefix or '.slo.' in prefix):
+                    snippets = []
+                    for item in obj:
+                        code = str(item).strip()
+                        if code in slos_lookup:
+                            desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
+                            if desc:
+                                snippets.append(f'<li>{desc}</li>')
+                            else:
+                                snippets.append(f'<li>{html.escape(code)}</li>')
+                        else:
+                            snippets.append(f'<li>{html.escape(code)}</li>')
+                    tags[prefix] = f"<ul>{''.join(snippets)}</ul>" if snippets else ''
+                else:
+                    tags[prefix] = ', '.join(str(item) for item in obj)
+            else:
+                table_value = to_table(obj, prefix, slos_lookup)
+                if table_value:
+                    tags[prefix] = table_value
+                for idx, item in enumerate(obj):
+                    flatten(item, f"{prefix}.{idx}", slos_lookup)
+        else:
+            tags[prefix] = str(obj)
+
+    flatten(data, 'outline', slos_lookup)
+
+    for key, value in list(tags.items()):
+        if key.startswith('^'):
+            tags[f'outline#{key}'] = value
     return tags
 
 def make_jobs(tags: dict[str, str]) -> list[RenderJob]:

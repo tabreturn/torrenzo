@@ -8,7 +8,7 @@
 
 ## What Does It Do?
 
-Traverses structured subject directories and outputs LMS-ready HTML content and PDF assessment briefs from Markdown, BibTeX, and other source material.
+Traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material.
 
 Torrenzo currently performs the following transformations:
 
@@ -19,37 +19,48 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
 | `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
+### Yeah, But Why?
+
+Torrenzo keeps learning content **portable, readable, and version-controlled**.
+
+Instead of authoring material directly in a learning management system (LMS), content is written in plain-text formats such as Markdown and BibTeX. This approach enables:
+
+- **Consistent metadata** defined once and reused everywhere (e.g., learning outcomes or assessment details)
+- **Version control** using Git and other standard tools
+- **Clear separation** of content and presentation
+- **Editor independence** so you can write with any tool (Obsidian, VS Code, Vim, even MS Word?)
+- **Machine-readable materials** that automation tools and AI can analyse and update
+- **Extensible components** for reusable interface elements across multiple pages
+- **Adaptable open-source tooling** to extend or customise for *your* publishing workflow
+
 ---
 
-## Configuration
+## Configuration & Tags
 
-Use `outline.yaml` (default) **or** `outline.md` (YAML frontmatter + Obsidian-friendly body) for project/subject configuration, including:
+Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``.
 
-- **`subject` (with `id`, `title`)**  
-  Basic subject identity used in rendered outputs.
+Starter keys in `outline.md`:
 
-- **`subject_descriptor`**  
-  A short overview of the subject: its aims, key concepts, and laerning it covers.
-
-- **`slo` (each with `id` and `description`)**  
-  Subject Learning Outcomes; the specific knowledge, skills, and capabilities students.
-
-- **`assessment` (each with an `id` and other values)**  
-  Submission requirements, tagged in markdown using `[[assessment|<id>|...]]` pattern.
+- **Subject:**  
+  `subject.code`, `subject.title`, `subject.descriptor`
+- **SLOs:**  
+  map under `slo` with codes (e.g., `slo.a`)
+- **Assessments:**  
+  Produce a full metadata table using `assessment.a1` or `assessment.a2`, etc.
 
 ---
 
 ## Usage
 
-1. Ensure [prerequisites](#prerequisites) are installed.
-2. [Populate subject content](#populating-content) (`outline.yaml`, `assessments/`, and `modules/`).
+1. Ensure to install [prerequisites](#prerequisites).
+2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
 3. Run Torrenzo from the repository root using `python torrenzo.py`
 
-By default, Torrenzo scans the current directory. To target another workspace use: `python3 torrenzo.py ../other-subject`
+By default, Torrenzo scans the current directory. To target another workspace use: `python torrenzo.py ../other-subject`
 
 Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which is cleared at the start of each run).
 
-> 💡 Markdown editors like [Obsidian](https://obsidian.md) can provide a well-suited environment for writing, organising, and navigating Torrenzo content.
+> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
 
 ---
 
@@ -83,13 +94,13 @@ npm install
 
 ## Repository Architecture
 
-Torrenzo provides a ready-to-use structure for a single subject.
+Torrenzo provides a ready-to-use structure for a single subject. The project is intentionally filesystem-driven: file names and directory structure determine how Torrenzo processes content.
 
 Any `demo_`-prefixed items are included for illustration. You can delete them if you wish; otherwise they build normally and appear in the `build/` output.
 
 ```text
 subject-root/
-├── outline.yaml        # subject configuration
+├── outline.md          # subject configuration (YAML)
 ├── assessments/        # assessment briefs → PDF
 │   ├── demo_assessment_1/
 │   │   ├── ass_1_brief.md
@@ -118,17 +129,17 @@ subject-root/
 
 Subject content is organised into two directories -- `assessments/` and `modules/` -- following strict naming conventions that Torrenzo uses to locate and process files.
 
-- **Global metadata** is handled using the **`outline.yaml`**. Torrenzo injects these values wherever placeholders such as `{{subject_descriptor}}` appear in source Markdown files.
+- **Global metadata** is handled using the **`outline.md`** (specified in YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
 
 - **Assessment briefs** are defined using `assessments/assessment_<n>/ass_<n>_brief.md`. Any assets the brief references (images, etc.) go in its adjacent `assets/` directory.
 
-- **Module files** follow a similar naming pattern (`modules/module_<n>/`), and comprise a --
+- **Module files** follow a similar naming pattern (`modules/module_<n>/`), and comprise a:
   - `mod_<n>_content.md` -- for primary module content
   - `mod_<n>_activities.md` -- for activity page(s)
   - `mod_<n>_resources.bib` -- for references (in BibTeX format)
-  - `assets/` -- holds and supporting files (images, etc.) that form part of each module
+  - `assets/` -- any supporting files (images, etc.) that form part of each module
 
-During the build process, Torrenzo injects `outline.yaml` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` deletes its contents to recreate them entirely with each run.
+During the build process, Torrenzo injects `outline.md` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` is cleared and regenerated on each run.
 
 ### Module Styling
 
@@ -164,7 +175,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ## To-Do
 
-- [ ] Consider leveraging Obsidian's tag syntax to better support WYSIWYG-style editing workflows
+- [x] Match Obsidian's (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [ ] Refine CSS styles for assessment briefs
 - [x] Improve brief templates (page numbers, versioning in headers, etc.)
 - [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
@@ -178,4 +189,3 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
 - [ ] ...
-

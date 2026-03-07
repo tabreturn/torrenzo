@@ -1,9 +1,9 @@
 # Module 01: Fruit Observation Essentials
 
-- [[slo|a]]
-- [[slo|b]]
-- [[slo|c]]
-- [[slo|d]]
+- `=[[outline]].slo.a`
+- `=[[outline]].slo.b`
+- `=[[outline]].slo.c`
+- `=[[outline]].slo.d`
 
 ## Overview
 

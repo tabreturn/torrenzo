@@ -41,4 +41,14 @@ npm-debug.log
 .yarn/
 
 # Obsidian
-.obsidian/
+.obsidian/*
+!.obsidian/app.json
+!.obsidian/appearance.json
+!.obsidian/community-plugins.json
+!.obsidian/plugins/
+!.obsidian/plugins/**
+!.obsidian/themes/
+!.obsidian/themes/**
+!.obsidian/snippets/
+!.obsidian/snippets/**
+

@@ -13,8 +13,8 @@ from markdown_it import MarkdownIt
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-TAG_RE = re.compile(r"{{\s*([^{}]+?)\s*}}")
-WIKI_TAG_RE = re.compile(r"!?\[\[\s*([^\[\]]+?)\s*\]\]")
+DATAVIEW_RE = re.compile(r"`?=?\s*\[\[outline\]\]\.([^\s`]+)`?")
+DATAVIEW_BLOCK_RE = re.compile(r"```dataview\s+LIST without id slo\[x\]\s+FROM \"outline\"\s+FLATTEN ([^\s]+) AS x\s+```", re.I | re.S)
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 METADATA_TOKEN = "<<metadata_table>>"
 
@@ -66,8 +66,26 @@ def apply_tags(text: str, tags: dict[str, str]) -> str:
                 return snippet
         return original
 
-    text = TAG_RE.sub(lambda m: replace_content(m.group(1), m.group(0)), text)
-    text = WIKI_TAG_RE.sub(lambda m: replace_content(m.group(1), m.group(0)), text)
+    def replace_dataview_block(match: re.Match[str]) -> str:
+        path = match.group(1).strip()
+        candidates: list[str] = [f'outline.{path}']
+        parts = path.split('.')
+        if len(parts) >= 2 and parts[0].lower() == 'assessment':
+            aid_token = parts[1]
+            aid_num = aid_token.removeprefix('ass') if aid_token.lower().startswith('ass') else aid_token
+            candidates = [
+                f'assessment|{aid_token}|slo',
+                f'assessment|{aid_num}|slo',
+                f'outline.{path}',
+            ]
+        for key in candidates:
+            snippet = tags.get(key)
+            if snippet is not None:
+                return snippet
+        return match.group(0)
+
+    text = DATAVIEW_RE.sub(lambda m: replace_content(f"outline.{m.group(1)}", m.group(0)), text)
+    text = DATAVIEW_BLOCK_RE.sub(lambda m: replace_dataview_block(m), text)
     return text
 
 

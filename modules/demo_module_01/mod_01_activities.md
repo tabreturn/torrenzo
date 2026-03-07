@@ -1,6 +1,9 @@
 # Module 01 Activities
 
-[[slo]]
+- `=[[outline]].slo.a`
+- `=[[outline]].slo.b`
+- `=[[outline]].slo.c`
+- `=[[outline]].slo.d`
 
 ## Activity 1: Colour Hunt
 

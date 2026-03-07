@@ -21,10 +21,10 @@
 
 ## Directory Layout & Naming
 
-- `torrenzo.py`: CLI entry; builds tag map from `outline.yaml`, registers renderers, constructs job specs, and runs the pipeline.
+- `torrenzo.py`: CLI entry; builds tag map from `outline.md` YAML, registers renderers, constructs job specs, and runs the pipeline.
 - `torrenzo_engine/`: renderer registry and pipeline execution.
 - `torrenzo_engine/renderers/`: individual renderers (`md_to_pdf`, `md_to_html`, `bib_to_html`).
-- `outline.yaml`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via tags like `[[slo]]`, `[[slo|<code>]]`, and `[[assessment|<id>|...]]`.
+- `outline.md`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via tags like `[[slo-a]]`, `[[assess-1-title]]`, and `[[assess-1-meta]]`.
 - `assessments/demo_assessment_<n>/ass_<n>_brief.md`: demo briefs → PDF (assets alongside).
 - `assessments/assessment_<n>/ass_<n>_brief.md`: user briefs → PDF (gitignored by default unless demo-prefixed).
 - `modules/demo_module_<n>/mod_<n>_content.md`: demo module content → HTML.
