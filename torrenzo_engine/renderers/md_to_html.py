@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 from typing import Any, Dict, Tuple
 
 from markdown_it import MarkdownIt
@@ -16,6 +17,30 @@ def load_module_css(input_path: Path) -> str:
     if css_path.exists():
         return css_path.read_text(encoding="utf-8")
     return ""
+
+
+def substitute_css_variables(css_text: str) -> str:
+    root_blocks = re.findall(r":root\s*{([^}]*)}", css_text, re.S)
+    mapping: dict[str, str] = {}
+    for block in root_blocks:
+        for match in re.finditer(r"--([A-Za-z0-9_-]+)\s*:\s*([^;]+);", block):
+            name = match.group(1).strip()
+            value = match.group(2).strip()
+            if name:
+                mapping[name] = value
+    if not mapping:
+        return css_text
+
+    def replace_var(match: re.Match[str]) -> str:
+        name = match.group(1).strip()
+        fallback = match.group(2).strip() if match.group(2) else None
+        if name in mapping:
+            return mapping[name]
+        if fallback is not None:
+            return fallback
+        return match.group(0)
+
+    return re.sub(r"var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)", replace_var, css_text)
 
 
 def strip_html_wrapper(html_text: str) -> str:
@@ -55,6 +80,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     raw = apply_tags(raw, tags)
 
     css_text = load_module_css(input_path)
+    css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
     if css_text.strip():
         try:

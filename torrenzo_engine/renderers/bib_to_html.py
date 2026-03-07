@@ -13,12 +13,17 @@ FALLBACK_STYLE = "unsrt"
 
 
 URL_LATEX_RE = re.compile(r"\\\\url\s+([^\\\s<]+)")
-URL_PLAIN_RE = re.compile(r"((?:https?|ftp)://[^\s<]+)")
+URL_PLAIN_RE = re.compile(r"((?:https?|ftp)://[^\s<>\\'\"]+)")
 
 
 def linkify_urls(text: str) -> str:
     def repl(match: re.Match[str]) -> str:
         url = match.group(1)
+        start = match.start()
+        last_open = text.rfind("<a", 0, start)
+        last_close = text.rfind("</a", 0, start)
+        if last_open != -1 and last_open > last_close:
+            return match.group(0)
         safe = html.escape(url, quote=True)
         return f"<a href=\"{safe}\">{safe}</a>"
 

@@ -1,18 +1,46 @@
-# Module 01 Activities
+# Module 3: Citrus Observation and Catalogue Writing
 
-- `=[[outline]].slo.a`
-- `=[[outline]].slo.b`
-- `=[[outline]].slo.c`
-- `=[[outline]].slo.d`
 
-## Activity 1: Colour Hunt
+## Resources
 
-Collect three different fruits or fruit images and note how each one adds a splash of colour to your workspace. Record at least one colour word and one feeling word for each item.
 
-## Activity 2: Texture Tally
+<section>
 
-With eyes closed, feel the surface of a fruit and describe its texture in plain language. Share the textures in a short paragraph or bullet list and compare how similar or different they feel.
+### Observing Everyday Objects (Henderson, 2021)
 
-## Activity 3: Sensory Pairing
+Chapter 3, *‘Describing Familiar Objects’* (pp. 41–58), explores how careful observation can transform ordinary objects into interesting subjects for description. The chapter introduces practical techniques for noticing colour variation, surface texture, scent, and shape. It also demonstrates how short descriptive passages can highlight the distinctive qualities of everyday items such as fruits.
 
-Pair a fruit with a sound or scent that feels harmonious. Write a sentence that explains the pairing—this encourages creative associations and playful storytelling.
+Access [Observing Everyday Objects](https://orangeuni.edu/library)
+
+</section>
+
+<section>
+
+### Citrus Diversity and Characteristics (Delgado, 2022)
+
+This chapter provides a short overview of citrus fruits and their distinctive characteristics. It explains how oranges, lemons, mandarins, and limes differ in flavour, acidity, aroma, and visual appearance. The chapter includes several examples showing how these characteristics can be translated into clear descriptive language.
+
+Access [Citrus Diversity and Characteristics](https://orangeuni.edu/library)
+
+</section>
+
+<section>
+
+### Writing Catalogue Entries (Marshall, 2020)
+
+This article explores how catalogue entries are used in museums, botanical collections, and illustrated guides. The author explains how short descriptions and images are combined to communicate essential information clearly and efficiently. The examples demonstrate how concise writing can highlight the most distinctive features of an object.
+
+Access [Writing Catalogue Entries](https://orangeuni.edu/library)
+
+</section>
+
+<section>
+
+### Photographing Food and Natural Objects (Chen & Ibrahim, 2022)
+
+This reading introduces basic techniques for photographing food and natural objects for documentation. The chapter discusses lighting, background selection, and composition, and shows how small adjustments can make an object easier to observe and describe. These techniques can help you produce clear images for your fruit catalogue.
+
+Access [Photographing Food and Natural Objects](https://orangeuni.edu/library)
+
+</section>
+

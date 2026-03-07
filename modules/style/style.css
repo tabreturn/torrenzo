@@ -1,3 +1,42 @@
-h1 {
-  background-color: maroon;
+/* =========================================
+   COLOR PALETTE
+   ========================================= */
+
+:root {
+  --color-black: #000;
+  --color-burgundy: #403;
+  --color-crimson: #812;
+  --color-gold: #FC1;
+  --color-ivory: #FFE;
+  --color-orange: #E52;
+  --color-orange-dark: #F70;
+  --color-rose: #B24;
 }
+
+
+/* =========================================
+   SECTION HEADINGS & SECTIONS
+   ========================================= */
+
+h1 {
+  margin-bottom: 25px;
+  margin-top: 30px;
+  text-align: center;
+}
+
+h2 {
+  background: var(--color-crimson);
+  color: var(--color-ivory);
+  margin: 20px 0 15px;
+  padding: 7px 10px;
+}
+
+section {
+  background: var(--color-ivory);
+  border: 1px solid var(--color-gold);
+  border-radius: 6px;
+  margin: 25px 0;
+  padding: 18px 20px;
+}
+
+
