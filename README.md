@@ -19,6 +19,8 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
 | `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
+See [sample_builds](sample_builds) for example output artefacts generated from the demo content.
+
 ### Yeah, But Why?
 
 Torrenzo keeps learning content **portable, readable, and version-controlled**.
@@ -181,6 +183,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [x] Improve brief templates (page numbers, versioning in headers, etc.)
 - [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
 - [ ] Consolidate on Python (or Node?) to maintain a single dependency stack
+- [ ] Configure GitHub Actions to build cross-platform executables (Windows/macOS/Linux).
 - [ ] ...
 
 ### 'Maybe' Goals
@@ -190,3 +193,4 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Add support for Marp slide decks
 - [ ] Implement batch LMS content importer (via Tampermonkey or similar)
 - [ ] ...
+
