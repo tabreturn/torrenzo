@@ -19,7 +19,7 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
 | `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
-See [sample_builds](sample_builds) for example output artefacts generated from the demo content.
+See [sample_build](sample_build) for example output artefacts generated from the demo content.
 
 ### Yeah, But Why?
 
