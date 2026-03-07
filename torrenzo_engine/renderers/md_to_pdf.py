@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import re
 import shutil
 import subprocess
@@ -100,7 +99,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     body = apply_tags(body, tags)
 
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
-    _ = md
+    _ = md  # parser kept for future extensions
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 

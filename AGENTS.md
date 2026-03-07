@@ -19,12 +19,18 @@
 - Run from repo root: `python torrenzo.py` (optionally `python torrenzo.py <other-root>` to target a different subject directory).
 - All outputs write to `build/`, which is cleared at the start of each run. Demo inputs keep `demo_` prefixes in output filenames; non-demo inputs do not.
 
+## Tagging (current behavior)
+
+- **Only Dataview-style inline tags are supported**: `` `=[[outline]].path.to.value` `` and the SLO dataview block (LIST without id slo[x] ... FLATTEN ...).
+- Parent paths (e.g., `` `=[[outline]].assessment.a1` ``) auto-render as HTML tables for their child fields. Lists of SLO codes render as `<ul>` of full descriptions (no bold codes).
+- Assessment metatable: `` `=[[outline]].assessment.<id>.metatable` `` outputs the formatted assessment table.
+
 ## Directory Layout & Naming
 
 - `torrenzo.py`: CLI entry; builds tag map from `outline.md` YAML, registers renderers, constructs job specs, and runs the pipeline.
 - `torrenzo_engine/`: renderer registry and pipeline execution.
 - `torrenzo_engine/renderers/`: individual renderers (`md_to_pdf`, `md_to_html`, `bib_to_html`).
-- `outline.md`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via tags like `[[slo-a]]`, `[[assess-1-title]]`, and `[[assess-1-meta]]`.
+- `outline.md`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via Dataview-style tags.
 - `assessments/demo_assessment_<n>/ass_<n>_brief.md`: demo briefs → PDF (assets alongside).
 - `assessments/assessment_<n>/ass_<n>_brief.md`: user briefs → PDF (gitignored by default unless demo-prefixed).
 - `modules/demo_module_<n>/mod_<n>_content.md`: demo module content → HTML.
