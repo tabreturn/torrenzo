@@ -9,11 +9,12 @@ module.exports = {
     headerTemplate: `
       <style>
         header {
+          align-items: center;
           color: #666;
-          display: grid;
+          display: flex;
           font-family: sans-serif;
           font-size: 9pt;
-          grid-template-columns: 1fr auto;
+          justify-content: space-between;
           padding: 8mm 18mm;
           width: 100%;
         }
@@ -22,14 +23,10 @@ module.exports = {
           height: 1.5cm;
           width: auto;
         }
-
-        .ver {
-          text-align: right;
-        }
       </style>
       <header>
         <div><!--INLINE_LOGO_MARKUP--></div>
-        <div class="ver"><em>ver. ${versionDate}</em></div>
+        <em>ver. ${versionDate}</em>
       </header>
     `,
 
