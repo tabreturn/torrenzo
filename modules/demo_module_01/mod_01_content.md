@@ -12,13 +12,13 @@ One of the most widely recognised citrus fruits, known for its bright colour and
 
 Welcome to Module 3. This module explores how fruits can be carefully observed, described, and organised into a simple catalogue format. Citrus fruits provide an excellent opportunity to practice observation skills because they combine distinctive colour, scent, texture, and flavour. The orange is a familiar example. While it may seem ordinary at first glance, closer observation reveals many interesting features: the textured skin, the segmented interior, the fine membranes separating each wedge, and the sharp burst of citrus aroma released when the peel is broken.
 
-Botanists classify oranges within the genus *Citrus*, a group of fruits that includes lemons, limes, mandarins, and grapefruits (Delgado, 2022). These fruits share structural similarities, such as segmented flesh and aromatic oils in their skins, yet they vary widely in sweetness, acidity, and appearance. Observing these differences helps develop the ability to describe food clearly and accurately.
+Botanists classify oranges within the genus *Citrus*, a group of fruits that includes lemons, limes, mandarins, and grapefruits @delgado2022citrus. These fruits share structural similarities, such as segmented flesh and aromatic oils in their skins, yet they vary widely in sweetness, acidity, and appearance. Observing these differences helps develop the ability to describe food clearly and accurately.
 
-The orange also illustrates how sensory experiences combine to shape our perception of fruit. Its colour suggests freshness and sweetness, while the scent released from the peel is often stronger than the flavour itself. When eaten, the juicy interior delivers both sweetness and acidity, creating the refreshing taste that citrus fruits are known for (Harper & Singh, 2021).
+The orange also illustrates how sensory experiences combine to shape our perception of fruit. Its colour suggests freshness and sweetness, while the scent released from the peel is often stronger than the flavour itself. When eaten, the juicy interior delivers both sweetness and acidity, creating the refreshing taste that citrus fruits are known for @harper2021sensory.
 
-In this module you will learn how to organise fruit observations into short catalogue entries. A catalogue entry typically combines a small image with a concise descriptive paragraph that highlights the most noticeable qualities of the fruit. This format is commonly used in field guides, botanical references, and food catalogues because it allows readers to quickly understand both the appearance and character of an item (Marshall, 2020).
+In this module you will learn how to organise fruit observations into short catalogue entries. A catalogue entry typically combines a small image with a concise descriptive paragraph that highlights the most noticeable qualities of the fruit. This format is commonly used in field guides, botanical references, and food catalogues because it allows readers to quickly understand both the appearance and character of an item @marshall2020catalogue.
 
-You will also continue thinking about how images and written descriptions support one another. A photograph communicates visual qualities such as colour, shape, and texture, while written descriptions can capture sensory experiences—such as aroma, flavour, or texture -- that images alone cannot fully convey.
+You will also continue thinking about how images and written descriptions support one another. A photograph communicates visual qualities such as colour, shape, and texture, while written descriptions can capture sensory experiences—such as aroma, flavour, or texture -- that images alone cannot fully convey @bogus.
 
 By the end of this module you should feel more confident organising your fruit observations into structured catalogue entries that combine descriptive writing and images. These skills will support your progress toward **Assessment 1**, where you will create a short fruit catalogue featuring three fruits of your choosing.
 
@@ -49,8 +49,5 @@ You can prepare for this assessment task by using the learning resources provide
 
 If you would like to begin working on the assessment early, ensure that you have reviewed the assessment brief and understand the submission requirements before drafting your catalogue entries.
 
-
-## References
-
-<!-- maintain references in mod_01_resources.bib (BibTeX); the site build renders them in /build. -->
+<!-- maintain references in mod_01_resources.bib (BibTeX); the site build renders them in /build here. -->
 

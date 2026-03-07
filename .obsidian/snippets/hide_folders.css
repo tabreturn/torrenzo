@@ -5,8 +5,6 @@
 .nav-folder[data-path*="build"],
 .nav-folder-title[data-path*="env"],
 .nav-folder[data-path*="env"],
-.nav-folder-title[data-path*="modules"],
-.nav-folder[data-path*="modules"],
 .nav-folder-title[data-path*="node_modules"],
 .nav-folder[data-path*="node_modules"],
 .nav-folder-title[data-path*="sample_build"],

@@ -7,8 +7,14 @@ from typing import Any, Dict, Tuple
 from markdown_it import MarkdownIt
 from premailer import transform
 from lxml import html as lxml_html
+from pybtex.database import parse_file
 
+from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
+
+
+CITATION_BRACKET_RE = re.compile(r"\[@([^\]]+)\]")
+CITATION_BARE_RE = re.compile(r"(?<!\w)@([A-Za-z0-9:_-]+)")
 
 
 def load_module_css(input_path: Path) -> str:
@@ -75,6 +81,91 @@ def sanitize_html_attributes(html_text: str) -> str:
     return lxml_html.tostring(document, encoding="unicode", method="html")
 
 
+def load_bibliography(input_path: Path) -> dict[str, Any]:
+    module_dir = input_path.parent
+    entries: dict[str, Any] = {}
+    for bib_path in sorted(module_dir.glob("mod_*_resources*.bib")):
+        try:
+            bib_data = parse_file(str(bib_path))
+        except Exception:
+            continue
+        for key, entry in bib_data.entries.items():
+            if key not in entries:
+                entries[key] = entry
+    return entries
+
+
+def collect_citation_numbers(text: str, bib_entries: dict[str, Any]) -> tuple[dict[str, int], list[str], list[str]]:
+    mapping: dict[str, int] = {}
+    ordered: list[str] = []
+    missing: list[str] = []
+
+    def add_key(key: str) -> None:
+        if key in bib_entries:
+            if key not in mapping:
+                mapping[key] = len(mapping) + 1
+                ordered.append(key)
+        elif key not in missing:
+            missing.append(key)
+
+    for match in CITATION_BRACKET_RE.finditer(text):
+        raw_keys = match.group(1)
+        for token in re.split(r"[;,]", raw_keys):
+            key = token.strip().lstrip("@")
+            if key:
+                add_key(key)
+    for match in CITATION_BARE_RE.finditer(text):
+        key = match.group(1).strip()
+        if key:
+            add_key(key)
+    return mapping, ordered, missing
+
+
+def replace_citations(text: str, mapping: dict[str, int]) -> str:
+    def replace_bracket(match: re.Match[str]) -> str:
+        raw_keys = match.group(1)
+        pieces: list[str] = []
+        for token in re.split(r"[;,]", raw_keys):
+            key = token.strip().lstrip("@")
+            if not key:
+                continue
+            number = mapping.get(key)
+            if number is None:
+                pieces.append(f"[@{key}]")
+            else:
+                pieces.append(f'<sup><a href="#ref-{key}">[{number}]</a></sup>')
+        return " ".join(pieces) if pieces else match.group(0)
+
+    def replace_bare(match: re.Match[str]) -> str:
+        key = match.group(1)
+        number = mapping.get(key)
+        if number is None:
+            return match.group(0)
+        return f'<sup><a href="#ref-{key}">[{number}]</a></sup>'
+
+    text = CITATION_BRACKET_RE.sub(replace_bracket, text)
+    text = CITATION_BARE_RE.sub(replace_bare, text)
+    return text
+
+
+def render_references(keys_in_order: list[str], bib_entries: dict[str, Any]) -> str:
+    if not keys_in_order:
+        return ""
+    items: list[str] = []
+    for key in keys_in_order:
+        entry = bib_entries.get(key)
+        if entry is None:
+            continue
+        try:
+            html_block = render_entry_to_html(entry)
+        except Exception:
+            continue
+        items.append(f'<li id="ref-{key}">{html_block}</li>')
+    if not items:
+        return ""
+    return "\n".join(["<h2>References</h2>", "<ul>", *items, "</ul>"])
+
+
 def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:
     tags = context.get("tags", {})
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
@@ -82,9 +173,18 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
 
     raw = apply_tags(raw, tags)
 
+    bib_entries = load_bibliography(input_path)
+    citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(raw, bib_entries)
+    if citation_numbers:
+        raw = replace_citations(raw, citation_numbers)
+
     css_text = load_module_css(input_path)
     css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
+    if ordered_keys:
+        references = render_references(ordered_keys, bib_entries)
+        if references:
+            html_body = f"{html_body}\n{references}"
     if css_text.strip():
         try:
             html_body = transform(
@@ -99,4 +199,6 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html_body, encoding="utf-8")
-    return True, f"{input_path} -> {output_path}"
+
+    msg_suffix = f" (missing citations: {', '.join(missing_keys)})" if missing_keys else ""
+    return True, f"{input_path} -> {output_path}{msg_suffix}"
