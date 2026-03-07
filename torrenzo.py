@@ -237,14 +237,14 @@ def build_tag_map() -> dict[str, str]:
                     detail = nested if nested is not None else html.escape(str(v))
                 rows.append((str(k).replace('_', ' ').title(), detail))
             if rows:
-                lines = ['<table>', '<thead><tr><th>Field</th><th>Details</th></tr></thead>', '<tbody>']
+                lines = ['<table>', '<tbody>']
                 for label, detail in rows:
                     lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
                 lines.append('</tbody></table>')
                 return '\n'.join(lines)
         if isinstance(value, list):
             if value and all(isinstance(item, (dict, list)) for item in value):
-                lines = ['<table>', '<thead><tr><th>Item</th><th>Details</th></tr></thead>', '<tbody>']
+                lines = ['<table>', '<tbody>']
                 for idx, item in enumerate(value):
                     lines.append(f'<tr><td>{idx}</td><td>{to_table(item, f"{prefix}.{idx}", slos_lookup) or html.escape(str(item))}</td></tr>')
                 lines.append('</tbody></table>')

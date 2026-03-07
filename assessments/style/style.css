@@ -1,191 +1,248 @@
-@page {
-    size: A4;
-    margin: 42mm 18mm 20mm 18mm;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 8mm;
-    left: 10mm;
-    width: 36mm;
-    height: 12mm;
-    background: url("style/logo.png") no-repeat left center / contain;
-}
+/* =========================================
+   COLOR PALETTE
+   ========================================= */
 
 :root {
-    --text: #5e1222;
-    --muted: #8f2940;
-    --border: #cfd8e3;
-    --border-strong: #aebccc;
-    --accent: #0f766e;
-    --accent-soft: #e6f4f1;
-    --heading: #881329;
-    --subheading: #6f1830;
-    --code-bg: #f4f7fa;
-    --table-head-bg: #f3f6f9;
-    --quote-bg: #faf6f7;
+  --color-black: #000;
+  --color-burgundy: #403;
+  --color-crimson: #812;
+  --color-gold: #FC1;
+  --color-ivory: #FFE;
+  --color-orange: #E52;
+  --color-orange-dark: #F70;
+  --color-rose: #B24;
+}
+
+
+/* =========================================
+   FONT DEFINITIONS
+   ========================================= */
+
+@font-face {
+  font-family: 'InterVariable';
+  src: url('style/InterVariable.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: "InterVariable";
-    src: url("style/InterVariable.ttf") format("truetype");
+  font-family: 'InterVariable-Italic';
+  font-style: italic;
+  src: url('style/InterVariable-Italic.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: "InterVariable-Italic";
-    src: url("style/InterVariable-Italic.ttf") format("truetype");
-    font-style: italic;
+  font-family: 'Bungee';
+  font-weight: 900;
+  src: url('style/BungeeRegular.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: "Bungee";
-    src: url("style/BungeeRegular.ttf") format("truetype");
-    font-weight: 900;
+  font-family: 'RecursiveVariable';
+  src: url('style/RecursiveVariable.ttf') format('truetype');
 }
 
-@font-face {
-    font-family: "RecursiveVariable";
-    src: url("style/RecursiveVariable.ttf") format("truetype");
-}
+
+/* =========================================
+   BASE DOCUMENT SETTINGS
+   ========================================= */
 
 html {
-    font-size: 10.5pt;
+  font-size: 10.5pt;
 }
 
 body {
-    font-family: "InterVariable", sans-serif;
-    line-height: 1.55;
-    color: var(--text);
-    margin: 0;
-    padding: 0;
-    background: #fff;
-    hyphens: auto;
+  color: var(--color-black);
+  font-family: 'InterVariable', sans-serif;
+  hyphens: auto;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
 }
 
+
+/* =========================================
+   HEADINGS
+   ========================================= */
+
 h1, h2 {
-    font-family: "Bungee", sans-serif;
-    text-transform: uppercase;
-    line-height: 1.15;
-    color: var(--heading);
-    page-break-after: avoid;
+  color: var(--color-burgundy);
+  font-family: 'Bungee', sans-serif;
+  line-height: 1.15;
+  page-break-after: avoid;
 }
 
 h1 {
-    font-size: 24pt;
-    margin: 0 0 14pt;
-    padding-bottom: 8pt;
-    border-bottom: 2px solid var(--heading);
+  border-bottom: 2pt solid var(--color-burgundy);
+  font-size: 20pt;
+  margin: 0 0 14pt;
+  padding-bottom: 8pt;
 }
 
 h2 {
-    font-size: 15pt;
-    margin: 22pt 0 10pt;
-    color: var(--subheading);
+  color: var(--color-crimson);
+  font-size: 15pt;
+  margin: 22pt 0 10pt;
 }
 
 h3, h4, h5, h6 {
-    font-family: "InterVariable", sans-serif;
-    font-weight: 700;
-    color: var(--subheading);
-    margin: 16pt 0 6pt;
-    page-break-after: avoid;
+  color: var(--color-crimson);
+  font-family: 'InterVariable', sans-serif;
+  font-weight: 700;
+  margin: 16pt 0 6pt;
+  page-break-after: avoid;
 }
 
+
+/* =========================================
+   TEXT CONTENT
+   ========================================= */
+
 p {
-    margin: 0 0 10pt;
+  margin: 0 0 10pt;
+  orphans: 3;
+  widows: 3;
 }
 
 ul, ol {
-    margin: 0 0 10pt 1.25rem;
-    padding: 0;
+  margin: 0 0 10pt 1.25rem;
+  padding: 0;
 }
 
 li {
-    margin: 3pt 0;
+  margin: 3pt 0;
 }
 
 blockquote {
-    margin: 14pt 0;
-    padding: 8pt 12pt;
-    border-left: 4px solid var(--muted);
-    background: var(--quote-bg);
-    color: var(--subheading);
+  background: var(--color-ivory);
+  border-left: 4pt solid var(--color-rose);
+  color: var(--color-crimson);
+  margin: 14pt 0;
+  padding: 8pt 12pt;
 }
 
+
+/* =========================================
+   CODE FORMATTING
+   ========================================= */
+
 code {
-    font-family: "RecursiveVariable", monospace;
-    background: var(--code-bg);
-    border: 1px solid #e2e8f0;
-    padding: 0.08em 0.35em;
-    border-radius: 4px;
-    font-size: 0.92em;
+  background: var(--color-ivory);
+  border: 1pt solid var(--color-gold);
+  border-radius: 4pt;
+  font-family: 'RecursiveVariable', monospace;
+  font-size: 0.92em;
+  padding: 0.08em 0.35em;
 }
 
 pre {
-    margin: 12pt 0 14pt;
-    page-break-inside: avoid;
+  margin: 12pt 0 14pt;
+  page-break-inside: avoid;
 }
 
 pre code {
-    display: block;
-    padding: 10pt 12pt;
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    font-size: 9pt;
-    line-height: 1.45;
+  background: var(--color-ivory);
+  border: 1pt solid var(--color-gold);
+  border-radius: 8pt;
+  display: block;
+  font-size: 9pt;
+  line-height: 1.45;
+  padding: 10pt 12pt;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
+
+/* =========================================
+   TABLE STYLING
+   ========================================= */
+
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 0 14pt;
-    font-size: 9.5pt;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 0 0 14pt;
+  width: 100%;
 }
 
 th, td {
-    border: 1px solid var(--border);
-    padding: 7pt 8pt;
-    text-align: left;
-    vertical-align: top;
+  border: 1pt solid var(--color-orange-dark);
+  padding: 7pt 8pt;
+  text-align: left;
+  vertical-align: top;
 }
 
 th {
-    background: var(--table-head-bg);
-    color: #243b53;
-    font-weight: 700;
-    border-bottom: 1.2px solid var(--border-strong);
+  background: var(--color-ivory);
+  border-bottom: 1.2pt solid var(--color-orange-dark);
+  color: var(--color-burgundy);
+  font-weight: 700;
+}
+
+/* left column styling */
+
+th:first-child,
+td:first-child {
+  background: var(--color-orange-dark);
+  color: var(--color-black);
+  font-weight: 700;
 }
 
 thead {
-    display: table-header-group;
+  display: table-header-group;
 }
+
+/* rubric is last table -- make its text even smaller */
+
+table:last-of-type {
+  font-size: 8pt;
+}
+
+
+/* =========================================
+   MEDIA
+   ========================================= */
 
 img, svg {
-    max-width: 100%;
-    height: auto;
+  height: auto;
+  max-width: 100%;
+  page-break-inside: avoid;
 }
+
+
+/* =========================================
+   DIVIDERS
+   ========================================= */
 
 hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 16pt 0;
+  border: none;
+  border-top: 1pt solid var(--color-gold);
+  margin: 16pt 0;
 }
+
+
+/* =========================================
+   LINKS
+   ========================================= */
 
 a {
-    color: var(--accent);
-    text-decoration: none;
+  color: var(--color-orange);
+  text-decoration: none;
 }
 
-a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 85%;
-    color: var(--muted);
+a[href^='http']::after {
+  color: var(--color-rose);
+  content: ' (' attr(href) ')';
+  font-size: 85%;
 }
 
-.page-break {
-    page-break-after: always;
+
+/* =========================================
+   PAGE CONTROL
+   ========================================= */
+
+h1, h2, h3 {
+  break-after: avoid;
 }
+
+table {
+  break-inside: avoid;
+}
+

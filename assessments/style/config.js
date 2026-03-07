@@ -1,34 +1,52 @@
+const versionDate = new Date().toISOString().slice(0, 10);
+
 module.exports = {
-  stylesheet: ['style.css'],
-  page_media_type: 'print',
   pdf_options: {
+    format: 'A4',
+    margin: { top: '38mm', right: '18mm', bottom: '20mm', left: '18mm' },
     displayHeaderFooter: true,
-    margin: '25mm 20mm',
+
     headerTemplate: `
       <style>
-        @font-face {
-          font-family: InterVariable;
-          src: url("style/InterVariable.ttf") format("truetype");
-        }
-        .hdr {
-          width: 100%;
-          font-size: 10px;
+        header {
           color: #666;
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 0 12px;
+          display: grid;
+          font-family: sans-serif;
+          font-size: 9pt;
+          grid-template-columns: 1fr auto;
+          padding: 8mm 18mm;
+          width: 100%;
         }
-        .hdr .ver { font-family: InterVariable, sans-serif; }
-        .hdr svg { height: 2cm; width: auto }
+
+        header svg {
+          height: 1.5cm;
+          width: auto;
+        }
+
+        .ver {
+          text-align: right;
+        }
       </style>
-      <div class="hdr">
-        <!--INLINE_LOGO_MARKUP-->
-        <span class="ver">ver.2025-03-06</span>
-      </div>
+      <header>
+        <div><!--INLINE_LOGO_MARKUP--></div>
+        <div class="ver"><em>ver. ${versionDate}</em></div>
+      </header>
     `,
-    footerTemplate: '<div style="width:100%; font-size:10px; text-align:center; color:#666;">Page <span class="pageNumber"></span> / <span class="totalPages"></span></div>'
+
+    footerTemplate: `
+      <style>
+        footer {
+          color: #666;
+          font-family: sans-serif;
+          font-size: 9pt;
+          padding-bottom: 5mm;
+          text-align: center;
+          width: 100%;
+        }
+      </style>
+      <footer>
+        Page <span class="pageNumber"></span> / <span class="totalPages"></span>
+      </footer>
+    `
   }
 };
