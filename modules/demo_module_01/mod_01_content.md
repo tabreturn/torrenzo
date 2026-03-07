@@ -1,6 +1,6 @@
 # Module 3: Citrus Observation, Description and Catalogue Design
 
-![placeholder img](assets/placeholder.png)
+![placeholder img](assets/mod_01_placeholder.png)
 
 *Image: FruitStock*
 

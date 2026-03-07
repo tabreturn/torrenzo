@@ -14,7 +14,7 @@ from typing import Any
 import yaml
 
 from torrenzo_engine import Pipeline, RenderJob, RendererRegistry
-from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_bib_to_html
+from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_bib_to_html, render_copy_asset
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
@@ -316,7 +316,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
         RenderJob(
             name='assessment_briefs',
             input_pattern=briefs_pattern,
-            output_dir=Path('.'),
+            output_dir=Path('assessments_briefs'),
             renderer='md_to_pdf',
             context={
                 'tags': tags,
@@ -330,7 +330,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
         RenderJob(
             name='module_content',
             input_pattern=content_pattern,
-            output_dir=Path('.'),
+            output_dir=Path('modules_html'),
             renderer='md_to_html',
             context={'tags': tags},
             output_ext='.html',
@@ -339,7 +339,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
         RenderJob(
             name='module_activities',
             input_pattern=activities_pattern,
-            output_dir=Path('.'),
+            output_dir=Path('modules_html'),
             renderer='md_to_html',
             context={'tags': tags},
             output_ext='.html',
@@ -348,11 +348,22 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
         RenderJob(
             name='module_resources',
             input_pattern=resources_pattern,
-            output_dir=Path('.'),
+            output_dir=Path('modules_html'),
             renderer='bib_to_html',
             context={},
             output_ext='.html',
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+        ),
+        RenderJob(
+            name='module_assets',
+            input_pattern='modules/*/assets/**/*',
+            output_dir=Path('modules_assets'),
+            renderer='copy_asset',
+            context={},
+            output_ext='',
+            output_namer=lambda p: (
+                f"demo_{p.name}" if 'demo_' in p.parent.parent.name else p.name
+            ),
         ),
     ]
 
@@ -374,6 +385,7 @@ def main() -> None:
     register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
     register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
     register_renderer(registry, 'bib_to_html', lambda _: render_bib_to_html)
+    register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
     pipeline = Pipeline(args.root, BUILD_DIR, registry)
     diagnostics = pipeline.execute(make_jobs(tags))

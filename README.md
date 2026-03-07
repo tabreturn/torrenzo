@@ -175,6 +175,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ## To-Do
 
+- [ ] Determine whether Canvas Files can be linked to directly (e.g., images or file paths).
 - [x] Match Obsidian's (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [ ] Refine CSS styles for assessment briefs
 - [x] Improve brief templates (page numbers, versioning in headers, etc.)
