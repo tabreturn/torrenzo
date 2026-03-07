@@ -40,7 +40,10 @@ def substitute_css_variables(css_text: str) -> str:
             return fallback
         return match.group(0)
 
-    return re.sub(r"var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)", replace_var, css_text)
+    substituted = re.sub(r"var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)", replace_var, css_text)
+    substituted = re.sub(r":root\s*{[^}]*}", "", substituted, flags=re.S)
+    substituted = re.sub(r"\s*--[A-Za-z0-9_-]+\s*:\s*[^;]+;\s*", "", substituted)
+    return substituted
 
 
 def strip_html_wrapper(html_text: str) -> str:
