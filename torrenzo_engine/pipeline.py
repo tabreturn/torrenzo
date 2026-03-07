@@ -71,14 +71,15 @@ class Pipeline:
 
                 output_path = output_dir / output_name
                 result = renderer(input_path, output_path, job.context)
+                render_warnings: list[str] = []
                 if isinstance(result, tuple) and len(result) == 3:
                     success, msg, render_warnings = result
-                    for warning in render_warnings:
-                        entries.append(("warning", f"{job.name}: {input_path.name}: {warning}"))
                 else:
                     success, msg = result
                 level = "info" if success else "error"
                 entries.append((level, f"{job.name}: {msg}"))
+                for warning in render_warnings:
+                    entries.append(("warning", f"{job.name}: {input_path.name}: {warning}"))
 
         ordered_entries = order_levels(entries)
         formatted = [fmt(level, message) for level, message in ordered_entries]

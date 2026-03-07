@@ -17,7 +17,6 @@ Torrenzo currently performs the following transformations:
 | `assessments/assessment_<n>/ass_<n>_brief.md` | PDF    |
 | `modules/module_<n>/mod_<n>_content.md`       | HTML   |
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
-| `modules/module_<n>/mod_<n>_resources.bib`    | HTML   |
 
 See [sample_build](sample_build) for example output artefacts generated from the demo content.
 
@@ -186,20 +185,22 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ## To-Do
 
-- [ ] Determine whether Canvas Files can be linked to directly (e.g., images or file paths).
-- [x] Match Obsidian's (Dataview) tag syntax to better support WYSIWYG-style editing workflows
-- [ ] Refine CSS styles for assessment briefs
-- [x] Improve brief templates (page numbers, versioning in headers, etc.)
-- [ ] Capture and expose build diagnostics (missing placeholders, missing assets, invalid front matter, failed conversions)
-- [ ] Consolidate on Python (or Node?) to maintain a single dependency stack
-- [ ] Configure GitHub Actions to build cross-platform executables (Windows/macOS/Linux).
+
+- [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
+- [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
+- [x] Refine CSS styles for assessment briefs
+- [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
+- [ ] Add support for common page elements (e.g., tabbed navigation components)
+- [ ] Determine whether Canvas Files can be linked to directly (e.g., images or other file asset paths)
+- [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
 - [ ] ...
 
 ### 'Maybe' Goals
 
-- [ ] Build Obsidian extension/plugin to support workflow (configuration, build, etc.)
-- [ ] Add support for Word documents (via semantic styles)
+- [ ] Consolidate on a single runtime stack (Python or Node)
 - [ ] Add support for Marp slide decks
-- [ ] Implement batch LMS content importer (via Tampermonkey or similar)
+- [ ] Add support for Word documents (via semantic styles)
+- [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
+- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] ...
 

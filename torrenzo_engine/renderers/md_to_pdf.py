@@ -18,16 +18,18 @@ FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 METADATA_TOKEN = "<<metadata_table>>"
 
 
-def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str]:
+def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str, list[str]]:
+    warnings: list[str] = []
     match = FRONT_MATTER_RE.match(text)
     if not match:
-        return {}, text
+        return {}, text, warnings
     try:
         metadata = yaml.safe_load(match.group(1)) or {}
-    except Exception:
+    except Exception as exc:
         metadata = {}
+        warnings.append(f"Invalid front matter: {exc}")
     body = text[match.end():]
-    return metadata, body
+    return metadata, body, warnings
 
 
 def build_metadata_table(metadata: dict[str, Any]) -> str:
@@ -45,7 +47,15 @@ def build_metadata_table(metadata: dict[str, Any]) -> str:
     return '\n'.join(lines)
 
 
-def apply_tags(text: str, tags: dict[str, str]) -> str:
+def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
+    warnings: list[str] = []
+    missing_placeholders: set[str] = set()
+
+    def add_warning(label: str) -> None:
+        if label and label not in missing_placeholders:
+            missing_placeholders.add(label)
+            warnings.append(f"Missing placeholder value for '{label}'")
+
     def replace_content(content: str, original: str) -> str:
         parts = [part.strip() for part in content.split('|') if part.strip()]
         if not parts:
@@ -63,6 +73,8 @@ def apply_tags(text: str, tags: dict[str, str]) -> str:
             snippet = tags.get(key)
             if snippet is not None:
                 return snippet
+        if lookup_keys:
+            add_warning(lookup_keys[0])
         return original
 
     def replace_dataview_block(match: re.Match[str]) -> str:
@@ -81,25 +93,29 @@ def apply_tags(text: str, tags: dict[str, str]) -> str:
             snippet = tags.get(key)
             if snippet is not None:
                 return snippet
+        if candidates:
+            add_warning(candidates[0])
         return match.group(0)
 
-    text = DATAVIEW_RE.sub(lambda m: replace_content(f"outline.{m.group(1)}", m.group(0)), text)
-    text = DATAVIEW_BLOCK_RE.sub(lambda m: replace_dataview_block(m), text)
-    return text
+    replaced = DATAVIEW_RE.sub(lambda m: replace_content(f"outline.{m.group(1)}", m.group(0)), text)
+    replaced = DATAVIEW_BLOCK_RE.sub(lambda m: replace_dataview_block(m), replaced)
+    return replaced, warnings
 
 
-def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str]:
+def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str, list[str]]:
     pdf_css = context.get('pdf_css', '')
     tags = context.get('tags', {})
 
     raw_content = input_path.read_text(encoding='utf-8')
-    metadata, body = extract_metadata_from_front_matter(raw_content)
+    metadata, body, meta_warnings = extract_metadata_from_front_matter(raw_content)
+    warnings: list[str] = list(meta_warnings)
     if METADATA_TOKEN in body and metadata:
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
-    body = apply_tags(body, tags)
+    body, tag_warnings = apply_tags(body, tags)
+    warnings.extend(tag_warnings)
 
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
-    _ = md  # parser kept for future extensions
+    _ = md
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -108,7 +124,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     style_dst = workdir / 'style'
     config_src = style_src / 'config.js'
     if not config_src.exists():
-        return False, f"Missing config.js for {input_path}"
+        return False, f"Missing config.js for {input_path}", warnings
 
     logo_path = style_src / 'logo.svg'
     created_style = False
@@ -130,6 +146,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
             config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', svg_markup)
         else:
             config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', '')
+            warnings.append(f"Missing logo asset for {input_path}")
 
         config_dst = style_dst / 'config.js'
         config_dst.write_text(config_content, encoding='utf-8')
@@ -155,7 +172,8 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         if success:
             msg = f"{input_path} -> {output_path}"
         else:
-            msg = f"{input_path} -> {output_path} failed: {result.stderr.strip()}"
+            stderr_output = result.stderr.strip() if result else ''
+            msg = f"{input_path} -> {output_path} failed: {stderr_output}"
     except FileNotFoundError as exc:
         msg = f"{input_path} -> {output_path} failed: {exc}"
     finally:
@@ -164,4 +182,4 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         if created_style and style_dst.exists():
             shutil.rmtree(style_dst, ignore_errors=True)
 
-    return success, msg
+    return success, msg, warnings

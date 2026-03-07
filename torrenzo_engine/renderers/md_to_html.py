@@ -174,7 +174,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
     raw = input_path.read_text(encoding="utf-8")
 
-    raw = apply_tags(raw, tags)
+    raw, tag_warnings = apply_tags(raw, tags)
 
     bib_entries = load_bibliography(input_path)
     citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(raw, bib_entries)
@@ -203,7 +203,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html_body, encoding="utf-8")
 
-    warnings: list[str] = []
+    warnings: list[str] = list(tag_warnings)
     if missing_keys:
         warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
