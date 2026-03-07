@@ -5,6 +5,7 @@
     "env/",
     "modules/",
     "node_modules/",
+    "sample_build/",
     "torrenzo_engine/"
   ]
 }

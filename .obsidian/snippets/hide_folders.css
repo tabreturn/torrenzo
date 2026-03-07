@@ -9,6 +9,8 @@
 .nav-folder[data-path*="modules"],
 .nav-folder-title[data-path*="node_modules"],
 .nav-folder[data-path*="node_modules"],
+.nav-folder-title[data-path*="sample_build"],
+.nav-folder[data-path*="sample_build"] 
 .nav-folder-title[data-path*="torrenzo_engine"],
 .nav-folder[data-path*="torrenzo_engine"] {
   display: none;
