@@ -1,60 +1,43 @@
 # AGENT NOTES
 
+- README.md is canonical; skim it before changes and for details.
+- Keep this file concise; do not duplicate README.
+
 ## Repository Snapshot
 
 - Python CLI (`torrenzo.py`) orchestrates render jobs that transform Markdown briefs and module files into PDFs/HTML via the `torrenzo_engine` pipeline and renderer registry.
-- Content sources live under `assessments/` (briefs and assets) and `modules/` (module content, activities, references, assets); outputs land in `build/`.
-- Demo/sample content is checked in under `assessments/demo_assessment_*` and `modules/demo_module_*`; user-created `assessment_*` / `module_*` are gitignored but still built.
-- Outputs land in `build/`; demo inputs produce filenames prefixed with `demo_`, others keep their base names.
+- Content sources live under `assessments/` (briefs and assets) and `modules/` (module content, activities, references, assets); outputs land in `build/` (cleared each run). Demo/sample content is checked in under `demo_*`; non-demo keeps base names. `sample_build/` shows demo outputs.
+- `outline.md` provides YAML metadata injected via Dataview-style tags.
 - No automated tests or linters; validation is manual.
 
 ## Setup & Dependencies
 
-- Python 3.10+ with requirements from `requirements.txt` (includes `PyYAML`, `premailer`, etc.).
-- Node 18+ with `npm`; run `npm install` for `md-to-pdf` used in PDF rendering (PDF only; HTML renderers are pure-Python + pip deps).
-- Use a local virtualenv if present in the repo root.
-
-## Usage & Build Behavior
-
-- Run from repo root: `python torrenzo.py` (optionally `python torrenzo.py <other-root>` to target a different subject directory).
-- All outputs write to `build/`, which is cleared at the start of each run. Demo inputs keep `demo_` prefixes in output filenames; non-demo inputs do not.
+- Python 3.10+; `pip install -r requirements.txt` (use a venv if present).
+- Node 18+ with `npm`; `npm install` for `md-to-pdf` (PDF only; HTML renderers are pure Python).
+- Run from repo root: `python torrenzo.py [other-root]` to target another subject directory. Obsidian vault config included.
 
 ## Tagging (current behavior)
 
-- **Only Dataview-style inline tags are supported**: `` `=[[outline]].path.to.value` `` and the SLO dataview block (LIST without id slo[x] ... FLATTEN ...).
-- Parent paths (e.g., `` `=[[outline]].assessment.a1` ``) auto-render as HTML tables for their child fields. Lists of SLO codes render as `<ul>` of full descriptions (no bold codes).
+- Dataview-style inline tags only: `` `=[[outline]].path.to.value` ``.
+- SLO Dataview LIST block supported (LIST without id slo[x] ... FLATTEN ...).
+- Parent paths (e.g., `` `=[[outline]].assessment.a1` ``) auto-render as HTML tables; SLO code lists render `<ul>` of full descriptions (no bold codes).
 - Assessment metatable: `` `=[[outline]].assessment.<id>.metatable` `` outputs the formatted assessment table.
 
 ## Directory Layout & Naming
 
-- `torrenzo.py`: CLI entry; builds tag map from `outline.md` YAML, registers renderers, constructs job specs, and runs the pipeline.
-- `torrenzo_engine/`: renderer registry and pipeline execution.
-- `torrenzo_engine/renderers/`: individual renderers (`md_to_pdf`, `md_to_html`, `bib_to_html`).
-- `outline.md`: subject metadata (subject info, descriptor, SLOs, assessments) injected into renders via Dataview-style tags.
-- `assessments/demo_assessment_<n>/ass_<n>_brief.md`: demo briefs → PDF (assets alongside).
-- `assessments/assessment_<n>/ass_<n>_brief.md`: user briefs → PDF (gitignored by default unless demo-prefixed).
-- `modules/demo_module_<n>/mod_<n>_content.md`: demo module content → HTML.
-- `modules/demo_module_<n>/mod_<n>_activities.md`: demo activities → HTML.
-- `modules/demo_module_<n>/mod_<n>_resources.bib`: demo references → HTML.
-- `modules/module_<n>/...`: user modules (gitignored) also built; they output without the `demo_` prefix.
-- `modules/style/style.css`: optional global stylesheet inlined into module HTML; legacy attributes stripped; output HTML is body-only for LMS pasting.
-- `build/`: generated output; ephemeral.
-- Branding: `assessments/style/` is copied alongside each brief; `logo.svg` is injected into the PDF header via `assessments/style/config.js` at build time—swap that file to change the header logo.
-
-## Code Patterns & Conventions
-
-- Job specs define input globs, output dirs/exts/naming, renderer key, and optional context.
-- Renderers are registered by name; registry returns a renderer factory, invoked per job.
-- Inline formatting/tag replacement occurs in renderer implementations; HTML is escaped before markup insertion.
-- Naming uses `snake_case` functions and constant-style uppercase for patterns/regex.
-
-## Testing & Validation Approach
-
-- No automated suite; run the build (`python torrenzo.py`) and inspect `build/` artifacts.
-
-## Gotchas & Notes
-
-- `build/` is wiped each run (`prepare_build_dir`).
-- PDF rendering depends on Node/npm for `md-to-pdf`; failure to have `npx`/Node halts PDF generation.
+- `torrenzo.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
+- `torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
+- `assessments/assessment_<n>/ass_<n>_brief.md` → PDF (assets alongside); `demo_assessment_*` variants checked in.
+- `modules/module_<n>/mod_<n>_content.md`, `mod_<n>_activities.md`, `mod_<n>_resources.bib` → HTML (assets alongside); `demo_module_*` variants checked in.
+- `modules/style/style.css` is inlined into module HTML; output HTML is body-only for LMS pasting.
+- `assessments/style/` is copied alongside each brief; `logo.svg` injected into the PDF header; swap to change branding.
+- `references.bib` contains global BibTeX sources.
 - File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_content.md`, `mod_*_activities.md`, `mod_*_resources.bib`) or files are skipped.
-- New outputs require registering renderer names and adding job specs.
+
+## Testing & Validation
+
+- No automated suite; run `python torrenzo.py` to rebuild and inspect `build/` artifacts. PDF generation requires Node/npm (`npx`).
+
+## Extensibility
+
+- Plugin-style renderers; register new renderer names and job specs for additional targets (e.g., `.docx` → HTML, Marp `.md` → PDF, extended Markdown widgets).
