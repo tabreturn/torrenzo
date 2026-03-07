@@ -23,8 +23,8 @@ def fmt(level: str, message: str) -> str:
 
 
 def order_levels(entries: List[tuple[str, str]]) -> List[tuple[str, str]]:
-    level_rank = {"info": 0, "error": 1, "warning": 2}
-    return sorted(entries, key=lambda item: level_rank.get(item[0], 3))
+    level_rank = {"info": 0, "warning": 1, "error": 2}
+    return sorted(entries, key=lambda item: (level_rank.get(item[0], 3), entries.index(item)))
 
 
 class DiagnosticLevel(str):

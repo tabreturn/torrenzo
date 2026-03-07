@@ -8,7 +8,7 @@
 
 ## What Does It Do?
 
-Traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material.
+Torrenzo traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material.
 
 Torrenzo currently performs the following transformations:
 
@@ -37,6 +37,20 @@ Instead of authoring material directly in a learning management system (LMS), co
 
 ---
 
+## Usage
+
+1. Ensure to install [prerequisites](#prerequisites).
+2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
+3. Run Torrenzo from the repository root using `python torrenzo.py`
+
+By default, Torrenzo scans the current directory. To target another workspace, use: `python torrenzo.py ../other-subject`
+
+Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which is cleared at the start of each run).
+
+> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
+
+---
+
 ## Configuration & Tags
 
 Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``.
@@ -49,20 +63,6 @@ Starter keys in `outline.md`:
   map under `slo` with codes (e.g., `slo.a`)
 - **Assessments:**  
   Produce a full metadata table using `assessment.a1` or `assessment.a2`, etc.
-
----
-
-## Usage
-
-1. Ensure to install [prerequisites](#prerequisites).
-2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
-3. Run Torrenzo from the repository root using `python torrenzo.py`
-
-By default, Torrenzo scans the current directory. To target another workspace use: `python torrenzo.py ../other-subject`
-
-Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which is cleared at the start of each run).
-
-> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
 
 ---
 
@@ -114,36 +114,43 @@ subject-root/
 │   ├── demo_module_1/
 │   │   ├── mod_1_content.md
 │   │   ├── mod_1_activities.md
-│   │   ├── mod_1_resources.bib
 │   │   └── assets/
 │   ├── module_<n>/
 │   │   ├── mod_<n>_content.md
 │   │   ├── mod_<n>_activities.md
-│   │   ├── mod_<n>_resources.bib
 │   │   └── assets/
 │   └── ...
 ├── build/              # generated output
 ├── outline.md          # subject configuration (YAML)
+├── references.bib      # global references (BibTeX)
 └── torrenzo.py         # run to build
 ```
 
 ### Populating Content
 
-Subject content is organised into two directories -- `assessments/` and `modules/` -- following strict naming conventions that Torrenzo uses to locate and process files.
+Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions in these directories to locate and process files.
 
-- **Global metadata** is handled using the **`outline.md`** (specified in YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
+- **Define global metadata** in `outline.md` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
 
-- **Assessment briefs** are defined using `assessments/assessment_<n>/ass_<n>_brief.md`. Any assets the brief references (images, etc.) go in its adjacent `assets/` directory.
+- **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory.
 
-- **Module files** follow a similar naming pattern (`modules/module_<n>/`), and comprise a:
-  - `mod_<n>_content.md` -- for primary module content page(s)
-  - `mod_<n>_activities.md` -- for activity page(s)
-  - `mod_<n>_resources.bib` -- for references (in BibTeX format)
-  - `assets/` -- any supporting files (images, etc.) that form part of each module
+- **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `@refname` syntax. Torrenzo renders the corresponding references at the bottom of the page.
 
-> 💡 For multiple content or activities pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`.
+- **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
+  - `mod_<n>_content.md` -- primary module content page(s)
+  - `mod_<n>_activities.md` -- activity page(s)
+  - `assets/` -- supporting files (images, etc.) used within the module
 
-During the build process, Torrenzo injects `outline.md` metadata (SLOs, etc.) and transforms content into PDF assessment briefs, LMS-ready HTML module pages (including separate activity pages), and HTML resource lists -- all output to `build/`. Demo inputs output with a `demo_` filename prefix; non-demo inputs keep base names. Note that `build/` is cleared and regenerated on each run.
+> 💡 For multiple content or activity pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`.
+
+During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.) and converts source content into:
+
+- PDF assessment briefs
+- LMS-ready HTML module pages (including separate activity pages)
+
+Torrenzo writes all output to `build/`.
+
+When processing demo inputs, Torrenzo adds a `demo_` filename prefix. For non-demo inputs, it keeps the original base names. Torrenzo clears and regenerates the `build/` directory on each run.
 
 ### Module Styling
 

@@ -14,7 +14,7 @@ from typing import Any
 import yaml
 
 from torrenzo_engine import Pipeline, RenderJob, RendererRegistry
-from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_bib_to_html, render_copy_asset
+from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_copy_asset
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
@@ -375,7 +375,6 @@ def main() -> None:
     registry = RendererRegistry()
     register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
     register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
-    register_renderer(registry, 'bib_to_html', lambda _: render_bib_to_html)
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
     pipeline = Pipeline(args.root, BUILD_DIR, registry)
