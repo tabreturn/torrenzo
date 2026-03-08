@@ -49,13 +49,13 @@ Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which i
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
 
 
-> 💡 Use `python torrenzo.py --optimize-assets` to optimise assets. This feature requires SVGO for SVG optimization (provided via `npm install`). PNG optimization requires `pngquant` or `oxipng` installed on your system. Demo modules prefix asset filenames and `<img src>` paths with `demo_` to avoid collisions.
+> 💡 Use `python torrenzo.py --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 ---
 
 ## Configuration & Tags
 
-Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``.
+Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
 Starter keys in `outline.md`:
 
@@ -143,14 +143,14 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
   - `mod_<n>_activities.md` -- activity page(s)
   - `assets/` -- supporting files (images, etc.) used within the module
 
-> 💡 For multiple content or activity pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`.
+> 💡 For multiple content or activity pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`
 
 During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.) and converts source content into:
 
 - PDF assessment briefs
 - LMS-ready HTML module pages (including separate activity pages)
 
-Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`.
+Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
 
 When processing demo inputs, Torrenzo adds a `demo_` filename prefix to both HTML outputs and their asset filenames/paths. For non-demo inputs, it keeps the original base names. Torrenzo clears and regenerates the `build/` directory on each run.
 
@@ -160,7 +160,7 @@ An optional global stylesheet lives at `modules/style/style.css`. Its rules are 
 
 ### Assessment Branding
 
-Universal assessment branding assets live in `assessments/style/`. On each run, the build injects `logo.svg` into the PDF header. Replace `logo.svg` (must be an SVG) to use a different logo, and configure styling and header/footer elements via the `style.css` and `config.js`.
+Universal assessment branding assets live in `assessments/style/`. On each run, the build injects `logo.svg` into the PDF header. Replace `logo.svg` (must be an SVG) to use a different logo, and configure styling and header/footer elements via the `style.css` and `config.js`
 
 ---
 
