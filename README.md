@@ -184,6 +184,8 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - Marp `.md` → PDF (slide decks)
 - Extended Markdown features for module pages (accordions, navigation tabs, and other LMS-specific markup)
 
+### Common Cartidge
+
 Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more frequently and manual updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
 
 ---
