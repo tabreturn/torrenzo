@@ -12,7 +12,7 @@ Goal: author course content (HTML, images, etc.) using Torrenzo and import into 
 - Canvas import documentation  
   https://community.instructure.com/en/kb/articles/660732-how-do-i-import-content-from-common-cartridge-into-canvas
 
-- Canvas local development (Docker)
+- Canvas local development (Docker)  
   https://github.com/instructure/canvas-lms/wiki/Quick-Start
 
 
