@@ -2,6 +2,8 @@
   "userIgnoreFilters": [
     "__pycache__/",
     "build/",
+    "common_cartidge/",
+    "common_cartidge_WIP/",
     "env/",
     "node_modules/",
     "sample_build/",

@@ -184,20 +184,21 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - Marp `.md` → PDF (slide decks)
 - Extended Markdown features for module pages (accordions, navigation tabs, and other LMS-specific markup)
 
+Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more frequently and manual updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
+
 ---
 
 ## To-Do
 
-- [ ] Build to `.imscc` (Common Cartidge) format for bulk populating subjects, otherwise ...
-- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
 - [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
-- [ ] Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
+- [ ] Add Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components)
-- [ ] Determine whether Canvas Files can be linked to directly (e.g., images or other file asset paths)
+- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise ...
+- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
 - [ ] ...
 
