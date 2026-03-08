@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="man0001"
+  xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1"
+  xmlns:lom="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <metadata>
+    <schema>IMS Common Cartridge</schema>
+    <schemaversion>1.1.0</schemaversion>
+  </metadata>
+
+  <organizations/>
+
+  <resources>
+
+    <resource identifier="page_intro"
+              type="webcontent"
+              href="wiki_content/intro-page.html">
+      <file href="wiki_content/intro-page.html"/>
+      <file href="web_resources/image1.png"/>
+    </resource>
+
+    <resource identifier="modules_meta"
+              type="associatedcontent/imscc_xmlv1p1/learning-application-resource"
+              href="course_settings/module_meta.xml">
+      <file href="course_settings/module_meta.xml"/>
+    </resource>
+
+  </resources>
+
+</manifest>

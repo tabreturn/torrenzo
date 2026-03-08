@@ -1,0 +1,11 @@
+<modules>
+  <module identifier="module1">
+    <title>Module 1</title>
+    <items>
+      <item identifier="item1" identifierref="page_intro">
+        <title>Intro Page</title>
+        <content_type>WikiPage</content_type>
+      </item>
+    </items>
+  </module>
+</modules>
