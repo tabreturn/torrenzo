@@ -199,8 +199,8 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [ ] Add Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components)
-- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise ...
-- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
+- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise
+- [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
 - [ ] ...
 
