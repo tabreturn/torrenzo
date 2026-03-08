@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 from typing import Any, Dict, Tuple
 
@@ -169,6 +169,22 @@ def render_references(keys_in_order: list[str], bib_entries: dict[str, Any]) -> 
     return "\n".join(["<h2>References</h2>", "<ul>", *items, "</ul>"])
 
 
+def prefix_demo_asset_paths(html_body: str, input_path: Path) -> str:
+    if "demo_" not in input_path.parent.name:
+        return html_body
+    try:
+        document = lxml_html.fromstring(html_body)
+    except Exception:
+        return html_body
+    for element in document.iter("img"):
+        src = element.get("src")
+        if not src:
+            continue
+        normalized = PurePosixPath(src)
+        if not normalized.name.startswith("demo_"):
+            element.set("src", str(normalized.with_name(f"demo_{normalized.name}")))
+    return lxml_html.tostring(document, encoding="unicode", method="html")
+
 def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str, list[str]]:
     tags = context.get("tags", {})
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
@@ -199,6 +215,8 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
             html_body = strip_html_wrapper(html_body)
         except Exception as exc:
             return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}", []
+
+    html_body = prefix_demo_asset_paths(html_body, input_path)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html_body, encoding="utf-8")

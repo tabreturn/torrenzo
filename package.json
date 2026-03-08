@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/tabreturn/torrenzo#readme",
   "dependencies": {
-    "md-to-pdf": "^5.2.5"
+    "md-to-pdf": "^5.2.5",
+    "svgo": "^4.0.1"
   }
 }

@@ -9,16 +9,75 @@ import argparse
 import html
 import re
 import shutil
+import subprocess
 from pathlib import Path
 from typing import Any
 import yaml
 
 from torrenzo_engine import Pipeline, RenderJob, RendererRegistry
+from torrenzo_engine.pipeline import fmt
 from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_copy_asset
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
 PDF_USER_CSS = ''
+
+def locate_command(candidates: list[str | Path]) -> str | None:
+    for candidate in candidates:
+        if isinstance(candidate, Path):
+            if candidate.exists():
+                return str(candidate)
+        else:
+            found = shutil.which(candidate)
+            if found:
+                return found
+    return None
+
+def optimize_assets(build_dir: Path) -> list[str]:
+    messages: list[str] = []
+
+    png_tool = locate_command(['pngquant', 'oxipng'])
+    png_files = sorted(build_dir.rglob('*.png'))
+    if png_tool and png_files:
+        optimized_pngs = 0
+        for path in png_files:
+            if Path(png_tool).name == 'pngquant':
+                cmd = [png_tool, '--force', '--strip', '--ext', '.png', str(path)]
+            else:
+                cmd = [png_tool, '--strip', 'safe', '--opt', '3', '--fix', str(path)]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode == 0:
+                optimized_pngs += 1
+            else:
+                error = result.stderr.strip() or result.stdout.strip()
+                messages.append(fmt('error', f"PNG optimize failed ({Path(png_tool).name}): {path.relative_to(build_dir)}: {error}" if error else f"PNG optimize failed ({Path(png_tool).name}): {path.relative_to(build_dir)}"))
+        if optimized_pngs:
+            messages.append(fmt('info', f"Optimized {optimized_pngs} PNG file(s) with {Path(png_tool).name}"))
+    elif not png_tool:
+        messages.append(fmt('warning', 'Skipping PNG optimization (pngquant or oxipng not installed)'))
+    elif not png_files:
+        messages.append(fmt('info', 'No PNG assets to optimize'))
+
+    svgo_tool = locate_command([PROJECT_ROOT / 'node_modules' / '.bin' / 'svgo', 'svgo'])
+    svg_files = sorted(build_dir.rglob('*.svg'))
+    if svgo_tool and svg_files:
+        optimized_svgs = 0
+        for path in svg_files:
+            cmd = [svgo_tool, '--quiet', '--multipass', '--input', str(path), '--output', str(path)]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode == 0:
+                optimized_svgs += 1
+            else:
+                error = result.stderr.strip() or result.stdout.strip()
+                messages.append(fmt('error', f"SVG optimize failed (svgo): {path.relative_to(build_dir)}: {error}" if error else f"SVG optimize failed (svgo): {path.relative_to(build_dir)}"))
+        if optimized_svgs:
+            messages.append(fmt('info', f"Optimized {optimized_svgs} SVG file(s) with svgo"))
+    elif not svgo_tool:
+        messages.append(fmt('warning', 'Skipping SVG optimization (svgo not installed; run npm install)'))
+    elif not svg_files:
+        messages.append(fmt('info', 'No SVG assets to optimize'))
+
+    return messages
 
 def prepare_build_dir() -> None:
     if BUILD_DIR.exists():
@@ -332,7 +391,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             input_pattern=content_pattern,
             output_dir=Path('modules_html'),
             renderer='md_to_html',
-            context={'tags': tags},
+            context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
@@ -341,14 +400,14 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             input_pattern=activities_pattern,
             output_dir=Path('modules_html'),
             renderer='md_to_html',
-            context={'tags': tags},
+            context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_assets',
             input_pattern='modules/*/assets/**/*',
-            output_dir=Path('modules_assets'),
+            output_dir=Path('modules_html/assets'),
             renderer='copy_asset',
             context={},
             output_ext='',
@@ -367,6 +426,11 @@ def main() -> None:
         default=Path('.'),
         help='Directory to search for briefs and activities',
     )
+    parser.add_argument(
+        '--optimize-assets',
+        action='store_true',
+        help='Optimize built assets with pngquant/oxipng and svgo',
+    )
     args = parser.parse_args()
 
     prepare_build_dir()
@@ -379,6 +443,8 @@ def main() -> None:
 
     pipeline = Pipeline(args.root, BUILD_DIR, registry)
     diagnostics = pipeline.execute(make_jobs(tags))
+    if args.optimize_assets:
+        diagnostics.extend(optimize_assets(BUILD_DIR))
     for message in diagnostics:
         print(message)
 

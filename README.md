@@ -48,6 +48,9 @@ Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which i
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
 
+
+> 💡 Use `python torrenzo.py --optimize-assets` to optimise assets. This feature requires SVGO for SVG optimization (provided via `npm install`). PNG optimization requires `pngquant` or `oxipng` installed on your system. Demo modules prefix asset filenames and `<img src>` paths with `demo_` to avoid collisions.
+
 ---
 
 ## Configuration & Tags
@@ -147,9 +150,9 @@ During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.)
 - PDF assessment briefs
 - LMS-ready HTML module pages (including separate activity pages)
 
-Torrenzo writes all output to `build/`.
+Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`.
 
-When processing demo inputs, Torrenzo adds a `demo_` filename prefix. For non-demo inputs, it keeps the original base names. Torrenzo clears and regenerates the `build/` directory on each run.
+When processing demo inputs, Torrenzo adds a `demo_` filename prefix to both HTML outputs and their asset filenames/paths. For non-demo inputs, it keeps the original base names. Torrenzo clears and regenerates the `build/` directory on each run.
 
 ### Module Styling
 
@@ -190,10 +193,11 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
+- [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
+- [ ] Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components)
 - [ ] Determine whether Canvas Files can be linked to directly (e.g., images or other file asset paths)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
-- [ ] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [ ] ...
 
 ### 'Maybe' Goals
