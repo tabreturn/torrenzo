@@ -188,7 +188,8 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ## To-Do
 
-
+- [ ] Build to `.imscc` (Common Cartidge) format for bulk populating subjects, otherwise ...
+- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
 - [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
@@ -206,6 +207,5 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - [ ] Add support for Marp slide decks
 - [ ] Add support for Word documents (via semantic styles)
 - [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
-- [ ] Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] ...
 
