@@ -202,6 +202,8 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise
 - [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
+- [ ] Devise mechanism to flag what is new build content (versus what won't need updating in LMS)
+- [ ] ... and on the above, best to add meta/commented timestamp to built items.
 - [ ] ...
 
 ### 'Maybe' Goals
