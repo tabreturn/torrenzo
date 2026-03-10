@@ -181,6 +181,8 @@ Torrenzo uses a plugin-style architecture with an extensible set of transformers
 | `torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
 | `torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
 
+> 💡 Note that MS Word is not a priority source format, so this has received the least attention. As a matter of personal preference, the Torrenzo contributor(s) do not spend time authoring content outside of Markdown.
+
 Torrenzo supports additional transformers without modifying the core pipeline. Developers should extend it to new targets (e.g., Marp slides) without expanding the CLI driver. Potential candidates include:
 
 - Marp `.md` → PDF (slide decks)
@@ -200,9 +202,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
-- [ ] **Fix MS Word transformer tags?** (Do they function? Should the placeholder/tag syntax change?)
-- [ ] **Fix MS Word transformer styles?** (Do they function?)
-- [ ] **Include MS Word sample template** (with Word styles that approximate the LMS styling?)
+- [x] Include MS Word sample template (with Word styles that approximate the LMS styling)
 - [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
 - [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise

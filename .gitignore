@@ -46,3 +46,8 @@ npm-debug.log
 !.obsidian/snippets/
 !.obsidian/snippets/**
 
+# Office / LibreOffice temp & lock files
+~$*
+.~lock.*
+*.{tmp,temp,bak,swp,swo}
+

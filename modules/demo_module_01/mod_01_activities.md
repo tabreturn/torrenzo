@@ -1,4 +1,4 @@
-# Module 3: Citrus Observation and Catalogue Writing
+# Module 1 Activities: Citrus Observation and Catalogue Writing
 
 ## Resources
 

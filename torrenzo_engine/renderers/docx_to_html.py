@@ -5,10 +5,20 @@ from pathlib import Path
 from typing import Any, Dict, Tuple
 
 from docx import Document
+from premailer import transform
 from lxml import html as lxml_html
 
 from .md_to_pdf import apply_tags
-from .md_to_html import sanitize_html_attributes, strip_html_wrapper
+from .md_to_html import (
+    collect_citation_numbers,
+    load_bibliography,
+    load_module_css,
+    render_references,
+    replace_citations,
+    sanitize_html_attributes,
+    strip_html_wrapper,
+    substitute_css_variables,
+)
 
 
 HEADING_PREFIX = "heading "
@@ -52,11 +62,35 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     raw_html, tag_warnings = apply_tags(raw_html, tags)
     warnings.extend(tag_warnings)
 
+    bib_entries = load_bibliography(input_path)
+    citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(raw_html, bib_entries)
+    if citation_numbers:
+        raw_html = replace_citations(raw_html, citation_numbers)
+    if ordered_keys:
+        references = render_references(ordered_keys, bib_entries)
+        if references:
+            raw_html = f"{raw_html}\n{references}"
+
+    css_text = load_module_css(input_path)
+    css_text = substitute_css_variables(css_text)
+    if css_text.strip():
+        try:
+            raw_html = transform(
+                raw_html,
+                css_text=css_text,
+                remove_classes=False,
+            )
+        except Exception as exc:
+            return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}", warnings
+
     try:
         raw_html = sanitize_html_attributes(raw_html)
         raw_html = strip_html_wrapper(raw_html)
     except Exception:
         pass
+
+    if missing_keys:
+        warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(raw_html, encoding="utf-8")
