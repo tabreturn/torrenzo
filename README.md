@@ -59,12 +59,12 @@ Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which i
 
 Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
-Starter keys in `outline.md`:
+Starter keys in `outline.md` define your subject metadata and automatically populate across all content via tags/placeholders.
 
 - **Subject:**  
   `subject.code`, `subject.title`, `subject.descriptor`
 - **SLOs:**  
-  map under `slo` with codes (e.g., `slo.a`)
+  Map under `slo` with codes (e.g., `slo.a`)
 - **Assessments:**  
   Produce a full metadata table using `assessment.a1` or `assessment.a2`, etc.
 
@@ -158,7 +158,7 @@ When processing demo inputs, Torrenzo adds a `demo_` filename prefix to both HTM
 
 ### Module Styling
 
-An optional global stylesheet lives at `modules/style/style.css`. Its rules are inlined into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
+An optional global stylesheet lives at `modules/style/style.css`. Its rules inline into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
 
 ### Assessment Branding
 
@@ -181,32 +181,34 @@ Torrenzo uses a plugin-style architecture with an extensible set of transformers
 | `torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
 | `torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
 
-Torrenzo supports additional transformers without modifying the core pipeline. Developers should extend it to new targets (e.g., Marp slides or Word documents) without expanding the CLI driver. Potential candidates include:
+Torrenzo supports additional transformers without modifying the core pipeline. Developers should extend it to new targets (e.g., Marp slides) without expanding the CLI driver. Potential candidates include:
 
 - Marp `.md` → PDF (slide decks)
 - Extended Markdown features for module pages (accordions, navigation tabs, and other LMS-specific markup)
+- Really, the limit is your imagination and whatever an LMS can handle ...
 
 ### Common Cartridge
 
-Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more frequently and manual updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
+Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more sporadically and 'manual' updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
 
 ---
 
 ## To-Do
 
-- [ ] Fix MS Word transformer tags? (Do they function? Should the syntax change?)
-- [ ] Fix MS Word transformer styles? (Do they function?)
-- [ ] Include MS Word sample template (with approximate stylesheet)
 - [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
-- [ ] Add Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
+- [ ] **Fix MS Word transformer tags?** (Do they function? Should the placeholder/tag syntax change?)
+- [ ] **Fix MS Word transformer styles?** (Do they function?)
+- [ ] **Include MS Word sample template** (with Word styles that approximate the LMS styling?)
+- [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
 - [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise
-- [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)
-- [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
+- [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)?
+- [ ] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
+- [ ] ... and add one-click executable runner to the above?
 - [ ] Devise mechanism to flag what is new build content (versus what won't need updating in LMS)
 - [ ] ... and on the above, best to add meta/commented timestamp to built items.
 - [ ] ...
