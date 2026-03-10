@@ -16,7 +16,7 @@ import yaml
 
 from torrenzo_engine import Pipeline, RenderJob, RendererRegistry
 from torrenzo_engine.pipeline import fmt
-from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_copy_asset
+from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_docx_to_html, render_copy_asset
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
@@ -368,7 +368,9 @@ def build_tag_map() -> dict[str, str]:
 def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
     content_pattern = 'modules/*/mod_*_content*.md'
+    content_docx_pattern = 'modules/*/mod_*_content*.docx'
     activities_pattern = 'modules/*/mod_*_activit*.md'
+    activities_docx_pattern = 'modules/*/mod_*_activit*.docx'
     resources_pattern = 'modules/*/mod_*_resources.bib'
 
     return [
@@ -396,11 +398,29 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
         RenderJob(
+            name='module_content_docx',
+            input_pattern=content_docx_pattern,
+            output_dir=Path('modules_html'),
+            renderer='docx_to_html',
+            context={'tags': tags},
+            output_ext='.html',
+            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+        ),
+        RenderJob(
             name='module_activities',
             input_pattern=activities_pattern,
             output_dir=Path('modules_html'),
             renderer='md_to_html',
             context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
+            output_ext='.html',
+            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+        ),
+        RenderJob(
+            name='module_activities_docx',
+            input_pattern=activities_docx_pattern,
+            output_dir=Path('modules_html'),
+            renderer='docx_to_html',
+            context={'tags': tags},
             output_ext='.html',
             output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
         ),
@@ -439,6 +459,7 @@ def main() -> None:
     registry = RendererRegistry()
     register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
     register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
+    register_renderer(registry, 'docx_to_html', lambda _: render_docx_to_html)
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
     pipeline = Pipeline(args.root, BUILD_DIR, registry)

@@ -16,7 +16,9 @@ Torrenzo currently performs the following transformations:
 |-----------------------------------------------|--------|
 | `assessments/assessment_<n>/ass_<n>_brief.md` | PDF    |
 | `modules/module_<n>/mod_<n>_content.md`       | HTML   |
+| `modules/module_<n>/mod_<n>_content.docx`     | HTML   |
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
+| `modules/module_<n>/mod_<n>_activities.docx`  | HTML   |
 
 See [sample_build](sample_build) for example output artefacts generated from the demo content.
 
@@ -114,12 +116,12 @@ subject-root/
 │   └── ...
 ├── modules/            # module content → HTML
 │   ├── demo_module_1/
-│   │   ├── mod_1_content.md
-│   │   ├── mod_1_activities.md
+│   │   ├── mod_1_content.[md|docx]
+│   │   ├── mod_1_activities.[md|docx]
 │   │   └── assets/
 │   ├── module_<n>/
-│   │   ├── mod_<n>_content.md
-│   │   ├── mod_<n>_activities.md
+│   │   ├── mod_<n>_content.[md|docx]
+│   │   ├── mod_<n>_activities.[md|docx]
 │   │   └── assets/
 │   └── ...
 ├── build/              # generated output
@@ -139,8 +141,8 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 - **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `@refname` syntax. Torrenzo renders the corresponding references at the bottom of the page.
 
 - **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
-  - `mod_<n>_content.md` -- primary module content page(s)
-  - `mod_<n>_activities.md` -- activity page(s)
+  - `mod_<n>_content.[md|docx]` -- primary module content page(s)
+  - `mod_<n>_activities.[md|docx]` -- activity page(s)
   - `assets/` -- supporting files (images, etc.) used within the module
 
 > 💡 For multiple content or activity pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`
@@ -172,19 +174,19 @@ This section is intended for developers and contributors.
 
 Torrenzo uses a plugin-style architecture with an extensible set of transformers:
 
-| Transformer                                | Conversion      |
-|--------------------------------------------|-----------------|
-| `torrenzo_engine/renderers/bib_to_html.py` | BibTeX → HTML   |
-| `torrenzo_engine/renderers/md_to_html.py`  | Markdown → HTML |
-| `torrenzo_engine/renderers/md_to_pdf.py`   | Markdown → PDF  |
+| Transformer                                 | Conversion      |
+|---------------------------------------------|-----------------|
+| `torrenzo_engine/renderers/bib_to_html.py`  | BibTeX → HTML   |
+| `torrenzo_engine/renderers/docx_to_html.py` | MS Word → HTML  |
+| `torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
+| `torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
 
 Torrenzo supports additional transformers without modifying the core pipeline. Developers should extend it to new targets (e.g., Marp slides or Word documents) without expanding the CLI driver. Potential candidates include:
 
-- `.docx` → HTML (using predefined Word stylesheets to ensure consistent visual output and semantic structure)
 - Marp `.md` → PDF (slide decks)
 - Extended Markdown features for module pages (accordions, navigation tabs, and other LMS-specific markup)
 
-### Common Cartidge
+### Common Cartridge
 
 Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more frequently and manual updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
 
@@ -192,13 +194,16 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 
 ## To-Do
 
+- [ ] Fix MS Word transformer tags? (Do they function? Should the syntax change?)
+- [ ] Fix MS Word transformer styles? (Do they function?)
+- [ ] Include MS Word sample template (with approximate stylesheet)
 - [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [ ] Add Image sizing support in markdown (perhaps follow https://marpit.marp.app/image-syntax)
-- [ ] Add support for common page elements (e.g., tabbed navigation components)
+- [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
 - [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise
 - [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)
 - [ ] Configure GitHub Actions to publish cross-platform CLI builds (Windows/macOS/Linux)
@@ -210,7 +215,6 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 
 - [ ] Consolidate on a single runtime stack (Python or Node)
 - [ ] Add support for Marp slide decks
-- [ ] Add support for Word documents (via semantic styles)
 - [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
 - [ ] ...
 

@@ -2,4 +2,5 @@ PyYAML>=6.0
 pybtex>=0.24
 markdown-it-py>=2.2
 premailer>=3.10
+python-docx>=1.1.0
 
