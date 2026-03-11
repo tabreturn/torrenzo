@@ -1,7 +1,6 @@
 # Module 1.1: Introduction to Citrus Module
 
-![placeholder img](assets/mod_01_placeholder.png)
-
+![placeholder img](assets/mod_01_placeholder.png)  
 *Image: FruitStock*
 
 ## Introduction
