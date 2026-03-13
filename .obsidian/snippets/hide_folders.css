@@ -3,16 +3,14 @@
 .nav-folder[data-path*="__pycache__"],
 .nav-folder-title[data-path*="build"],
 .nav-folder[data-path*="build"],
-.nav-folder-title[data-path*="common_cartidge"],
-.nav-folder[data-path*="common_cartidge"],
-.nav-folder-title[data-path*="common_cartidge_WIP"],
-.nav-folder[data-path*="common_cartidge_WIP"],
+.nav-folder-title[data-path*="common_cartridge_WIP"],
+.nav-folder[data-path*="common_cartridge_WIP"],
 .nav-folder-title[data-path*="env"],
 .nav-folder[data-path*="env"],
 .nav-folder-title[data-path*="node_modules"],
 .nav-folder[data-path*="node_modules"],
 .nav-folder-title[data-path*="sample_build"],
-.nav-folder[data-path*="sample_build"] 
+.nav-folder[data-path*="sample_build"],
 .nav-folder-title[data-path*="torrenzo_engine"],
 .nav-folder[data-path*="torrenzo_engine"] {
   display: none;
