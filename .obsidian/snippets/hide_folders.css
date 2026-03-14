@@ -21,6 +21,8 @@
 .nav-file-title[data-path="package.json"],
 .nav-file-title[data-path="package-lock.json"],
 .nav-file-title[data-path="requirements.txt"],
+.nav-file-title[data-path="README.md"],
+.nav-file-title[data-path="README_banner.png"],
 .nav-file-title[data-path="torrenzo.py"] {
   display: none;
 }
