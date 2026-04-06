@@ -1,0 +1,4 @@
+.nav-folder-title[data-path*="build"],
+.nav-folder[data-path*="build"] {
+  display: none;
+}

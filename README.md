@@ -20,7 +20,7 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
 | `modules/module_<n>/mod_<n>_activities.docx`  | HTML   |
 
-See [sample_build](sample_build) for example output artefacts generated from the demo content.
+See the `demo/` directory for sample subject content, and `demo/build/` for example output artefacts.
 
 ### Yeah, But Why?
 
@@ -42,16 +42,17 @@ Instead of authoring material directly in a learning management system (LMS), co
 
 1. Ensure to install [prerequisites](#prerequisites).
 2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
-3. Run Torrenzo from the repository root using `python torrenzo.py`
+3. Run Torrenzo from the repository root, passing your subject directory:
 
-By default, Torrenzo scans the current directory. To target another workspace, use: `python torrenzo.py ../other-subject`
+```bash
+python -m torrenzo /path/to/your-subject
+```
 
-Torrenzo outputs everything (HTML, PDF, etc.) to the `build/` directory (which is cleared at the start of each run).
+`outline.md`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory, which is cleared at the start of each run.
 
-> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md), and includes an `.obsidian` configuration so that you can simply point a new vault at your Torrenzo project.
+> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
-
-> 💡 Use `python torrenzo.py --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 ---
 
@@ -76,11 +77,8 @@ Starter keys in `outline.md` define your subject metadata and automatically popu
 - **Node 18+** with `npm`
 - **Terminal environment** of your choice
 
-### Working Directory
-All relative paths assume execution from the repository root. Set your working directory using:
-```bash
-cd <repository-root>
-```
+### Setup
+Clone or download the Torrenzo repository. All setup commands run from the **Torrenzo repo root** -- subject content lives separately.
 
 ### Python Setup
 To create and activate a virtual environment, then install dependencies:
@@ -100,35 +98,40 @@ npm install
 
 ## Repository Architecture
 
-Torrenzo provides a ready-to-use structure for a single subject. The project is intentionally filesystem-driven: file names and directory structure determine how Torrenzo processes content.
+Torrenzo separates the **tool** (this repo) from **subject content** (your working directory). The tool is filesystem-driven: file names and directory structure determine how content is processed.
 
-Any `demo_`-prefixed items are included for illustration. You can delete them if you wish; otherwise they build normally and appear in the `build/` output.
-
+**Torrenzo repo layout:**
 ```text
-subject-root/
+torrenzo/               # tool repo -- clone once, reuse for all subjects
+├── torrenzo/           # Python package
+│   ├── __main__.py
+│   └── torrenzo_engine/
+├── demo/               # sample subject
+├── node_modules/
+├── package.json
+└── requirements.txt
+```
+
+**Subject directory layout:**
+```text
+your-subject/
 ├── assessments/        # assessment briefs → PDF
-│   ├── demo_assessment_1/
-│   │   ├── ass_1_brief.md
-│   │   └── assets/
 │   ├── assessment_<n>/
 │   │   ├── ass_<n>_brief.md
 │   │   └── assets/
-│   └── ...
+│   └── style/          # branding (logo.svg, style.css, config.js)
 ├── modules/            # module content → HTML
-│   ├── demo_module_1/
-│   │   ├── mod_1_content.[md|docx]
-│   │   ├── mod_1_activities.[md|docx]
-│   │   └── assets/
 │   ├── module_<n>/
 │   │   ├── mod_<n>_content.[md|docx]
 │   │   ├── mod_<n>_activities.[md|docx]
 │   │   └── assets/
-│   └── ...
-├── build/              # generated output
-├── outline.md          # subject configuration (YAML)
-├── references.bib      # global references (BibTeX)
-└── torrenzo.py         # run to build
+│   ├── style/          # stylesheet inlined into HTML output
+│   └── references.bib  # subject-level BibTeX references
+├── build/              # generated output (cleared each run)
+└── outline.md          # subject configuration (YAML)
 ```
+
+> 💡 To get started, you could simply duplicate the `demo/` subject, rename it, and use it as a starting point for developing new learning materials.
 
 ### Populating Content
 
@@ -154,15 +157,15 @@ During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.)
 
 Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
 
-When processing demo inputs, Torrenzo adds a `demo_` filename prefix to both HTML outputs and their asset filenames/paths. For non-demo inputs, it keeps the original base names. Torrenzo clears and regenerates the `build/` directory on each run.
+Torrenzo clears and regenerates the `build/` directory on each run.
 
-### Module Styling
+### Module Styling & Assessment Branding
 
-An optional global stylesheet lives at `modules/style/style.css`. Its rules inline into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
-
-### Assessment Branding
+An optional global stylesheet lives at `modules/style/style.css`. Its inlines CSS into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
 
 Universal assessment branding assets live in `assessments/style/`. On each run, the build injects `logo.svg` into the PDF header. Replace `logo.svg` (must be an SVG) to use a different logo, and configure styling and header/footer elements via the `style.css` and `config.js`
+
+> 💡 Each stylesheet and `config.js` includes a metadata block at the top (`Theme`, `Output`, `Version`, `Modified`). Update these when you customise styles, ensuring theming is easier to track across subjects.
 
 ---
 
@@ -174,12 +177,12 @@ This section is intended for developers and contributors.
 
 Torrenzo uses a plugin-style architecture with an extensible set of transformers:
 
-| Transformer                                 | Conversion      |
-|---------------------------------------------|-----------------|
-| `torrenzo_engine/renderers/bib_to_html.py`  | BibTeX → HTML   |
-| `torrenzo_engine/renderers/docx_to_html.py` | MS Word → HTML  |
-| `torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
-| `torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
+| Transformer                                          | Conversion      |
+|------------------------------------------------------|-----------------|
+| `torrenzo/torrenzo_engine/renderers/bib_to_html.py`  | BibTeX → HTML   |
+| `torrenzo/torrenzo_engine/renderers/docx_to_html.py` | MS Word → HTML  |
+| `torrenzo/torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
+| `torrenzo/torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
 
 > 💡 Note that MS Word is not a priority source format, so this has received the least attention. As a matter of personal preference, the Torrenzo contributor(s) do not spend time authoring content outside of Markdown.
 
@@ -191,7 +194,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ### Common Cartridge
 
-Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more sporadically and 'manual' updates remain manageable. The [common_cartridge_WIP](common_cartridge_WIP) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
+Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more sporadically and 'manual' updates remain manageable. The [research/common_cartridge](research/common_cartridge) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
 
 ---
 
@@ -205,7 +208,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Include MS Word sample template (with Word styles that approximate the LMS styling)
 - [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
-- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [common_cartidge_WIP](common_cartidge_WIP)), otherwise
+- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [research/common_cartridge](research/common_cartridge)), otherwise
 - [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)?
 - [ ] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
 - [ ] ... and add one-click executable runner to the above?

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""torenzo.py
+"""torrenzo.__main__
 Converts assessment briefs into PDFs and module activities into LMS-ready HTML snippets.
 """
 
@@ -14,12 +14,11 @@ from pathlib import Path
 from typing import Any
 import yaml
 
-from torrenzo_engine import Pipeline, RenderJob, RendererRegistry
-from torrenzo_engine.pipeline import fmt
-from torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_docx_to_html, render_copy_asset
+from .torrenzo_engine import Pipeline, RenderJob, RendererRegistry
+from .torrenzo_engine.pipeline import fmt
+from .torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_docx_to_html, render_copy_asset
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-BUILD_DIR = PROJECT_ROOT / 'build'
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PDF_USER_CSS = ''
 
 def locate_command(candidates: list[str | Path]) -> str | None:
@@ -79,15 +78,15 @@ def optimize_assets(build_dir: Path) -> list[str]:
 
     return messages
 
-def prepare_build_dir() -> None:
-    if BUILD_DIR.exists():
-        for child in BUILD_DIR.iterdir():
+def prepare_build_dir(build_dir: Path) -> None:
+    if build_dir.exists():
+        for child in build_dir.iterdir():
             if child.is_dir():
                 shutil.rmtree(child)
             else:
                 child.unlink()
     else:
-        BUILD_DIR.mkdir(parents=True, exist_ok=True)
+        build_dir.mkdir(parents=True, exist_ok=True)
 
 def render_learning_outcomes(outcomes: list[dict[str, str]]) -> str:
     if not outcomes:
@@ -169,8 +168,8 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
             tags[f"assessment|{fields.get('_key', assessment_id)}|meta_table"] = table_markup
     return tags
 
-def load_outline() -> dict[str, Any]:
-    md_path = PROJECT_ROOT / 'outline.md'
+def load_outline(root: Path) -> dict[str, Any]:
+    md_path = root / 'outline.md'
     if not md_path.exists():
         raise SystemExit('outline.md is required at the project root')
     text = md_path.read_text(encoding='utf-8')
@@ -183,8 +182,8 @@ def load_outline() -> dict[str, Any]:
     return data
 
 
-def build_tag_map() -> dict[str, str]:
-    data = load_outline()
+def build_tag_map(root: Path) -> dict[str, str]:
+    data = load_outline(root)
 
     tags: dict[str, str] = {}
     slos_obj = data.get('slo') or data.get('slos') or {}
@@ -395,7 +394,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='md_to_html',
             context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
-            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+            output_namer=lambda p: p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_content_docx',
@@ -404,7 +403,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='docx_to_html',
             context={'tags': tags},
             output_ext='.html',
-            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+            output_namer=lambda p: p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_activities',
@@ -413,7 +412,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='md_to_html',
             context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
-            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+            output_namer=lambda p: p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_activities_docx',
@@ -422,7 +421,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='docx_to_html',
             context={'tags': tags},
             output_ext='.html',
-            output_namer=lambda p: f"demo_{p.with_suffix('.html').name}" if 'demo_' in p.parent.name else p.with_suffix('.html').name,
+            output_namer=lambda p: p.with_suffix('.html').name,
         ),
         RenderJob(
             name='module_assets',
@@ -431,9 +430,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             renderer='copy_asset',
             context={},
             output_ext='',
-            output_namer=lambda p: (
-                f"demo_{p.name}" if 'demo_' in p.parent.parent.name else p.name
-            ),
+            output_namer=lambda p: p.name,
         ),
     ]
 
@@ -453,8 +450,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    prepare_build_dir()
-    tags = build_tag_map()
+    subject_root = args.root.resolve()
+    build_dir = subject_root / 'build'
+
+    prepare_build_dir(build_dir)
+    tags = build_tag_map(subject_root)
 
     registry = RendererRegistry()
     register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
@@ -462,10 +462,10 @@ def main() -> None:
     register_renderer(registry, 'docx_to_html', lambda _: render_docx_to_html)
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
-    pipeline = Pipeline(args.root, BUILD_DIR, registry)
+    pipeline = Pipeline(subject_root, build_dir, registry)
     diagnostics = pipeline.execute(make_jobs(tags))
     if args.optimize_assets:
-        diagnostics.extend(optimize_assets(BUILD_DIR))
+        diagnostics.extend(optimize_assets(build_dir))
     for message in diagnostics:
         print(message)
 

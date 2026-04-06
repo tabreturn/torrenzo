@@ -5,16 +5,17 @@
 
 ## Repository Snapshot
 
-- Python CLI (`torrenzo.py`) orchestrates render jobs that transform Markdown briefs and module files into PDFs/HTML via the `torrenzo_engine` pipeline and renderer registry.
-- Content sources live under `assessments/` (briefs and assets) and `modules/` (module content, activities, references, assets); outputs land in `build/` (cleared each run). Demo/sample content is checked in under `demo_*`; non-demo keeps base names. `sample_build/` shows demo outputs.
-- `outline.md` provides YAML metadata injected via Dataview-style tags.
+- Python package (`torrenzo/`) with entry point `torrenzo/__main__.py`; run as `python -m torrenzo <subject>`.
+- `torrenzo/torrenzo_engine/` contains the renderer registry and pipeline.
+- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` (cleared each run) — all resolved relative to the subject root passed as the CLI argument.
+- `demo/` is a self-contained sample subject checked into this repo.
 - No automated tests or linters; validation is manual.
 
 ## Setup & Dependencies
 
 - Python 3.10+; `pip install -r requirements.txt` (use a venv if present).
 - Node 18+ with `npm`; `npm install` for `md-to-pdf` (PDF only; HTML renderers are pure Python).
-- Run from repo root: `python torrenzo.py [other-root]` to target another subject directory. Obsidian vault config included.
+- Run as `python -m torrenzo <subject-root>` from the repo root. `node_modules/` and `requirements.txt` live here; subject content lives elsewhere. Obsidian vault config included.
 
 ## Tagging (current behavior)
 
@@ -25,13 +26,12 @@
 
 ## Directory Layout & Naming
 
-- `torrenzo.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
-- `torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
-- `assessments/assessment_<n>/ass_<n>_brief.md` → PDF (assets alongside); `demo_assessment_*` variants checked in.
-- `modules/module_<n>/mod_<n>_content.md`, `mod_<n>_activities.md`, `mod_<n>_resources.bib` → HTML (assets alongside); `demo_module_*` variants checked in.
+- `torrenzo/__main__.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
+- `torrenzo/torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
+- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_content.md`, `mod_<n>_activities.md`, `mod_<n>_resources.bib` → HTML.
 - `modules/style/style.css` is inlined into module HTML; output HTML is body-only for LMS pasting.
 - `assessments/style/` is copied alongside each brief; `logo.svg` injected into the PDF header; swap to change branding.
-- `references.bib` contains global BibTeX sources.
+- `modules/references.bib` contains subject-level BibTeX sources.
 - File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_content.md`, `mod_*_activities.md`, `mod_*_resources.bib`) or files are skipped.
 
 ## Testing & Validation

@@ -10,7 +10,7 @@ from typing import Any, Dict, Tuple
 import yaml
 from markdown_it import MarkdownIt
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+TOOL_ROOT = Path(__file__).resolve().parents[3]
 
 DATAVIEW_RE = re.compile(r"`?=?\s*\[\[outline\]\]\.([^\s`]+)`?")
 DATAVIEW_BLOCK_RE = re.compile(r"```dataview\s+LIST without id slo\[x\]\s+FROM \"outline\"\s+FLATTEN ([^\s]+) AS x\s+```", re.I | re.S)
@@ -120,7 +120,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     workdir = input_path.parent
-    style_src = PROJECT_ROOT / 'assessments' / 'style'
+    style_src = input_path.parent.parent / 'style'
     style_dst = workdir / 'style'
     config_src = style_src / 'config.js'
     if not config_src.exists():
@@ -155,7 +155,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
             temp_md.write(body)
             temp_md_path = Path(temp_md.name)
 
-        local_bin = PROJECT_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
+        local_bin = TOOL_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
         if local_bin.exists():
             cmd = [str(local_bin.resolve()), temp_md_path.name]
         else:

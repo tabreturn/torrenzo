@@ -1,3 +1,8 @@
+/* Theme:    OrangeUni
+   Output:   Assessment (PDF)
+   Version:  1.0
+   Modified: 2026-04-06 */
+
 const versionDate = new Date().toISOString().slice(0, 10);
 
 module.exports = {
