@@ -35,16 +35,16 @@ npm-debug.log
 .yarn/
 
 # Obsidian
-.obsidian/*
-!.obsidian/app.json
-!.obsidian/appearance.json
-!.obsidian/community-plugins.json
-!.obsidian/plugins/
-!.obsidian/plugins/**
-!.obsidian/themes/
-!.obsidian/themes/**
-!.obsidian/snippets/
-!.obsidian/snippets/**
+**/.obsidian/*
+!**/.obsidian/app.json
+!**/.obsidian/appearance.json
+!**/.obsidian/community-plugins.json
+!**/.obsidian/plugins/
+!**/.obsidian/plugins/**
+!**/.obsidian/themes/
+!**/.obsidian/themes/**
+!**/.obsidian/snippets/
+!**/.obsidian/snippets/**
 
 # Office / LibreOffice temp & lock files
 ~$*
