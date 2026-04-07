@@ -20,6 +20,7 @@ from .md_to_html import (
     strip_html_wrapper,
     substitute_css_variables,
 )
+from ..build_stamp import html_comment, now_iso
 
 
 HEADING_PREFIX = "heading "
@@ -130,5 +131,5 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(raw_html, encoding="utf-8")
+    output_path.write_text(html_comment(input_path, now_iso()) + raw_html, encoding="utf-8")
     return True, f"{input_path} -> {output_path}", warnings

@@ -10,6 +10,29 @@ from typing import Any, Dict, Tuple
 import yaml
 from markdown_it import MarkdownIt
 
+from ..build_stamp import now_iso
+
+
+def _stamp_pdf_metadata(pdf_path: Path, source: Path, ts: str) -> None:
+    try:
+        from pypdf import PdfReader, PdfWriter
+        reader = PdfReader(str(pdf_path))
+        writer = PdfWriter()
+        writer.append(reader)
+        writer.add_metadata({
+            "/Producer": "torrenzo",
+            "/Subject": source.name,
+            "/Keywords": f"built: {ts}",
+        })
+        import tempfile, os
+        fd, tmp = tempfile.mkstemp(suffix=".pdf", dir=pdf_path.parent)
+        os.close(fd)
+        with open(tmp, "wb") as f:
+            writer.write(f)
+        os.replace(tmp, pdf_path)
+    except Exception:
+        pass
+
 TOOL_ROOT = Path(__file__).resolve().parents[3]
 
 DATAVIEW_RE = re.compile(r"`?=?\s*\[\[outline\]\]\.([^\s`]+)`?")
@@ -167,6 +190,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         pdf_temp = workdir / f"{temp_md_path.stem}.pdf"
         if result.returncode == 0 and pdf_temp.exists():
             shutil.move(str(pdf_temp), output_path)
+            _stamp_pdf_metadata(output_path, input_path, now_iso())
 
         success = result.returncode == 0 and output_path.exists()
         if success:

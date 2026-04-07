@@ -17,6 +17,7 @@ import yaml
 from .torrenzo_engine import Pipeline, RenderJob, RendererRegistry
 from .torrenzo_engine.pipeline import fmt
 from .torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_docx_to_html, render_copy_asset
+from .torrenzo_engine.build_stamp import now_iso
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PDF_USER_CSS = ''
@@ -78,13 +79,14 @@ def optimize_assets(build_dir: Path) -> list[str]:
 
     return messages
 
-def prepare_build_dir(build_dir: Path) -> None:
+def prepare_build_dir(build_dir: Path, clean: bool = False) -> None:
     if build_dir.exists():
-        for child in build_dir.iterdir():
-            if child.is_dir():
-                shutil.rmtree(child)
-            else:
-                child.unlink()
+        if clean:
+            for child in build_dir.iterdir():
+                if child.is_dir():
+                    shutil.rmtree(child)
+                else:
+                    child.unlink()
     else:
         build_dir.mkdir(parents=True, exist_ok=True)
 
@@ -364,13 +366,24 @@ def build_tag_map(root: Path) -> dict[str, str]:
             tags[f'outline#{key}'] = value
     return tags
 
-def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
+def make_jobs(tags: dict[str, str], subject_root: Path, built: str | None = None) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
     content_pattern = 'modules/*/mod_*_content*.md'
     content_docx_pattern = 'modules/*/mod_*_content*.docx'
     activities_pattern = 'modules/*/mod_*_activit*.md'
     activities_docx_pattern = 'modules/*/mod_*_activit*.docx'
-    resources_pattern = 'modules/*/mod_*_resources.bib'
+
+    built = built or now_iso()
+
+    outline = subject_root / 'outline.md'
+    module_css = subject_root / 'modules' / 'style' / 'style.css'
+    module_bib = subject_root / 'modules' / 'references.bib'
+    assess_style_css = subject_root / 'assessments' / 'style' / 'style.css'
+    assess_config_js = subject_root / 'assessments' / 'style' / 'config.js'
+    assess_logo = subject_root / 'assessments' / 'style' / 'logo.svg'
+
+    html_deps = [p for p in [outline, module_css, module_bib] if p.exists()]
+    pdf_deps = [p for p in [outline, assess_style_css, assess_config_js, assess_logo] if p.exists()]
 
     return [
         RenderJob(
@@ -381,11 +394,12 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             context={
                 'tags': tags,
                 'pdf_css': PDF_USER_CSS,
-                'header_html': '<div class="header">ver.2026-03-04</div>',
+                'header_html': f'<div class="header">ver.2026-03-04 &nbsp; built: {built}</div>',
                 'footer_html': '<div class="footer"></div>',
             },
             output_ext='.pdf',
             output_namer=lambda p: f"{p.parent.name}.pdf",
+            deps=pdf_deps,
         ),
         RenderJob(
             name='module_content',
@@ -395,6 +409,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
             output_namer=lambda p: p.with_suffix('.html').name,
+            deps=html_deps,
         ),
         RenderJob(
             name='module_content_docx',
@@ -404,6 +419,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             context={'tags': tags},
             output_ext='.html',
             output_namer=lambda p: p.with_suffix('.html').name,
+            deps=html_deps,
         ),
         RenderJob(
             name='module_activities',
@@ -413,6 +429,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
             output_ext='.html',
             output_namer=lambda p: p.with_suffix('.html').name,
+            deps=html_deps,
         ),
         RenderJob(
             name='module_activities_docx',
@@ -422,6 +439,7 @@ def make_jobs(tags: dict[str, str]) -> list[RenderJob]:
             context={'tags': tags},
             output_ext='.html',
             output_namer=lambda p: p.with_suffix('.html').name,
+            deps=html_deps,
         ),
         RenderJob(
             name='module_assets',
@@ -448,12 +466,24 @@ def main() -> None:
         action='store_true',
         help='Optimize built assets with pngquant/oxipng and svgo',
     )
+    parser.add_argument(
+        '--clean',
+        action='store_true',
+        help='Wipe build/ before building (forces full rebuild)',
+    )
+    parser.add_argument(
+        '--force',
+        action='store_true',
+        help='Rebuild all files even if outputs are up-to-date',
+    )
     args = parser.parse_args()
 
     subject_root = args.root.resolve()
     build_dir = subject_root / 'build'
 
-    prepare_build_dir(build_dir)
+    built = now_iso()
+    force = args.force or args.clean
+    prepare_build_dir(build_dir, clean=args.clean)
     tags = build_tag_map(subject_root)
 
     registry = RendererRegistry()
@@ -463,7 +493,7 @@ def main() -> None:
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
     pipeline = Pipeline(subject_root, build_dir, registry)
-    diagnostics = pipeline.execute(make_jobs(tags))
+    diagnostics = pipeline.execute(make_jobs(tags, subject_root=subject_root, built=built), force=force)
     if args.optimize_assets:
         diagnostics.extend(optimize_assets(build_dir))
     for message in diagnostics:

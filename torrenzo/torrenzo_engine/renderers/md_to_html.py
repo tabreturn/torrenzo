@@ -11,6 +11,7 @@ from pybtex.database import parse_file
 
 from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
+from ..build_stamp import html_comment, now_iso
 
 
 CITATION_BRACKET_RE = re.compile(r"\[@([^\]]+)\]")
@@ -201,7 +202,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
             return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}", []
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(html_body, encoding="utf-8")
+    output_path.write_text(html_comment(input_path, now_iso()) + html_body, encoding="utf-8")
 
     warnings: list[str] = list(tag_warnings)
     if missing_keys:

@@ -7,6 +7,7 @@ from typing import Any, Dict, Tuple
 
 from pybtex.database import parse_file
 from pybtex.plugin import find_plugin
+from ..build_stamp import html_comment, now_iso
 
 APA_STYLE = "apa7"
 FALLBACK_STYLE = "unsrt"
@@ -62,5 +63,5 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         items.append(f"<li>{html_block}</li>")
     output = "\n".join(["<ul>", *items, "</ul>"])
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(output, encoding="utf-8")
+    output_path.write_text(html_comment(input_path, now_iso()) + output, encoding="utf-8")
     return True, f"{input_path} -> {output_path}"

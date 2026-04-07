@@ -48,11 +48,13 @@ Instead of authoring material directly in a learning management system (LMS), co
 python -m torrenzo /path/to/your-subject
 ```
 
-`outline.md`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory, which is cleared at the start of each run.
+`outline.md`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically.
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
 > 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+
+> 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
 
 ---
 
@@ -127,7 +129,7 @@ your-subject/
 │   │   └── assets/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
-├── build/              # generated output (cleared each run)
+├── build/              # generated output
 └── outline.md          # subject configuration (YAML)
 ```
 
@@ -157,7 +159,9 @@ During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.)
 
 Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
 
-Torrenzo clears and regenerates the `build/` directory on each run.
+Torrenzo only rebuilds files whose source (or a shared dependency such as `outline.md` or the stylesheet) is newer than the existing output. Outputs for deleted or renamed source files are removed automatically. Each build output embeds a timestamp (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
+
+Use `--clean` to wipe `build/` and force a full rebuild, or `--force` to rebuild all files without clearing first.
 
 ### Module Styling & Assessment Branding
 
@@ -206,14 +210,14 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [x] Include MS Word sample template (with Word styles that approximate the LMS styling)
+- [x] Devise mechanism to flag what is new build content (versus what won't need updating in LMS)
+- [x] Add meta/commented timestamp to built items
 - [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
 - [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [research/common_cartridge](research/common_cartridge)), otherwise
 - [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)?
 - [ ] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
 - [ ] ... and add one-click executable runner to the above?
-- [ ] Devise mechanism to flag what is new build content (versus what won't need updating in LMS)
-- [ ] ... and on the above, best to add meta/commented timestamp to built items.
 - [ ] ...
 
 ### 'Maybe' Goals

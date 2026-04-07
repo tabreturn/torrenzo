@@ -7,13 +7,13 @@
 
 - Python package (`torrenzo/`) with entry point `torrenzo/__main__.py`; run as `python -m torrenzo <subject>`.
 - `torrenzo/torrenzo_engine/` contains the renderer registry and pipeline.
-- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` (cleared each run) — all resolved relative to the subject root passed as the CLI argument.
+- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` — all resolved relative to the subject root passed as the CLI argument. `build/` is not wiped on each run; only stale files are rebuilt and orphans are pruned.
 - `demo/` is a self-contained sample subject checked into this repo.
 - No automated tests or linters; validation is manual.
 
 ## Setup & Dependencies
 
-- Python 3.10+; `pip install -r requirements.txt` (use a venv if present).
+- Python 3.10+; `pip install -r requirements.txt` (use a venv if present). Key deps: `pypdf` (PDF metadata), `Pillow` (PNG metadata); both pure Python.
 - Node 18+ with `npm`; `npm install` for `md-to-pdf` (PDF only; HTML renderers are pure Python).
 - Run as `python -m torrenzo <subject-root>` from the repo root. `node_modules/` and `requirements.txt` live here; subject content lives elsewhere. Obsidian vault config included.
 
@@ -34,9 +34,22 @@
 - `modules/references.bib` contains subject-level BibTeX sources.
 - File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_content.md`, `mod_*_activities.md`, `mod_*_resources.bib`) or files are skipped.
 
+## Incremental Builds & Timestamps
+
+- Default run skips files whose output is newer than the source and all shared deps (`outline.md`, stylesheet, bib) — mtime comparison via `torrenzo_engine/build_stamp.py`.
+- `--force` rebuilds all files without clearing `build/`; `--clean` wipes `build/` first then rebuilds all.
+- Orphaned outputs (source deleted/renamed) are pruned automatically after each run; empty directories are removed.
+- Diagnostics report "N file(s) up-to-date, skipped", "N file(s) newly built", and "N orphaned file(s) removed" at the end of each run.
+- Timestamp embedding per format:
+  - **HTML**: `<!-- built: <ISO-8601>  source: <filename> -->` prepended
+  - **PDF**: timestamp in visible page header; `Producer`/`Subject`/`Keywords` written to PDF document properties via `pypdf`
+  - **SVG**: XML comment inserted after XML declaration
+  - **PNG**: `Comment` tEXt chunk written via `Pillow`; falls back to plain copy if Pillow unavailable
+  - **Other assets**: plain `shutil.copy2`, no metadata added
+
 ## Testing & Validation
 
-- No automated suite; run `python torrenzo.py` to rebuild and inspect `build/` artifacts. PDF generation requires Node/npm (`npx`).
+- No automated suite; run `python -m torrenzo <subject>` to rebuild and inspect `build/` artifacts. PDF generation requires Node/npm (`npx`).
 
 ## Extensibility
 
