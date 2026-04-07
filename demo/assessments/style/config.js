@@ -17,7 +17,7 @@ module.exports = {
           align-items: center;
           color: #666;
           display: flex;
-          font-family: sans-serif;
+          font-family: ui-sans-serif, Helvetica, Arial, sans-serif;
           font-size: 9pt;
           justify-content: space-between;
           padding: 8mm 18mm;
@@ -39,7 +39,7 @@ module.exports = {
       <style>
         footer {
           color: #666;
-          font-family: sans-serif;
+          font-family: ui-sans-serif, Helvetica, Arial, sans-serif;
           font-size: 9pt;
           padding-bottom: 5mm;
           text-align: center;
