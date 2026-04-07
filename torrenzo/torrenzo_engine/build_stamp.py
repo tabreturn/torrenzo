@@ -1,4 +1,4 @@
-"""build_stamp — shared utilities for build timestamps and staleness checks."""
+"""build_stamp -- shared utilities for build timestamps and staleness checks."""
 
 from datetime import datetime, timezone
 from pathlib import Path

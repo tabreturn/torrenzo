@@ -7,7 +7,7 @@
 
 - Python package (`torrenzo/`) with entry point `torrenzo/__main__.py`; run as `python -m torrenzo <subject>`.
 - `torrenzo/torrenzo_engine/` contains the renderer registry and pipeline.
-- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` — all resolved relative to the subject root passed as the CLI argument. `build/` is not wiped on each run; only stale files are rebuilt and orphans are pruned.
+- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` -- all resolved relative to the subject root passed as the CLI argument. `build/` is not wiped on each run; only stale files are rebuilt and orphans are pruned.
 - `demo/` is a self-contained sample subject checked into this repo.
 - No automated tests or linters; validation is manual.
 
@@ -36,7 +36,7 @@
 
 ## Incremental Builds & Timestamps
 
-- Default run skips files whose output is newer than the source and all shared deps (`outline.md`, stylesheet, bib) — mtime comparison via `torrenzo_engine/build_stamp.py`.
+- Default run skips files whose output is newer than the source and all shared deps (`outline.md`, stylesheet, bib) -- mtime comparison via `torrenzo_engine/build_stamp.py`.
 - `--force` rebuilds all files without clearing `build/`; `--clean` wipes `build/` first then rebuilds all.
 - Orphaned outputs (source deleted/renamed) are pruned automatically after each run; empty directories are removed.
 - Diagnostics report "N file(s) up-to-date, skipped", "N file(s) newly built", and "N orphaned file(s) removed" at the end of each run.

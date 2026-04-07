@@ -40,9 +40,9 @@ There is no formal referencing style required for this playful assessment. But p
 
 ```
 Files Included
-- catalogue.md — Markdown catalogue containing three fruit entries
-- reflection.md — short reflection about the exercise
-- assets/ — folder containing the fruit images used in the catalogue
+- catalogue.md -- Markdown catalogue containing three fruit entries
+- reflection.md -- short reflection about the exercise
+- assets/ -- folder containing the fruit images used in the catalogue
   - mango.png
   - dragonfruit.png
   - rambutan.png
