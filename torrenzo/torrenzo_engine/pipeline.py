@@ -65,6 +65,13 @@ class Pipeline:
         self.build_dir = build_dir
         self.registry = registry
 
+    def _shorten(self, msg: str) -> str:
+        """Replace absolute subject-root and build-dir prefixes with
+        relative paths in a renderer message string."""
+        msg = msg.replace(str(self.root) + '/', '')
+        msg = msg.replace(str(self.build_dir) + '/', 'build/')
+        return msg
+
     def iter_jobs(
       self,
       job_specs: Iterable[RenderJob],
@@ -115,7 +122,7 @@ class Pipeline:
                 else:
                     success, msg = result
                 level = 'info' if success else 'error'
-                entries.append((level, f'{job.name}: {msg}'))
+                entries.append((level, f'{job.name}: {self._shorten(msg)}'))
                 for warning in render_warnings:
                     entries.append((
                       'warning',
