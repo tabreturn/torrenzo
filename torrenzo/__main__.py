@@ -4,7 +4,6 @@ Converts assessment briefs into PDFs and module activities into
 LMS-ready HTML snippets.
 """
 
-from __future__ import annotations
 
 import argparse
 import html
