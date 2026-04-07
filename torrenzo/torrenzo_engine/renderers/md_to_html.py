@@ -205,6 +205,13 @@ def render(
         raw = replace_citations(raw, citation_numbers)
 
     css_text = load_module_css(input_path)
+    if not css_text:
+        warnings: list[str] = list(tag_warnings)
+        warnings.append(
+          f'No modules/style/style.css found; {input_path.name} built unstyled'
+        )
+    else:
+        warnings = list(tag_warnings)
     css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
     if ordered_keys:
@@ -233,7 +240,6 @@ def render(
       encoding='utf-8',
     )
 
-    warnings: list[str] = list(tag_warnings)
     if missing_keys:
         warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 

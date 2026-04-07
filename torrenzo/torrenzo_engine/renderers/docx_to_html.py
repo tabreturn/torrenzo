@@ -119,6 +119,10 @@ def render(
             raw_html = f'{raw_html}\n{references}'
 
     css_text = load_module_css(input_path)
+    if not css_text:
+        warnings.append(
+          f'No modules/style/style.css found; {input_path.name} built unstyled'
+        )
     css_text = substitute_css_variables(css_text)
     if css_text.strip():
         try:

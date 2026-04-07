@@ -173,10 +173,17 @@ def render(
     style_src = input_path.parent.parent / 'style'
     style_dst = workdir / 'style'
     config_src = style_src / 'config.js'
-    if not config_src.exists():
-        return False, f'Missing config.js for {input_path}', warnings
-
+    style_css_src = style_src / 'style.css'
     logo_path = style_src / 'logo.svg'
+    has_style = style_src.exists()
+    has_config = config_src.exists()
+    has_css = style_css_src.exists()
+
+    if not has_style:
+        warnings.append(f'No assessments/style/ found for {input_path.name}; building unstyled')
+    elif not has_config:
+        warnings.append(f'Missing config.js for {input_path.name}; building unstyled')
+
     created_style = False
     temp_md_path: Path | None = None
     result: subprocess.CompletedProcess[str] | None = None
@@ -184,26 +191,26 @@ def render(
     msg = ''
 
     try:
-        if style_src.exists():
+        if has_style:
             if style_dst.exists():
                 shutil.rmtree(style_dst, ignore_errors=True)
             shutil.copytree(style_src, style_dst)
             created_style = True
 
-        config_content = config_src.read_text(encoding='utf-8')
-        if logo_path.exists():
-            svg_markup = logo_path.read_text(encoding='utf-8').strip()
-            config_content = config_content.replace(
-              '<!--INLINE_LOGO_MARKUP-->', svg_markup
-            )
-        else:
-            config_content = config_content.replace(
-              '<!--INLINE_LOGO_MARKUP-->', ''
-            )
-            warnings.append(f'Missing logo asset for {input_path}')
-
-        config_dst = style_dst / 'config.js'
-        config_dst.write_text(config_content, encoding='utf-8')
+        if has_config:
+            config_content = config_src.read_text(encoding='utf-8')
+            if logo_path.exists():
+                svg_markup = logo_path.read_text(encoding='utf-8').strip()
+                config_content = config_content.replace(
+                  '<!--INLINE_LOGO_MARKUP-->', svg_markup
+                )
+            else:
+                config_content = config_content.replace(
+                  '<!--INLINE_LOGO_MARKUP-->', ''
+                )
+                warnings.append(f'Missing logo asset for {input_path.name}')
+            config_dst = style_dst / 'config.js'
+            config_dst.write_text(config_content, encoding='utf-8')
 
         with tempfile.NamedTemporaryFile(
           'w', delete=False, dir=workdir, suffix='.md', encoding='utf-8'
@@ -218,10 +225,10 @@ def render(
             cmd = [str(local_bin.resolve()), temp_md_path.name]
         else:
             cmd = ['npx', 'md-to-pdf', temp_md_path.name]
-        cmd.extend([
-          '--stylesheet', 'style/style.css',
-          '--config-file', 'style/config.js',
-        ])
+        if has_css:
+            cmd.extend(['--stylesheet', 'style/style.css'])
+        if has_config:
+            cmd.extend(['--config-file', 'style/config.js'])
 
         result = subprocess.run(
           cmd, capture_output=True, text=True, cwd=str(workdir)
