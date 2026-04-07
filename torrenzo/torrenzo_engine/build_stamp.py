@@ -7,15 +7,23 @@ from pathlib import Path
 
 def now_iso() -> str:
     """Return the current local time as an ISO-8601 string with UTC offset."""
-    return datetime.now(tz=timezone.utc).astimezone().isoformat(timespec="seconds")
+    return (
+      datetime.now(tz=timezone.utc)
+      .astimezone()
+      .isoformat(timespec='seconds')
+    )
 
 
 def html_comment(source: Path, ts: str) -> str:
-    return f"<!-- built: {ts}  source: {source.name} -->\n"
+    return f'<!-- built: {ts}  source: {source.name} -->\n'
 
 
-def is_stale(source: Path, output: Path, deps: list[Path] | None = None) -> bool:
-    """True if output does not exist or is older than source or any extra dependency."""
+def is_stale(
+  source: Path,
+  output: Path,
+  deps: list[Path] | None = None,
+) -> bool:
+    """True if output does not exist or is older than source or any dep."""
     if not output.exists():
         return True
     out_mtime = output.stat().st_mtime

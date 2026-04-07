@@ -2,18 +2,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Protocol, TypeAlias, Any, Dict, Iterable, Tuple
+from typing import Any, Callable, Dict, Iterable, Protocol, Tuple, TypeAlias
+
 
 class Renderer(Protocol):
     def __call__(
-        self,
-        input_path: Path,
-        output_path: Path,
-        context: Dict[str, Any],
+      self,
+      input_path: Path,
+      output_path: Path,
+      context: Dict[str, Any],
     ) -> Tuple[bool, str]:
         ...
 
+
 RendererFactory: TypeAlias = Callable[[Any], Renderer]
+
 
 @dataclass
 class RendererRecord:
@@ -42,5 +45,9 @@ class RendererRegistry:
         self._registry.clear()
 
 
-def register_renderer(registry: RendererRegistry, name: str, factory: RendererFactory) -> None:
+def register_renderer(
+  registry: RendererRegistry,
+  name: str,
+  factory: RendererFactory,
+) -> None:
     registry.register(name, factory)

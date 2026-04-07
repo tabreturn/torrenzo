@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -13,6 +14,18 @@ from markdown_it import MarkdownIt
 from ..build_stamp import now_iso
 
 
+TOOL_ROOT = Path(__file__).resolve().parents[3]
+
+DATAVIEW_RE = re.compile(r'`?=?\s*\[\[outline\]\]\.([^\s`]+)`?')
+DATAVIEW_BLOCK_RE = re.compile(
+  r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
+  r'FLATTEN ([^\s]+) AS x\s+```',
+  re.I | re.S,
+)
+FRONT_MATTER_RE = re.compile(r'\A---\n(.*?)\n---\n', re.S)
+METADATA_TOKEN = '<<metadata_table>>'
+
+
 def _stamp_pdf_metadata(pdf_path: Path, source: Path, ts: str) -> None:
     try:
         from pypdf import PdfReader, PdfWriter
@@ -20,28 +33,22 @@ def _stamp_pdf_metadata(pdf_path: Path, source: Path, ts: str) -> None:
         writer = PdfWriter()
         writer.append(reader)
         writer.add_metadata({
-            "/Producer": "torrenzo",
-            "/Subject": source.name,
-            "/Keywords": f"built: {ts}",
+          '/Producer': 'torrenzo',
+          '/Subject': source.name,
+          '/Keywords': f'built: {ts}',
         })
-        import tempfile, os
-        fd, tmp = tempfile.mkstemp(suffix=".pdf", dir=pdf_path.parent)
+        fd, tmp = tempfile.mkstemp(suffix='.pdf', dir=pdf_path.parent)
         os.close(fd)
-        with open(tmp, "wb") as f:
+        with open(tmp, 'wb') as f:
             writer.write(f)
         os.replace(tmp, pdf_path)
     except Exception:
         pass
 
-TOOL_ROOT = Path(__file__).resolve().parents[3]
 
-DATAVIEW_RE = re.compile(r"`?=?\s*\[\[outline\]\]\.([^\s`]+)`?")
-DATAVIEW_BLOCK_RE = re.compile(r"```dataview\s+LIST without id slo\[x\]\s+FROM \"outline\"\s+FLATTEN ([^\s]+) AS x\s+```", re.I | re.S)
-FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
-METADATA_TOKEN = "<<metadata_table>>"
-
-
-def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str, list[str]]:
+def extract_metadata_from_front_matter(
+  text: str,
+) -> tuple[Dict[str, Any], str, list[str]]:
     warnings: list[str] = []
     match = FRONT_MATTER_RE.match(text)
     if not match:
@@ -50,7 +57,7 @@ def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str, 
         metadata = yaml.safe_load(match.group(1)) or {}
     except Exception as exc:
         metadata = {}
-        warnings.append(f"Invalid front matter: {exc}")
+        warnings.append(f'Invalid front matter: {exc}')
     body = text[match.end():]
     return metadata, body, warnings
 
@@ -58,7 +65,11 @@ def extract_metadata_from_front_matter(text: str) -> tuple[Dict[str, Any], str, 
 def build_metadata_table(metadata: dict[str, Any]) -> str:
     if not metadata:
         return ''
-    lines: list[str] = ['<table>', '<thead><tr><th>Field</th><th>Details</th></tr></thead>', '<tbody>']
+    lines: list[str] = [
+      '<table>',
+      '<thead><tr><th>Field</th><th>Details</th></tr></thead>',
+      '<tbody>',
+    ]
     for key, value in metadata.items():
         field = key.replace('_', ' ').title()
         if isinstance(value, list):
@@ -70,7 +81,10 @@ def build_metadata_table(metadata: dict[str, Any]) -> str:
     return '\n'.join(lines)
 
 
-def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
+def apply_tags(
+  text: str,
+  tags: dict[str, str],
+) -> tuple[str, list[str]]:
     warnings: list[str] = []
     missing_placeholders: set[str] = set()
 
@@ -83,7 +97,6 @@ def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
         parts = [part.strip() for part in content.split('|') if part.strip()]
         if not parts:
             return original
-
         lookup_keys: list[str] = []
         if len(parts) == 1:
             lookup_keys.append(parts[0])
@@ -91,7 +104,6 @@ def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
             lookup_keys.append('|'.join(parts))
             if parts[0].lower() == 'assessment':
                 lookup_keys.append('|'.join(parts[1:]))
-
         for key in lookup_keys:
             snippet = tags.get(key)
             if snippet is not None:
@@ -106,11 +118,15 @@ def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
         parts = path.split('.')
         if len(parts) >= 2 and parts[0].lower() == 'assessment':
             aid_token = parts[1]
-            aid_num = aid_token.removeprefix('ass') if aid_token.lower().startswith('ass') else aid_token
+            aid_num = (
+              aid_token.removeprefix('ass')
+              if aid_token.lower().startswith('ass')
+              else aid_token
+            )
             candidates = [
-                f'assessment|{aid_token}|slo',
-                f'assessment|{aid_num}|slo',
-                f'outline.{path}',
+              f'assessment|{aid_token}|slo',
+              f'assessment|{aid_num}|slo',
+              f'outline.{path}',
             ]
         for key in candidates:
             snippet = tags.get(key)
@@ -120,24 +136,36 @@ def apply_tags(text: str, tags: dict[str, str]) -> tuple[str, list[str]]:
             add_warning(candidates[0])
         return match.group(0)
 
-    replaced = DATAVIEW_RE.sub(lambda m: replace_content(f"outline.{m.group(1)}", m.group(0)), text)
-    replaced = DATAVIEW_BLOCK_RE.sub(lambda m: replace_dataview_block(m), replaced)
+    replaced = DATAVIEW_RE.sub(
+      lambda m: replace_content(f'outline.{m.group(1)}', m.group(0)),
+      text,
+    )
+    replaced = DATAVIEW_BLOCK_RE.sub(
+      lambda m: replace_dataview_block(m),
+      replaced,
+    )
     return replaced, warnings
 
 
-def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str, list[str]]:
+def render(
+  input_path: Path,
+  output_path: Path,
+  context: Dict[str, Any],
+) -> Tuple[bool, str, list[str]]:
     pdf_css = context.get('pdf_css', '')
     tags = context.get('tags', {})
 
     raw_content = input_path.read_text(encoding='utf-8')
-    metadata, body, meta_warnings = extract_metadata_from_front_matter(raw_content)
+    metadata, body, meta_warnings = extract_metadata_from_front_matter(
+      raw_content
+    )
     warnings: list[str] = list(meta_warnings)
     if METADATA_TOKEN in body and metadata:
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body, tag_warnings = apply_tags(body, tags)
     warnings.extend(tag_warnings)
 
-    md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
+    md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
     _ = md
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -147,7 +175,7 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     style_dst = workdir / 'style'
     config_src = style_src / 'config.js'
     if not config_src.exists():
-        return False, f"Missing config.js for {input_path}", warnings
+        return False, f'Missing config.js for {input_path}', warnings
 
     logo_path = style_src / 'logo.svg'
     created_style = False
@@ -166,40 +194,53 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
         config_content = config_src.read_text(encoding='utf-8')
         if logo_path.exists():
             svg_markup = logo_path.read_text(encoding='utf-8').strip()
-            config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', svg_markup)
+            config_content = config_content.replace(
+              '<!--INLINE_LOGO_MARKUP-->', svg_markup
+            )
         else:
-            config_content = config_content.replace('<!--INLINE_LOGO_MARKUP-->', '')
-            warnings.append(f"Missing logo asset for {input_path}")
+            config_content = config_content.replace(
+              '<!--INLINE_LOGO_MARKUP-->', ''
+            )
+            warnings.append(f'Missing logo asset for {input_path}')
 
         config_dst = style_dst / 'config.js'
         config_dst.write_text(config_content, encoding='utf-8')
 
-        with tempfile.NamedTemporaryFile('w', delete=False, dir=workdir, suffix='.md', encoding='utf-8') as temp_md:
+        with tempfile.NamedTemporaryFile(
+          'w', delete=False, dir=workdir, suffix='.md', encoding='utf-8'
+        ) as temp_md:
             temp_md.write(body)
             temp_md_path = Path(temp_md.name)
 
-        local_bin = TOOL_ROOT / 'node_modules' / '.bin' / ('md-to-pdf.cmd' if Path.home().anchor != '/' else 'md-to-pdf')
+        is_windows = Path.home().anchor != '/'
+        bin_name = 'md-to-pdf.cmd' if is_windows else 'md-to-pdf'
+        local_bin = TOOL_ROOT / 'node_modules' / '.bin' / bin_name
         if local_bin.exists():
             cmd = [str(local_bin.resolve()), temp_md_path.name]
         else:
             cmd = ['npx', 'md-to-pdf', temp_md_path.name]
-        cmd.extend(['--stylesheet', 'style/style.css', '--config-file', 'style/config.js'])
+        cmd.extend([
+          '--stylesheet', 'style/style.css',
+          '--config-file', 'style/config.js',
+        ])
 
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workdir))
+        result = subprocess.run(
+          cmd, capture_output=True, text=True, cwd=str(workdir)
+        )
 
-        pdf_temp = workdir / f"{temp_md_path.stem}.pdf"
+        pdf_temp = workdir / f'{temp_md_path.stem}.pdf'
         if result.returncode == 0 and pdf_temp.exists():
             shutil.move(str(pdf_temp), output_path)
             _stamp_pdf_metadata(output_path, input_path, now_iso())
 
         success = result.returncode == 0 and output_path.exists()
         if success:
-            msg = f"{input_path} -> {output_path}"
+            msg = f'{input_path} -> {output_path}'
         else:
             stderr_output = result.stderr.strip() if result else ''
-            msg = f"{input_path} -> {output_path} failed: {stderr_output}"
+            msg = f'{input_path} -> {output_path} failed: {stderr_output}'
     except FileNotFoundError as exc:
-        msg = f"{input_path} -> {output_path} failed: {exc}"
+        msg = f'{input_path} -> {output_path} failed: {exc}'
     finally:
         if temp_md_path and temp_md_path.exists():
             temp_md_path.unlink(missing_ok=True)

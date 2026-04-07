@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """torrenzo.__main__
-Converts assessment briefs into PDFs and module activities into LMS-ready HTML snippets.
+Converts assessment briefs into PDFs and module activities into
+LMS-ready HTML snippets.
 """
 
 from __future__ import annotations
@@ -16,11 +17,18 @@ import yaml
 
 from .torrenzo_engine import Pipeline, RenderJob, RendererRegistry
 from .torrenzo_engine.pipeline import fmt
-from .torrenzo_engine.renderers import register_renderer, render_md_to_pdf, render_md_to_html, render_docx_to_html, render_copy_asset
+from .torrenzo_engine.renderers import (
+  register_renderer,
+  render_md_to_pdf,
+  render_md_to_html,
+  render_docx_to_html,
+  render_copy_asset,
+)
 from .torrenzo_engine.build_stamp import now_iso
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PDF_USER_CSS = ''
+
 
 def locate_command(candidates: list[str | Path]) -> str | None:
     for candidate in candidates:
@@ -33,6 +41,7 @@ def locate_command(candidates: list[str | Path]) -> str | None:
                 return found
     return None
 
+
 def optimize_assets(build_dir: Path) -> list[str]:
     messages: list[str] = []
 
@@ -42,42 +51,77 @@ def optimize_assets(build_dir: Path) -> list[str]:
         optimized_pngs = 0
         for path in png_files:
             if Path(png_tool).name == 'pngquant':
-                cmd = [png_tool, '--force', '--strip', '--ext', '.png', str(path)]
+                cmd = [
+                  png_tool, '--force', '--strip', '--ext', '.png', str(path)
+                ]
             else:
-                cmd = [png_tool, '--strip', 'safe', '--opt', '3', '--fix', str(path)]
+                cmd = [
+                  png_tool, '--strip', 'safe', '--opt', '3', '--fix',
+                  str(path),
+                ]
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode == 0:
                 optimized_pngs += 1
             else:
                 error = result.stderr.strip() or result.stdout.strip()
-                messages.append(fmt('error', f"PNG optimize failed ({Path(png_tool).name}): {path.relative_to(build_dir)}: {error}" if error else f"PNG optimize failed ({Path(png_tool).name}): {path.relative_to(build_dir)}"))
+                tool_name = Path(png_tool).name
+                rel = path.relative_to(build_dir)
+                if error:
+                    msg = f'PNG optimize failed ({tool_name}): {rel}: {error}'
+                else:
+                    msg = f'PNG optimize failed ({tool_name}): {rel}'
+                messages.append(fmt('error', msg))
         if optimized_pngs:
-            messages.append(fmt('info', f"Optimized {optimized_pngs} PNG file(s) with {Path(png_tool).name}"))
+            messages.append(fmt(
+              'info',
+              f'Optimized {optimized_pngs} PNG file(s) with '
+              f'{Path(png_tool).name}',
+            ))
     elif not png_tool:
-        messages.append(fmt('warning', 'Skipping PNG optimization (pngquant or oxipng not installed)'))
+        messages.append(fmt(
+          'warning',
+          'Skipping PNG optimization (pngquant or oxipng not installed)',
+        ))
     elif not png_files:
         messages.append(fmt('info', 'No PNG assets to optimize'))
 
-    svgo_tool = locate_command([PROJECT_ROOT / 'node_modules' / '.bin' / 'svgo', 'svgo'])
+    svgo_tool = locate_command([
+      PROJECT_ROOT / 'node_modules' / '.bin' / 'svgo',
+      'svgo',
+    ])
     svg_files = sorted(build_dir.rglob('*.svg'))
     if svgo_tool and svg_files:
         optimized_svgs = 0
         for path in svg_files:
-            cmd = [svgo_tool, '--quiet', '--multipass', '--input', str(path), '--output', str(path)]
+            cmd = [
+              svgo_tool, '--quiet', '--multipass',
+              '--input', str(path), '--output', str(path),
+            ]
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode == 0:
                 optimized_svgs += 1
             else:
                 error = result.stderr.strip() or result.stdout.strip()
-                messages.append(fmt('error', f"SVG optimize failed (svgo): {path.relative_to(build_dir)}: {error}" if error else f"SVG optimize failed (svgo): {path.relative_to(build_dir)}"))
+                rel = path.relative_to(build_dir)
+                if error:
+                    msg = f'SVG optimize failed (svgo): {rel}: {error}'
+                else:
+                    msg = f'SVG optimize failed (svgo): {rel}'
+                messages.append(fmt('error', msg))
         if optimized_svgs:
-            messages.append(fmt('info', f"Optimized {optimized_svgs} SVG file(s) with svgo"))
+            messages.append(fmt(
+              'info', f'Optimized {optimized_svgs} SVG file(s) with svgo'
+            ))
     elif not svgo_tool:
-        messages.append(fmt('warning', 'Skipping SVG optimization (svgo not installed; run npm install)'))
+        messages.append(fmt(
+          'warning',
+          'Skipping SVG optimization (svgo not installed; run npm install)',
+        ))
     elif not svg_files:
         messages.append(fmt('info', 'No SVG assets to optimize'))
 
     return messages
+
 
 def prepare_build_dir(build_dir: Path, clean: bool = False) -> None:
     if build_dir.exists():
@@ -90,13 +134,14 @@ def prepare_build_dir(build_dir: Path, clean: bool = False) -> None:
     else:
         build_dir.mkdir(parents=True, exist_ok=True)
 
+
 def render_learning_outcomes(outcomes: list[dict[str, str]]) -> str:
     if not outcomes:
         return ''
     entries: list[str] = [
-        '<section class="subject-learning-outcomes">',
-        '<h3>Subject learning outcomes</h3>',
-        '<dl>',
+      '<section class="subject-learning-outcomes">',
+      '<h3>Subject learning outcomes</h3>',
+      '<dl>',
     ]
     for outcome in outcomes:
         code = html.escape(str(outcome.get('id', '')).strip())
@@ -105,6 +150,7 @@ def render_learning_outcomes(outcomes: list[dict[str, str]]) -> str:
         entries.append(f'<dd>{description}</dd>')
     entries.extend(['</dl>', '</section>'])
     return '\n'.join(entries)
+
 
 def render_single_learning_outcome(outcome: dict[str, str]) -> str:
     code = html.escape(str(outcome.get('id', '')).strip())
@@ -117,17 +163,30 @@ def render_single_learning_outcome(outcome: dict[str, str]) -> str:
         return f'<p><strong>{code}</strong></p>'
     return f'<p><strong>{code}</strong> {description}</p>'
 
+
 def format_metadata_value(value: Any) -> str:
     if isinstance(value, list):
-        return '<br>'.join(html.escape(str(item).strip()) for item in value)
+        return '<br>'.join(
+          html.escape(str(item).strip()) for item in value
+        )
     return html.escape(str(value).strip())
 
-def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str, Any], slos: list[dict[str, str]] | None = None) -> dict[str, str]:
-    slos_by_id = {str(item.get('id', '')).strip(): item for item in slos or []}
+
+def build_assessment_metadata_tags(
+  assessments: list[dict[str, Any]] | dict[str, Any],
+  slos: list[dict[str, str]] | None = None,
+) -> dict[str, str]:
+    slos_by_id = {
+      str(item.get('id', '')).strip(): item for item in slos or []
+    }
     tags: dict[str, str] = {}
 
     if isinstance(assessments, list):
-        items = [(str(item.get('id', '')).strip(), item) for item in assessments if isinstance(item, dict)]
+        items = [
+          (str(item.get('id', '')).strip(), item)
+          for item in assessments
+          if isinstance(item, dict)
+        ]
     elif isinstance(assessments, dict):
         items = assessments.items()
     else:
@@ -140,42 +199,60 @@ def build_assessment_metadata_tags(assessments: list[dict[str, Any]] | dict[str,
         for key, value in fields.items():
             if str(key).startswith('_'):
                 continue
-            normalized_key = 'slo' if key in ('learning_outcomes', 'lo', 'slo') else key
+            normalized_key = (
+              'slo' if key in ('learning_outcomes', 'lo', 'slo') else key
+            )
             if normalized_key == 'slo':
                 outcomes: list[str] = []
                 if isinstance(value, list):
                     for code in value:
                         code_str = str(code).strip()
                         if code_str in slos_by_id:
-                            desc = html.escape(str(slos_by_id[code_str].get('description', '')).strip())
+                            desc = html.escape(
+                              str(slos_by_id[code_str]
+                              .get('description', '')).strip()
+                            )
                             if desc:
                                 outcomes.append(f'<li>{desc}</li>')
                             else:
-                                outcomes.append(f'<li>{html.escape(code_str)}</li>')
+                                outcomes.append(
+                                  f'<li>{html.escape(code_str)}</li>'
+                                )
                         else:
-                            outcomes.append(f'<li>{html.escape(code_str)}</li>')
+                            outcomes.append(
+                              f'<li>{html.escape(code_str)}</li>'
+                            )
                 detail = f"<ul>{''.join(outcomes)}</ul>" if outcomes else ''
                 normalized_key = 'slo'
             else:
                 detail = format_metadata_value(value)
             tags[f'assessment|{assessment_id}|{normalized_key}'] = detail
-            table_rows.append((normalized_key.replace('_', ' ').title(), detail))
+            table_rows.append((
+              normalized_key.replace('_', ' ').title(), detail
+            ))
         if table_rows:
-            lines: list[str] = ['<table>', '<thead><tr><th>Field</th><th>Details</th></tr></thead>', '<tbody>']
+            lines: list[str] = [
+              '<table>',
+              '<thead><tr><th>Field</th><th>Details</th></tr></thead>',
+              '<tbody>',
+            ]
             for label, detail in table_rows:
                 lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
             lines.append('</tbody></table>')
             table_markup = '\n'.join(lines)
             tags[f'assessment|{assessment_id}|meta_table'] = table_markup
-            tags[f"assessment|{fields.get('_key', assessment_id)}|meta_table"] = table_markup
+            tags[
+              f"assessment|{fields.get('_key', assessment_id)}|meta_table"
+            ] = table_markup
     return tags
+
 
 def load_outline(root: Path) -> dict[str, Any]:
     md_path = root / 'outline.md'
     if not md_path.exists():
         raise SystemExit('outline.md is required at the project root')
     text = md_path.read_text(encoding='utf-8')
-    frontmatter_match = re.match(r"\A---\n(.*?)\n---\n", text, re.S)
+    frontmatter_match = re.match(r'\A---\n(.*?)\n---\n', text, re.S)
     yaml_text = frontmatter_match.group(1) if frontmatter_match else text
     try:
         data = yaml.safe_load(yaml_text) or {}
@@ -209,7 +286,9 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 tags[f'slo-{code}'] = snippet
                 tags[f'^slo-{code}'] = snippet
 
-    assessments_obj = data.get('assessment') or data.get('assessments') or {}
+    assessments_obj = (
+      data.get('assessment') or data.get('assessments') or {}
+    )
     if isinstance(assessments_obj, dict):
         assessments_list = []
         for key, val in assessments_obj.items():
@@ -220,9 +299,15 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 assessments_list.append(entry)
         assessments = assessments_list
     else:
-        assessments = assessments_obj if isinstance(assessments_obj, list) else []
+        assessments = (
+          assessments_obj if isinstance(assessments_obj, list) else []
+        )
 
-    slos_lookup = {str(item.get('id', '')).strip(): item for item in slos if isinstance(item, dict)}
+    slos_lookup = {
+      str(item.get('id', '')).strip(): item
+      for item in slos
+      if isinstance(item, dict)
+    }
 
     tags.update(build_assessment_metadata_tags(assessments, slos))
     if isinstance(assessments, list):
@@ -269,93 +354,116 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 tags[f'outline.assessment.{aid}.metatable'] = table
                 tags[f'outline.assessment.{key}.metatable'] = table
 
-    def to_table(value: Any, prefix: str, slos_lookup: dict[str, Any] | None) -> str | None:
+    def _is_slo_path(path: str) -> bool:
+        return (
+          path.endswith('.learning_outcomes')
+          or path.endswith('.slo')
+          or '.learning_outcomes.' in path
+          or '.slo.' in path
+        )
+
+    def _slo_snippets(
+      values: list[Any],
+      lookup: dict[str, Any],
+    ) -> list[str]:
+        snippets: list[str] = []
+        for item in values:
+            code = str(item).strip()
+            if code in lookup:
+                desc = html.escape(
+                  str(lookup[code].get('description', '')).strip()
+                )
+                snippets.append(f'<li>{desc}</li>' if desc
+                                else f'<li>{html.escape(code)}</li>')
+            else:
+                snippets.append(f'<li>{html.escape(code)}</li>')
+        return snippets
+
+    def to_table(
+      value: Any,
+      prefix: str,
+      lookup: dict[str, Any] | None,
+    ) -> str | None:
         if isinstance(value, dict):
             rows = []
             for k, v in value.items():
                 if str(k).startswith('_'):
                     continue
-                child_prefix = f"{prefix}.{k}"
-                if isinstance(v, list) and all(isinstance(item, (str, int, float)) for item in v):
-                    if slos_lookup and (child_prefix.endswith('.learning_outcomes') or child_prefix.endswith('.slo') or '.learning_outcomes.' in child_prefix or '.slo.' in child_prefix):
-                        snippets: list[str] = []
-                        for item in v:
-                            code = str(item).strip()
-                            if code in slos_lookup:
-                                desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
-                                if desc:
-                                    snippets.append(f'<li>{desc}</li>')
-                                else:
-                                    snippets.append(f'<li>{html.escape(code)}</li>')
-                            else:
-                                snippets.append(f'<li>{html.escape(code)}</li>')
-                        detail = f"<ul>{''.join(snippets)}</ul>" if snippets else ''
+                child_prefix = f'{prefix}.{k}'
+                is_scalar_list = (
+                  isinstance(v, list)
+                  and all(isinstance(i, (str, int, float)) for i in v)
+                )
+                if is_scalar_list:
+                    if lookup and _is_slo_path(child_prefix):
+                        snips = _slo_snippets(v, lookup)
+                        detail = f"<ul>{''.join(snips)}</ul>" if snips else ''
                     else:
-                        detail = '<br>'.join(html.escape(str(item).strip()) for item in v)
+                        detail = '<br>'.join(
+                          html.escape(str(i).strip()) for i in v
+                        )
                 else:
-                    nested = to_table(v, child_prefix, slos_lookup)
-                    detail = nested if nested is not None else html.escape(str(v))
+                    nested = to_table(v, child_prefix, lookup)
+                    detail = nested if nested is not None else html.escape(
+                      str(v)
+                    )
                 rows.append((str(k).replace('_', ' ').title(), detail))
             if rows:
                 lines = ['<table>', '<tbody>']
                 for label, detail in rows:
-                    lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
+                    lines.append(
+                      f'<tr><td>{label}</td><td>{detail}</td></tr>'
+                    )
                 lines.append('</tbody></table>')
                 return '\n'.join(lines)
         if isinstance(value, list):
-            if value and all(isinstance(item, (dict, list)) for item in value):
+            if value and all(isinstance(i, (dict, list)) for i in value):
                 lines = ['<table>', '<tbody>']
                 for idx, item in enumerate(value):
-                    lines.append(f'<tr><td>{idx}</td><td>{to_table(item, f"{prefix}.{idx}", slos_lookup) or html.escape(str(item))}</td></tr>')
+                    cell = (
+                      to_table(item, f'{prefix}.{idx}', lookup)
+                      or html.escape(str(item))
+                    )
+                    lines.append(
+                      f'<tr><td>{idx}</td><td>{cell}</td></tr>'
+                    )
                 lines.append('</tbody></table>')
                 return '\n'.join(lines)
-            if all(isinstance(item, (str, int, float)) for item in value):
-                if slos_lookup and (prefix.endswith('.learning_outcomes') or prefix.endswith('.slo') or '.learning_outcomes.' in prefix or '.slo.' in prefix):
-                    snippets = []
-                    for item in value:
-                        code = str(item).strip()
-                        if code in slos_lookup:
-                            desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
-                            if desc:
-                                snippets.append(f'<li>{desc}</li>')
-                            else:
-                                snippets.append(f'<li>{html.escape(code)}</li>')
-                        else:
-                            snippets.append(f'<li>{html.escape(code)}</li>')
-                    return f"<ul>{''.join(snippets)}</ul>" if snippets else ''
-                return '<br>'.join(html.escape(str(item).strip()) for item in value)
+            if all(isinstance(i, (str, int, float)) for i in value):
+                if lookup and _is_slo_path(prefix):
+                    snips = _slo_snippets(value, lookup)
+                    return f"<ul>{''.join(snips)}</ul>" if snips else ''
+                return '<br>'.join(
+                  html.escape(str(i).strip()) for i in value
+                )
         return None
 
-    def flatten(obj: Any, prefix: str, slos_lookup: dict[str, Any] | None) -> None:
+    def flatten(
+      obj: Any,
+      prefix: str,
+      lookup: dict[str, Any] | None,
+    ) -> None:
         if isinstance(obj, dict):
-            table_value = to_table(obj, prefix, slos_lookup)
+            table_value = to_table(obj, prefix, lookup)
             if table_value:
                 tags[prefix] = table_value
             for k, v in obj.items():
-                flatten(v, f"{prefix}.{k}", slos_lookup)
+                flatten(v, f'{prefix}.{k}', lookup)
         elif isinstance(obj, list):
             if all(isinstance(item, (str, int, float)) for item in obj):
-                if slos_lookup and (prefix.endswith('.learning_outcomes') or prefix.endswith('.slo') or '.learning_outcomes.' in prefix or '.slo.' in prefix):
-                    snippets = []
-                    for item in obj:
-                        code = str(item).strip()
-                        if code in slos_lookup:
-                            desc = html.escape(str(slos_lookup[code].get('description', '')).strip())
-                            if desc:
-                                snippets.append(f'<li>{desc}</li>')
-                            else:
-                                snippets.append(f'<li>{html.escape(code)}</li>')
-                        else:
-                            snippets.append(f'<li>{html.escape(code)}</li>')
-                    tags[prefix] = f"<ul>{''.join(snippets)}</ul>" if snippets else ''
+                if lookup and _is_slo_path(prefix):
+                    snips = _slo_snippets(obj, lookup)
+                    tags[prefix] = (
+                      f"<ul>{''.join(snips)}</ul>" if snips else ''
+                    )
                 else:
                     tags[prefix] = ', '.join(str(item) for item in obj)
             else:
-                table_value = to_table(obj, prefix, slos_lookup)
+                table_value = to_table(obj, prefix, lookup)
                 if table_value:
                     tags[prefix] = table_value
                 for idx, item in enumerate(obj):
-                    flatten(item, f"{prefix}.{idx}", slos_lookup)
+                    flatten(item, f'{prefix}.{idx}', lookup)
         else:
             tags[prefix] = str(obj)
 
@@ -366,7 +474,12 @@ def build_tag_map(root: Path) -> dict[str, str]:
             tags[f'outline#{key}'] = value
     return tags
 
-def make_jobs(tags: dict[str, str], subject_root: Path, built: str | None = None) -> list[RenderJob]:
+
+def make_jobs(
+  tags: dict[str, str],
+  subject_root: Path,
+  built: str | None = None,
+) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
     content_pattern = 'modules/*/mod_*_content*.md'
     content_docx_pattern = 'modules/*/mod_*_content*.docx'
@@ -378,103 +491,116 @@ def make_jobs(tags: dict[str, str], subject_root: Path, built: str | None = None
     outline = subject_root / 'outline.md'
     module_css = subject_root / 'modules' / 'style' / 'style.css'
     module_bib = subject_root / 'modules' / 'references.bib'
-    assess_style_css = subject_root / 'assessments' / 'style' / 'style.css'
-    assess_config_js = subject_root / 'assessments' / 'style' / 'config.js'
+    assess_css = subject_root / 'assessments' / 'style' / 'style.css'
+    assess_js = subject_root / 'assessments' / 'style' / 'config.js'
     assess_logo = subject_root / 'assessments' / 'style' / 'logo.svg'
 
-    html_deps = [p for p in [outline, module_css, module_bib] if p.exists()]
-    pdf_deps = [p for p in [outline, assess_style_css, assess_config_js, assess_logo] if p.exists()]
-
-    return [
-        RenderJob(
-            name='assessment_briefs',
-            input_pattern=briefs_pattern,
-            output_dir=Path('assessments_briefs'),
-            renderer='md_to_pdf',
-            context={
-                'tags': tags,
-                'pdf_css': PDF_USER_CSS,
-                'header_html': f'<div class="header">ver.2026-03-04 &nbsp; built: {built}</div>',
-                'footer_html': '<div class="footer"></div>',
-            },
-            output_ext='.pdf',
-            output_namer=lambda p: f"{p.parent.name}.pdf",
-            deps=pdf_deps,
-        ),
-        RenderJob(
-            name='module_content',
-            input_pattern=content_pattern,
-            output_dir=Path('modules_html'),
-            renderer='md_to_html',
-            context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
-            output_ext='.html',
-            output_namer=lambda p: p.with_suffix('.html').name,
-            deps=html_deps,
-        ),
-        RenderJob(
-            name='module_content_docx',
-            input_pattern=content_docx_pattern,
-            output_dir=Path('modules_html'),
-            renderer='docx_to_html',
-            context={'tags': tags},
-            output_ext='.html',
-            output_namer=lambda p: p.with_suffix('.html').name,
-            deps=html_deps,
-        ),
-        RenderJob(
-            name='module_activities',
-            input_pattern=activities_pattern,
-            output_dir=Path('modules_html'),
-            renderer='md_to_html',
-            context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
-            output_ext='.html',
-            output_namer=lambda p: p.with_suffix('.html').name,
-            deps=html_deps,
-        ),
-        RenderJob(
-            name='module_activities_docx',
-            input_pattern=activities_docx_pattern,
-            output_dir=Path('modules_html'),
-            renderer='docx_to_html',
-            context={'tags': tags},
-            output_ext='.html',
-            output_namer=lambda p: p.with_suffix('.html').name,
-            deps=html_deps,
-        ),
-        RenderJob(
-            name='module_assets',
-            input_pattern='modules/*/assets/**/*',
-            output_dir=Path('modules_html/assets'),
-            renderer='copy_asset',
-            context={},
-            output_ext='',
-            output_namer=lambda p: p.name,
-        ),
+    html_deps = [
+      p for p in [outline, module_css, module_bib] if p.exists()
+    ]
+    pdf_deps = [
+      p for p in [outline, assess_css, assess_js, assess_logo]
+      if p.exists()
     ]
 
+    return [
+      RenderJob(
+        name='assessment_briefs',
+        input_pattern=briefs_pattern,
+        output_dir=Path('assessments_briefs'),
+        renderer='md_to_pdf',
+        context={
+          'tags': tags,
+          'pdf_css': PDF_USER_CSS,
+          'header_html': (
+            f'<div class="header">ver.2026-03-04 &nbsp; built: {built}</div>'
+          ),
+          'footer_html': '<div class="footer"></div>',
+        },
+        output_ext='.pdf',
+        output_namer=lambda p: f'{p.parent.name}.pdf',
+        deps=pdf_deps,
+      ),
+      RenderJob(
+        name='module_content',
+        input_pattern=content_pattern,
+        output_dir=Path('modules_html'),
+        renderer='md_to_html',
+        context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
+        output_ext='.html',
+        output_namer=lambda p: p.with_suffix('.html').name,
+        deps=html_deps,
+      ),
+      RenderJob(
+        name='module_content_docx',
+        input_pattern=content_docx_pattern,
+        output_dir=Path('modules_html'),
+        renderer='docx_to_html',
+        context={'tags': tags},
+        output_ext='.html',
+        output_namer=lambda p: p.with_suffix('.html').name,
+        deps=html_deps,
+      ),
+      RenderJob(
+        name='module_activities',
+        input_pattern=activities_pattern,
+        output_dir=Path('modules_html'),
+        renderer='md_to_html',
+        context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
+        output_ext='.html',
+        output_namer=lambda p: p.with_suffix('.html').name,
+        deps=html_deps,
+      ),
+      RenderJob(
+        name='module_activities_docx',
+        input_pattern=activities_docx_pattern,
+        output_dir=Path('modules_html'),
+        renderer='docx_to_html',
+        context={'tags': tags},
+        output_ext='.html',
+        output_namer=lambda p: p.with_suffix('.html').name,
+        deps=html_deps,
+      ),
+      RenderJob(
+        name='module_assets',
+        input_pattern='modules/*/assets/**/*',
+        output_dir=Path('modules_html/assets'),
+        renderer='copy_asset',
+        context={},
+        output_ext='',
+        output_namer=lambda p: p.name,
+      ),
+    ]
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Convert assessment briefs to PDF and module activities to LMS-ready HTML snippets.')
-    parser.add_argument(
-        'root',
-        nargs='?',
-        type=Path,
-        default=Path('.'),
-        help='Directory to search for briefs and activities',
+    parser = argparse.ArgumentParser(
+      description=(
+        'Convert assessment briefs to PDF and module activities '
+        'to LMS-ready HTML snippets.'
+      )
     )
     parser.add_argument(
-        '--optimize-assets',
-        action='store_true',
-        help='Optimize built assets with pngquant/oxipng and svgo',
+      'root',
+      nargs='?',
+      type=Path,
+      default=Path('.'),
+      help='Directory to search for briefs and activities',
     )
     parser.add_argument(
-        '--clean',
-        action='store_true',
-        help='Wipe build/ before building (forces full rebuild)',
+      '--optimize-assets',
+      action='store_true',
+      help='Optimize built assets with pngquant/oxipng and svgo',
     )
     parser.add_argument(
-        '--force',
-        action='store_true',
-        help='Rebuild all files even if outputs are up-to-date',
+      '--clean',
+      action='store_true',
+      help='Wipe build/ before building (forces full rebuild)',
+    )
+    parser.add_argument(
+      '--force',
+      action='store_true',
+      help='Rebuild all files even if outputs are up-to-date',
     )
     args = parser.parse_args()
 
@@ -489,15 +615,21 @@ def main() -> None:
     registry = RendererRegistry()
     register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
     register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
-    register_renderer(registry, 'docx_to_html', lambda _: render_docx_to_html)
+    register_renderer(
+      registry, 'docx_to_html', lambda _: render_docx_to_html
+    )
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
 
     pipeline = Pipeline(subject_root, build_dir, registry)
-    diagnostics = pipeline.execute(make_jobs(tags, subject_root=subject_root, built=built), force=force)
+    diagnostics = pipeline.execute(
+      make_jobs(tags, subject_root=subject_root, built=built),
+      force=force,
+    )
     if args.optimize_assets:
         diagnostics.extend(optimize_assets(build_dir))
     for message in diagnostics:
         print(message)
+
 
 if __name__ == '__main__':
     main()

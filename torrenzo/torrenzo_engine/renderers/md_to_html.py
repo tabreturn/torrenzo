@@ -14,23 +14,25 @@ from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
 
 
-CITATION_BRACKET_RE = re.compile(r"\[@([^\]]+)\]")
-CITATION_BARE_RE = re.compile(r"(?<!\w)@([A-Za-z0-9:_-]+)")
+CITATION_BRACKET_RE = re.compile(r'\[@([^\]]+)\]')
+CITATION_BARE_RE = re.compile(r'(?<!\w)@([A-Za-z0-9:_-]+)')
 
 
 def load_module_css(input_path: Path) -> str:
     modules_dir = input_path.parent.parent
-    css_path = modules_dir / "style" / "style.css"
+    css_path = modules_dir / 'style' / 'style.css'
     if css_path.exists():
-        return css_path.read_text(encoding="utf-8")
-    return ""
+        return css_path.read_text(encoding='utf-8')
+    return ''
 
 
 def substitute_css_variables(css_text: str) -> str:
-    root_blocks = re.findall(r":root\s*{([^}]*)}", css_text, re.S)
+    root_blocks = re.findall(r':root\s*{([^}]*)}', css_text, re.S)
     mapping: dict[str, str] = {}
     for block in root_blocks:
-        for match in re.finditer(r"--([A-Za-z0-9_-]+)\s*:\s*([^;]+);", block):
+        for match in re.finditer(
+          r'--([A-Za-z0-9_-]+)\s*:\s*([^;]+);', block
+        ):
             name = match.group(1).strip()
             value = match.group(2).strip()
             if name:
@@ -47,9 +49,15 @@ def substitute_css_variables(css_text: str) -> str:
             return fallback
         return match.group(0)
 
-    substituted = re.sub(r"var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)", replace_var, css_text)
-    substituted = re.sub(r":root\s*{[^}]*}", "", substituted, flags=re.S)
-    substituted = re.sub(r"\s*--[A-Za-z0-9_-]+\s*:\s*[^;]+;\s*", "", substituted)
+    substituted = re.sub(
+      r'var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)',
+      replace_var,
+      css_text,
+    )
+    substituted = re.sub(r':root\s*{[^}]*}', '', substituted, flags=re.S)
+    substituted = re.sub(
+      r'\s*--[A-Za-z0-9_-]+\s*:\s*[^;]+;\s*', '', substituted
+    )
     return substituted
 
 
@@ -58,12 +66,12 @@ def strip_html_wrapper(html_text: str) -> str:
         document = lxml_html.fromstring(html_text)
     except Exception:
         return html_text
-    body = document.find("body")
+    body = document.find('body')
     if body is None:
         return html_text
-    inner = body.text or ""
+    inner = body.text or ''
     for child in body:
-        inner += lxml_html.tostring(child, encoding="unicode", method="html")
+        inner += lxml_html.tostring(child, encoding='unicode', method='html')
         if child.tail:
             inner += child.tail
     return inner
@@ -74,18 +82,21 @@ def sanitize_html_attributes(html_text: str) -> str:
         document = lxml_html.fromstring(html_text)
     except Exception:
         return html_text
-    unwanted = {"bgcolor", "color", "background", "text", "link", "alink", "vlink"}
+    unwanted = {'bgcolor', 'color', 'background', 'text', 'link', 'alink', 'vlink'}
     for element in document.iter():
         for attr in list(element.attrib):
             if attr.lower() in unwanted:
                 del element.attrib[attr]
-    return lxml_html.tostring(document, encoding="unicode", method="html")
+    return lxml_html.tostring(document, encoding='unicode', method='html')
 
 
 def load_bibliography(input_path: Path) -> dict[str, Any]:
     modules_root = input_path.parent.parent
     entries: dict[str, Any] = {}
-    bib_paths = [modules_root / "references.bib", *sorted(modules_root.glob("mod_*_resources*.bib"))]
+    bib_paths = [
+      modules_root / 'references.bib',
+      *sorted(modules_root.glob('mod_*_resources*.bib')),
+    ]
     for bib_path in bib_paths:
         if not bib_path.exists():
             continue
@@ -99,7 +110,10 @@ def load_bibliography(input_path: Path) -> dict[str, Any]:
     return entries
 
 
-def collect_citation_numbers(text: str, bib_entries: dict[str, Any]) -> tuple[dict[str, int], list[str], list[str]]:
+def collect_citation_numbers(
+  text: str,
+  bib_entries: dict[str, Any],
+) -> tuple[dict[str, int], list[str], list[str]]:
     mapping: dict[str, int] = {}
     ordered: list[str] = []
     missing: list[str] = []
@@ -114,8 +128,8 @@ def collect_citation_numbers(text: str, bib_entries: dict[str, Any]) -> tuple[di
 
     for match in CITATION_BRACKET_RE.finditer(text):
         raw_keys = match.group(1)
-        for token in re.split(r"[;,]", raw_keys):
-            key = token.strip().lstrip("@")
+        for token in re.split(r'[;,]', raw_keys):
+            key = token.strip().lstrip('@')
             if key:
                 add_key(key)
     for match in CITATION_BARE_RE.finditer(text):
@@ -129,16 +143,16 @@ def replace_citations(text: str, mapping: dict[str, int]) -> str:
     def replace_bracket(match: re.Match[str]) -> str:
         raw_keys = match.group(1)
         pieces: list[str] = []
-        for token in re.split(r"[;,]", raw_keys):
-            key = token.strip().lstrip("@")
+        for token in re.split(r'[;,]', raw_keys):
+            key = token.strip().lstrip('@')
             if not key:
                 continue
             number = mapping.get(key)
             if number is None:
-                pieces.append(f"[@{key}]")
+                pieces.append(f'[@{key}]')
             else:
                 pieces.append(f'<sup><a href="#ref-{key}">[{number}]</a></sup>')
-        return " ".join(pieces) if pieces else match.group(0)
+        return ' '.join(pieces) if pieces else match.group(0)
 
     def replace_bare(match: re.Match[str]) -> str:
         key = match.group(1)
@@ -152,9 +166,12 @@ def replace_citations(text: str, mapping: dict[str, int]) -> str:
     return text
 
 
-def render_references(keys_in_order: list[str], bib_entries: dict[str, Any]) -> str:
+def render_references(
+  keys_in_order: list[str],
+  bib_entries: dict[str, Any],
+) -> str:
     if not keys_in_order:
-        return ""
+        return ''
     items: list[str] = []
     for key in keys_in_order:
         entry = bib_entries.get(key)
@@ -166,19 +183,25 @@ def render_references(keys_in_order: list[str], bib_entries: dict[str, Any]) -> 
             continue
         items.append(f'<li id="ref-{key}">{html_block}</li>')
     if not items:
-        return ""
-    return "\n".join(["<h2>References</h2>", "<ul>", *items, "</ul>"])
+        return ''
+    return '\n'.join(['<h2>References</h2>', '<ul>', *items, '</ul>'])
 
 
-def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tuple[bool, str, list[str]]:
-    tags = context.get("tags", {})
-    md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
-    raw = input_path.read_text(encoding="utf-8")
+def render(
+  input_path: Path,
+  output_path: Path,
+  context: Dict[str, Any],
+) -> Tuple[bool, str, list[str]]:
+    tags = context.get('tags', {})
+    md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+    raw = input_path.read_text(encoding='utf-8')
 
     raw, tag_warnings = apply_tags(raw, tags)
 
     bib_entries = load_bibliography(input_path)
-    citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(raw, bib_entries)
+    citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(
+      raw, bib_entries
+    )
     if citation_numbers:
         raw = replace_citations(raw, citation_numbers)
 
@@ -188,24 +211,31 @@ def render(input_path: Path, output_path: Path, context: Dict[str, Any]) -> Tupl
     if ordered_keys:
         references = render_references(ordered_keys, bib_entries)
         if references:
-            html_body = f"{html_body}\n{references}"
+            html_body = f'{html_body}\n{references}'
     if css_text.strip():
         try:
             html_body = transform(
-                html_body,
-                css_text=css_text,
-                remove_classes=False,
+              html_body,
+              css_text=css_text,
+              remove_classes=False,
             )
             html_body = sanitize_html_attributes(html_body)
             html_body = strip_html_wrapper(html_body)
         except Exception as exc:
-            return False, f"{input_path} -> {output_path} failed to inline CSS: {exc}", []
+            return (
+              False,
+              f'{input_path} -> {output_path} failed to inline CSS: {exc}',
+              [],
+            )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(html_comment(input_path, now_iso()) + html_body, encoding="utf-8")
+    output_path.write_text(
+      html_comment(input_path, now_iso()) + html_body,
+      encoding='utf-8',
+    )
 
     warnings: list[str] = list(tag_warnings)
     if missing_keys:
         warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
-    return True, f"{input_path} -> {output_path}", warnings
+    return True, f'{input_path} -> {output_path}', warnings
