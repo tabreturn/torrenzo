@@ -25,25 +25,43 @@
    ========================================= */
 
 @font-face {
-  font-family: 'InterVariable';
-  src: url('style/InterVariable.ttf') format('truetype');
+  font-family: 'Inter';
+  font-weight: 400;
+  font-style: normal;
+  src: url('style/Inter-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'InterVariable-Italic';
+  font-family: 'Inter';
+  font-weight: 700;
+  font-style: normal;
+  src: url('style/Inter-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
   font-style: italic;
-  src: url('style/InterVariable-Italic.ttf') format('truetype');
+  src: url('style/Inter-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 700;
+  font-style: italic;
+  src: url('style/Inter-BoldItalic.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Bungee';
   font-weight: 900;
-  src: url('style/BungeeRegular.ttf') format('truetype');
+  src: url('style/Bungee-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'RecursiveVariable';
-  src: url('style/RecursiveVariable.ttf') format('truetype');
+  font-family: 'RecursiveMono';
+  font-weight: 400;
+  src: url('style/Recursive_Monospace-Regular.ttf') format('truetype');
 }
 
 
@@ -57,7 +75,7 @@ html {
 
 body {
   color: var(--color-black);
-  font-family: 'InterVariable', sans-serif;
+  font-family: 'Inter', sans-serif;
   hyphens: auto;
   line-height: 1.55;
   margin: 0;
@@ -91,7 +109,7 @@ h2 {
 
 h3, h4, h5, h6 {
   color: var(--color-crimson);
-  font-family: 'InterVariable', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
   margin: 16pt 0 6pt;
   page-break-after: avoid;
@@ -134,7 +152,7 @@ code {
   background: var(--color-ivory);
   border: 1pt solid var(--color-gold);
   border-radius: 4pt;
-  font-family: 'RecursiveVariable', monospace;
+  font-family: 'RecursiveMono', monospace;
   font-size: 0.92em;
   padding: 0.08em 0.35em;
 }
