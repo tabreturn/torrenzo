@@ -11,6 +11,7 @@ from pybtex.database import parse_file
 from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
+from ..preprocess import convert_dashes
 
 
 CITATION_BRACKET_RE = re.compile(r'\[@([^\]]+)\]')
@@ -196,6 +197,7 @@ def render(
     raw = input_path.read_text(encoding='utf-8')
 
     raw, tag_warnings = apply_tags(raw, tags)
+    raw = convert_dashes(raw)
 
     bib_entries = load_bibliography(input_path)
     citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(

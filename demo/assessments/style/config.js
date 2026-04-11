@@ -6,6 +6,9 @@
 const versionDate = new Date().toISOString().slice(0, 10);
 
 module.exports = {
+  launch_options: {
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+  },
   pdf_options: {
     format: 'A4',
     margin: { top: '38mm', right: '18mm', bottom: '20mm', left: '18mm' },

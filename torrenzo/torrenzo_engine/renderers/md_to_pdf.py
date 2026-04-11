@@ -11,6 +11,7 @@ import yaml
 from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
+from ..preprocess import convert_dashes
 
 
 TOOL_ROOT = Path(__file__).resolve().parents[3]
@@ -162,6 +163,7 @@ def render(
     if METADATA_TOKEN in body and metadata:
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body, tag_warnings = apply_tags(body, tags)
+    body = convert_dashes(body)
     warnings.extend(tag_warnings)
 
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
