@@ -12,6 +12,7 @@ from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
 from ..preprocess import convert_dashes
+from ...components import build_component_tags
 
 
 CITATION_BRACKET_RE = re.compile(r'\[@([^\]]+)\]')
@@ -193,6 +194,7 @@ def render(
   context: Dict[str, Any],
 ) -> Tuple[bool, str, list[str]]:
     tags = context.get('tags', {})
+    tags = {**tags, **build_component_tags(input_path)}
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
     raw = input_path.read_text(encoding='utf-8')
 

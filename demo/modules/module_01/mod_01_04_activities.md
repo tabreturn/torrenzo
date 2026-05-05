@@ -1,4 +1,6 @@
-# Module 1 Activities: Citrus Observation and Catalogue Writing
+`=[[component.module-navigation]]`
+
+# Module 1.4: Activities
 
 ## Resources
 

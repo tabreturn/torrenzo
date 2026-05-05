@@ -46,3 +46,30 @@ section {
 }
 
 
+/* =========================================
+   COMPONENTS
+   ========================================= */
+
+[data-tag="component-module-navigation"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 3px;
+  justify-content: center;
+}
+
+[data-tag="component-module-navigation"] a {
+  background: var(--color-ivory);
+  border: 1px solid var(--color-burgundy);
+  color: var(--color-burgundy);
+  font-size: 18px;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+}
+
+[data-tag="component-module-navigation"] a.selected {
+  background: var(--color-burgundy);
+  border: 1px solid var(--color-burgundy);
+  color: var(--color-ivory);
+}
+

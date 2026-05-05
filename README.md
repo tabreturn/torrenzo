@@ -69,6 +69,16 @@ Starter keys in `outline.md` define your subject metadata and automatically popu
 - **Assessments:**  
   Produce a full metadata table using `assessment.a1` or `assessment.a2`, etc.
 
+### Components
+
+Torrenzo includes built-in components for common page elements. Use the `component` tag prefix:
+
+| Tag                                      | Description                                       |
+|------------------------------------------|---------------------------------------------------|
+| `` `=[[component.module-navigation]]` `` | Tabbed navigation linking to sibling module files |
+
+Custom components live in `torrenzo/components/` and plug into the tag system via `build_component_tags()`.
+
 ---
 
 ## Prerequisites

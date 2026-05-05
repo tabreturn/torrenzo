@@ -20,6 +20,7 @@ from .md_to_html import (
   substitute_css_variables,
 )
 from ..build_stamp import html_comment, now_iso
+from ...components import build_component_tags
 
 
 HEADING_PREFIX = 'heading '
@@ -94,6 +95,7 @@ def render(
   context: Dict[str, Any],
 ) -> Tuple[bool, str, list[str]]:
     tags = context.get('tags', {})
+    tags = {**tags, **build_component_tags(input_path)}
     document = Document(str(input_path))
     asset_dir = output_path.parent / 'assets'
     image_map = extract_image_map(document, asset_dir, input_path)

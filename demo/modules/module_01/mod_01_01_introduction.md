@@ -1,3 +1,5 @@
+`=[[component.module-navigation]]`
+
 # Module 1.1: Introduction to Citrus Module
 
 ![placeholder img](assets/mod_01_placeholder.png)  

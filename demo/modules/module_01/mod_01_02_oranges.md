@@ -1,3 +1,5 @@
+`=[[component.module-navigation]]`
+
 # Module 1.2: Oranges
 
 ![placeholder img](assets/mod_01_placeholder.png)  

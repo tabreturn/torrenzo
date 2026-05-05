@@ -16,7 +16,7 @@ from ..preprocess import convert_dashes
 
 TOOL_ROOT = Path(__file__).resolve().parents[3]
 
-DATAVIEW_RE = re.compile(r'`?=?\s*\[\[outline\]\]\.([^\s`]+)`?')
+DATAVIEW_RE = re.compile(r'`?=?\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
   r'FLATTEN ([^\s]+) AS x\s+```',
@@ -136,10 +136,14 @@ def apply_tags(
             add_warning(candidates[0])
         return match.group(0)
 
-    replaced = DATAVIEW_RE.sub(
-      lambda m: replace_content(f'outline.{m.group(1)}', m.group(0)),
-      text,
-    )
+    def replace_dv_inline(match: re.Match[str]) -> str:
+        prefix = match.group(1)
+        suffix = match.group(2)
+        if suffix:
+            return replace_content(f'outline.{suffix}', match.group(0))
+        return replace_content(f'outline.{prefix}', match.group(0))
+
+    replaced = DATAVIEW_RE.sub(replace_dv_inline, text)
     replaced = DATAVIEW_BLOCK_RE.sub(
       lambda m: replace_dataview_block(m),
       replaced,
