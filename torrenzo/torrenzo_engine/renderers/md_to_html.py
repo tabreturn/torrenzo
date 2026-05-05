@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import logging
 import re
 from typing import Any, Dict, Tuple
 
@@ -224,6 +225,8 @@ def render(
             html_body = f'{html_body}\n{references}'
     if css_text.strip():
         try:
+            import cssutils
+            cssutils.log.setLevel(logging.CRITICAL)
             html_body = transform(
               html_body,
               css_text=css_text,

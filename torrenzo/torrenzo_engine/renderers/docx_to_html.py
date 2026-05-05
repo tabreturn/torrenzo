@@ -1,5 +1,6 @@
 
 from html import escape
+import logging
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
@@ -128,6 +129,8 @@ def render(
     css_text = substitute_css_variables(css_text)
     if css_text.strip():
         try:
+            import cssutils
+            cssutils.log.setLevel(logging.CRITICAL)
             raw_html = transform(
               raw_html,
               css_text=css_text,
