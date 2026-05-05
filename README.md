@@ -12,13 +12,11 @@ Torrenzo traverses structured learning content directories and generates LMS-rea
 
 Torrenzo currently performs the following transformations:
 
-| Input                                         | Output |
-|-----------------------------------------------|--------|
-| `assessments/assessment_<n>/ass_<n>_brief.md` | PDF    |
-| `modules/module_<n>/mod_<n>_content.md`       | HTML   |
-| `modules/module_<n>/mod_<n>_content.docx`     | HTML   |
-| `modules/module_<n>/mod_<n>_activities.md`    | HTML   |
-| `modules/module_<n>/mod_<n>_activities.docx`  | HTML   |
+| Input                                          | Output |
+|------------------------------------------------|--------|
+| `assessments/assessment_<n>/ass_<n>_brief.md`  | PDF    |
+| `modules/module_<n>/mod_<n>_<seq>_<name>.md`   | HTML   |
+| `modules/module_<n>/mod_<n>_<seq>_<name>.docx` | HTML   |
 
 See the `demo/` directory for sample subject content, and `demo/build/` for example output artefacts.
 
@@ -124,8 +122,7 @@ your-subject/
 │   └── style/          # branding (logo.svg, style.css, config.js)
 ├── modules/            # module content → HTML
 │   ├── module_<n>/
-│   │   ├── mod_<n>_content.[md|docx]
-│   │   ├── mod_<n>_activities.[md|docx]
+│   │   ├── mod_<n>_<seq>_<name>.[md|docx]
 │   │   └── assets/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
