@@ -21,4 +21,4 @@ You will also continue thinking about how images and written descriptions suppor
 
 By the end of this module you should feel more confident organising your fruit observations into structured catalogue entries that combine descriptive writing and images. These skills will support your progress toward **Assessment 1**, where you will create a short fruit catalogue featuring three fruits of your choosing.
 
-<!-- maintain references in mod_01_02_oranges_resources.bib (BibTeX); the site build renders them in /build here. -->
+<!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->

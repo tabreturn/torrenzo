@@ -34,5 +34,5 @@ You can prepare for this assessment task by using the learning resources provide
 
 If you would like to begin working on the assessment early, ensure that you have reviewed the assessment brief and understand the submission requirements before drafting your catalogue entries.
 
-<!-- maintain references in mod_01_01_citrus_intro_resources.bib (BibTeX); the site build renders them in /build here. -->
+<!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->
 
