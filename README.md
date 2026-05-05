@@ -146,11 +146,10 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 - **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `@refname` syntax. Torrenzo renders the corresponding references at the bottom of the page.
 
 - **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
-  - `mod_<n>_content.[md|docx]` -- primary module content page(s)
-  - `mod_<n>_activities.[md|docx]` -- activity page(s)
+  - `mod_<n>_<seq>_<name>.[md|docx]` -- module page(s) (content and activities)
   - `assets/` -- supporting files (images, etc.) used within the module
 
-> 💡 For multiple content or activity pages, add a suffix to the file name. For example: `mod_01_content_01.md`, `mod_01_content_02.md`, or `mod_01_activities_foo.md`, `mod_01_activities_bar.md`
+> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`
 
 During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.) and converts source content into:
 

@@ -480,10 +480,8 @@ def make_jobs(
   built: str | None = None,
 ) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
-    content_pattern = 'modules/*/mod_*_content*.md'
-    content_docx_pattern = 'modules/*/mod_*_content*.docx'
-    activities_pattern = 'modules/*/mod_*_activit*.md'
-    activities_docx_pattern = 'modules/*/mod_*_activit*.docx'
+    module_md_pattern = 'modules/*/mod_*.md'
+    module_docx_pattern = 'modules/*/mod_*.docx'
 
     built = built or now_iso()
 
@@ -521,8 +519,8 @@ def make_jobs(
         deps=pdf_deps,
       ),
       RenderJob(
-        name='module_content',
-        input_pattern=content_pattern,
+        name='module_md',
+        input_pattern=module_md_pattern,
         output_dir=Path('modules_html'),
         renderer='md_to_html',
         context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
@@ -531,28 +529,8 @@ def make_jobs(
         deps=html_deps,
       ),
       RenderJob(
-        name='module_content_docx',
-        input_pattern=content_docx_pattern,
-        output_dir=Path('modules_html'),
-        renderer='docx_to_html',
-        context={'tags': tags},
-        output_ext='.html',
-        output_namer=lambda p: p.with_suffix('.html').name,
-        deps=html_deps,
-      ),
-      RenderJob(
-        name='module_activities',
-        input_pattern=activities_pattern,
-        output_dir=Path('modules_html'),
-        renderer='md_to_html',
-        context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
-        output_ext='.html',
-        output_namer=lambda p: p.with_suffix('.html').name,
-        deps=html_deps,
-      ),
-      RenderJob(
-        name='module_activities_docx',
-        input_pattern=activities_docx_pattern,
+        name='module_docx',
+        input_pattern=module_docx_pattern,
         output_dir=Path('modules_html'),
         renderer='docx_to_html',
         context={'tags': tags},

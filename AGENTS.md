@@ -28,11 +28,11 @@
 
 - `torrenzo/__main__.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
 - `torrenzo/torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
-- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_content.md`, `mod_<n>_activities.md`, `mod_<n>_resources.bib` → HTML.
+- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_<seq>_<name>.[md|docx]` → HTML.
 - `modules/style/style.css` is inlined into module HTML; output HTML is body-only for LMS pasting.
 - `assessments/style/` is copied alongside each brief; `logo.svg` injected into the PDF header; swap to change branding.
 - `modules/references.bib` contains subject-level BibTeX sources.
-- File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_content.md`, `mod_*_activities.md`, `mod_*_resources.bib`) or files are skipped.
+- File naming must match the expected patterns (`ass_*_brief.md`, `mod_*_*_*.md`, `mod_*_*_*.docx`) or files are skipped.
 
 ## Incremental Builds & Timestamps
 
