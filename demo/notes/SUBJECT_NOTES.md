@@ -1,4 +1,4 @@
-# Facilitator Notes
+# Instructor Notes
 
 This document offers suggestions for running the subject. It is not processed by Torrenzo. 
 
