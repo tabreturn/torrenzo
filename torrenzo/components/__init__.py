@@ -39,7 +39,8 @@ def render_module_navigation(input_path: Path) -> str:
     links: list[str] = []
     for seq, name, filename in siblings:
         cls = ' class="selected"' if filename == input_path.name else ''
-        links.append(f'<a href="#" data-page="{filename}"{cls}>{name}</a>')
+        href = Path(filename).with_suffix('.html').name
+        links.append(f'<a href="{href}"{cls}>{name}</a>')
 
     return (
         '<div data-tag="component-module-navigation">\n'
