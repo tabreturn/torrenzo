@@ -264,6 +264,14 @@ def build_tag_map(root: Path) -> dict[str, str]:
     data = load_outline(root)
 
     tags: dict[str, str] = {}
+
+    subject_obj = data.get('subject') or {}
+    if isinstance(subject_obj, dict):
+        for key, val in subject_obj.items():
+            if isinstance(val, str):
+                tags[f'outline.subject.{key}'] = val
+                tags[f'outline.{key}'] = val
+
     slos_obj = data.get('slo') or data.get('slos') or {}
     if isinstance(slos_obj, dict):
         slos = [{'id': k, 'description': v} for k, v in slos_obj.items()]

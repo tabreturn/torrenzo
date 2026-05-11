@@ -131,6 +131,9 @@ your-subject/
 │   │   └── assets/
 │   └── style/          # branding (logo.svg, style.css, config.js)
 ├── modules/            # module content → HTML
+│   ├── module_00/      # overview / introductory content (landing page)
+│   │   ├── mod_00_<seq>_<name>.[md|docx]
+│   │   └── assets/
 │   ├── module_<n>/
 │   │   ├── mod_<n>_<seq>_<name>.[md|docx]
 │   │   └── assets/
@@ -155,6 +158,8 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 - **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
   - `mod_<n>_<seq>_<name>.[md|docx]` -- module page(s) (content and activities)
   - `assets/` -- supporting files (images, etc.) used within the module
+
+Use `modules/module_00/` for subject overview and introductory content (e.g., welcome page, student expectations, key documents). This typically serves as the landing page(s) content.
 
 > 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`
 
