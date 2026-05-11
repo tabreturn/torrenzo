@@ -64,3 +64,39 @@ def _convert_line_dashes(line: str) -> str:
         protected = protected.replace(f'\x00PH{i}\x00', original)
 
     return protected
+
+
+_UNICODE_TO_ENTITY = {
+    '\u2013': '&ndash;',
+    '\u2014': '&mdash;',
+    '\u00d7': '&times;',
+    '\u2018': '&lsquo;',
+    '\u2019': '&rsquo;',
+    '\u201c': '&ldquo;',
+    '\u201d': '&rdquo;',
+    '\u2026': '&hellip;',
+    '\u00a9': '&copy;',
+    '\u00ae': '&reg;',
+    '\u2122': '&trade;',
+    '\u00b0': '&deg;',
+    '\u00b1': '&plusmn;',
+    '\u2264': '&le;',
+    '\u2265': '&ge;',
+    '\u00bd': '&frac12;',
+    '\u2153': '&#8531;',
+    '\u00bc': '&frac14;',
+    '\u00be': '&frac34;',
+    '\u2190': '&larr;',
+    '\u2192': '&rarr;',
+    '\u2191': '&uarr;',
+    '\u2193': '&darr;',
+    '\u00b7': '&middot;',
+    '\u2022': '&bull;',
+}
+
+
+def unicode_to_entities(html: str) -> str:
+    """Replace Unicode symbols with HTML entities for encoding safety."""
+    for char, entity in _UNICODE_TO_ENTITY.items():
+        html = html.replace(char, entity)
+    return html

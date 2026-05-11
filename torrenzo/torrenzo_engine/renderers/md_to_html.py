@@ -12,7 +12,7 @@ from pybtex.database import parse_file
 from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
-from ..preprocess import convert_dashes
+from ..preprocess import convert_dashes, unicode_to_entities
 from ...components import build_component_tags
 
 
@@ -241,6 +241,7 @@ def render(
               [],
             )
 
+    html_body = unicode_to_entities(html_body)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
       html_comment(input_path, now_iso()) + html_body,
