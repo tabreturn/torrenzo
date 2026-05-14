@@ -88,6 +88,7 @@ class Pipeline:
         built_count = 0
         skipped_count = 0
         expected_outputs: set[Path] = set()
+        seen_outputs: dict[Path, Path] = {}
 
         job_list = list(self.iter_jobs(job_specs))
 
@@ -107,6 +108,15 @@ class Pipeline:
                     output_name = input_path.name
 
                 output_path = output_dir / output_name
+                if output_path in seen_outputs:
+                    entries.append((
+                        'warning',
+                        f'{job.name}: collision — {self._shorten(str(input_path))} '
+                        f'and {self._shorten(str(seen_outputs[output_path]))} '
+                        f'both target {self._shorten(str(output_path))}',
+                    ))
+                else:
+                    seen_outputs[output_path] = input_path
                 expected_outputs.add(output_path)
 
                 if not force and not is_stale(
