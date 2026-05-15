@@ -53,6 +53,8 @@ python -m torrenzo /path/to/your-subject
 > 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 > 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
+>
+> 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. Use this to identify which files need updating in your LMS across multiple builds. Delete the log once you've uploaded everything to reset tracking.
 
 ---
 
@@ -221,7 +223,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
 - [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
 - [x] Include MS Word sample template (with Word styles that approximate the LMS styling)
-- [x] Devise mechanism to flag what is new build content (versus what won't need updating in LMS)
+- [x] Devise mechanism to flag what is new build content (see `build/build-log.json`) (versus what won't need updating in LMS)
 - [x] Add meta/commented timestamp to built items
 - [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
 - [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?

@@ -1,10 +1,12 @@
 
+import json
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Protocol
 
 from .renderers.registry import RendererRegistry
-from .build_stamp import is_stale
+from .build_stamp import is_stale, now_iso
 
 
 RESET = '\033[0m'
@@ -85,6 +87,7 @@ class Pipeline:
       force: bool = False,
     ) -> List[str]:
         entries: List[tuple[str, str]] = []
+        built_files: List[str] = []
         built_count = 0
         skipped_count = 0
         expected_outputs: set[Path] = set()
@@ -140,6 +143,16 @@ class Pipeline:
                     ))
                 if success:
                     built_count += 1
+                    built_files.append(self._shorten(str(output_path)))
+
+        log_path = self.build_dir / 'build-log.json'
+        prior_entries: list[dict] = []
+        if log_path.exists():
+            try:
+                prior_entries = json.loads(log_path.read_text())
+            except (json.JSONDecodeError, ValueError):
+                prior_entries = []
+        expected_outputs.add(log_path)
 
         pruned_count = self._prune_orphans(expected_outputs)
 
@@ -159,6 +172,20 @@ class Pipeline:
             formatted.append(fmt(
               'info',
               f'{built_count} file(s) newly built',
+            ))
+            for f in built_files:
+                formatted.append(f'  {f}')
+            prior_entries.append({
+                'built_at': now_iso(),
+                'files': built_files,
+            })
+            log_path.write_text(
+                json.dumps(prior_entries, indent=2) + '\n',
+                encoding='utf-8',
+            )
+            formatted.append(fmt(
+              'info',
+              f'build log → {self._shorten(str(log_path))}',
             ))
         return formatted
 
