@@ -3,6 +3,7 @@
 
 import re
 import sys
+import webbrowser
 from pathlib import Path
 
 from PySide6.QtCore import QProcess, QSettings, QUrl
@@ -187,7 +188,10 @@ class MainWindow(QMainWindow):
         subject = self._dir_combo.currentText().strip()
         build_dir = Path(subject) / 'build'
         if build_dir.is_dir():
-            QDesktopServices.openUrl(QUrl.fromLocalFile(str(build_dir)))
+            if sys.platform == 'win32':
+                QDesktopServices.openUrl(QUrl.fromLocalFile(str(build_dir)))
+            else:
+                webbrowser.open(build_dir.as_uri())
 
 
 def main():
