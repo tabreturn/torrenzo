@@ -188,10 +188,12 @@ class MainWindow(QMainWindow):
         subject = self._dir_combo.currentText().strip()
         build_dir = Path(subject) / 'build'
         if build_dir.is_dir():
+            url = build_dir.resolve().as_uri()
             if sys.platform == 'win32':
-                QDesktopServices.openUrl(QUrl.fromLocalFile(str(build_dir)))
+                import subprocess
+                subprocess.Popen(['cmd', '/c', 'start', '', url])
             else:
-                webbrowser.open(build_dir.as_uri())
+                webbrowser.open(url)
 
 
 def main():
