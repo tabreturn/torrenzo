@@ -36,7 +36,30 @@ Instead of authoring material directly in a learning management system (LMS), co
 
 ---
 
-## Usage
+## GUI
+
+Torrenzo includes a desktop application for point-and-click builds.
+
+![GUI](README_gui.png)
+
+**Features:**
+
+- **Directory picker** with history (remembers your subject folders)
+- **Build options** as checkboxes: `--force`, `--clean`, `--optimize-assets`
+- **Live build log** displayed in the window
+- **Preview in Browser** button opens the build output for review
+
+Launch from the repo root:
+
+```bash
+python -m torrenzo_gui
+```
+
+> 💡 The GUI requires `PySide6` (included in `requirements.txt`).
+
+---
+
+## Usage (Command Line)
 
 1. Ensure to install [prerequisites](#prerequisites).
 2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
@@ -229,6 +252,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 ### 'Maybe' Goals
 
 - [x] Consolidate on a single runtime stack (Python or Node)
+- [x] Add GUI desktop application
 - [ ] Add support for Marp slide decks
 - [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
 - [ ] ...
