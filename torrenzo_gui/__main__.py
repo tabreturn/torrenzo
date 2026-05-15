@@ -3,11 +3,10 @@
 
 import re
 import sys
-import webbrowser
 from pathlib import Path
 
-from PySide6.QtCore import QProcess, QSettings
-from PySide6.QtGui import QFont
+from PySide6.QtCore import QProcess, QSettings, QUrl
+from PySide6.QtGui import QDesktopServices, QFont
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -188,7 +187,7 @@ class MainWindow(QMainWindow):
         subject = self._dir_combo.currentText().strip()
         build_dir = Path(subject) / 'build'
         if build_dir.is_dir():
-            webbrowser.open(build_dir.as_uri())
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(build_dir)))
 
 
 def main():
