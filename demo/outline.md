@@ -13,7 +13,7 @@ slo:
 assessment:
   a1:
     assessment: Seasonal Fruit Catalogue
-    individual_group: Individual
+    individual/group: Individual
     length: One page of notes plus a small media folder
     learning_outcomes: [a, b, c]
     submission: Due by 23h55 GMT on the final weekend of the learning block
