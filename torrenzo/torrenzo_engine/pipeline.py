@@ -9,19 +9,22 @@ from .renderers.registry import RendererRegistry
 from .build_stamp import is_stale, now_iso
 
 
-RESET = '\033[0m'
-GREEN = '\033[32m'
-YELLOW = '\033[33m'
-RED = '\033[31m'
-BOLD = '\033[1m'
+IS_WIN = Path.home().anchor != '/'
+RESET = '' if IS_WIN else '\033[0m'
+GREEN = '' if IS_WIN else '\033[32m'
+YELLOW = '' if IS_WIN else '\033[33m'
+RED = '' if IS_WIN else '\033[31m'
+BOLD = '' if IS_WIN else '\033[1m'
+TICK = '+' if IS_WIN else '\u2713'
+CROSS = 'x' if IS_WIN else '\u2717'
 
 
 def fmt(level: str, message: str) -> str:
     if level == 'info':
-        return f'{GREEN}✓{RESET} {message}'
+        return f'{GREEN}{TICK}{RESET} {message}'
     if level == 'warning':
         return f'{YELLOW}!{RESET} {message}'
-    return f'{RED}✗{RESET} {message}'
+    return f'{RED}{CROSS}{RESET} {message}'
 
 
 def order_levels(
