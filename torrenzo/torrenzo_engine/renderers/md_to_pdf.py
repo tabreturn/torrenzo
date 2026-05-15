@@ -1,8 +1,9 @@
-
+import asyncio
+import json
 import os
 import re
 import shutil
-import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, Tuple
@@ -14,8 +15,6 @@ from ..build_stamp import now_iso
 from ..preprocess import convert_dashes
 
 
-TOOL_ROOT = Path(__file__).resolve().parents[3]
-
 DATAVIEW_RE = re.compile(r'`?=?\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
@@ -26,17 +25,23 @@ FRONT_MATTER_RE = re.compile(r'\A---\n(.*?)\n---\n', re.S)
 METADATA_TOKEN = '<<metadata_table>>'
 
 
-def _stamp_pdf_metadata(pdf_path: Path, source: Path, ts: str) -> None:
+def _stamp_pdf_metadata(pdf_path: Path, source: Path, title: str, body: str, ts: str) -> None:
     try:
         from pypdf import PdfReader, PdfWriter
         reader = PdfReader(str(pdf_path))
-        writer = PdfWriter()
-        writer.append(reader)
+        writer = PdfWriter(clone_from=reader)
         writer.add_metadata({
           '/Producer': 'torrenzo',
+          '/Title': title,
           '/Subject': source.name,
           '/Keywords': f'built: {ts}',
         })
+        # open with outline pane visible, fit-to-width on first page
+        writer.page_mode = '/UseOutlines'
+        writer.page_layout = '/SinglePage'
+        writer.open_destination = writer.pages[0] if writer.pages else None
+        # add PDF outlines from markdown headings (body has tags resolved)
+        _add_pdf_outlines(writer, reader, body)
         fd, tmp = tempfile.mkstemp(suffix='.pdf', dir=pdf_path.parent)
         os.close(fd)
         with open(tmp, 'wb') as f:
@@ -44,6 +49,180 @@ def _stamp_pdf_metadata(pdf_path: Path, source: Path, ts: str) -> None:
         os.replace(tmp, pdf_path)
     except Exception:
         pass
+
+
+def _add_pdf_outlines(
+  writer: Any,
+  reader: Any,
+  body: str,
+) -> None:
+    """Add PDF outline/bookmarks from markdown headings."""
+    from pypdf.generic import Fit
+
+    md_text = body
+    headings: list[tuple[int, str]] = []
+    for m in re.finditer(r'^(#{1,6})\s+(.+)$', md_text, re.M):
+        level = len(m.group(1))
+        text = m.group(2).strip()
+        headings.append((level, text))
+
+    if not headings:
+        return
+
+    last_parent: dict[int, Any] = {}
+    for level, text in headings:
+        found_page = None
+        for i, page in enumerate(reader.pages):
+            page_text = (page.extract_text() or '').replace('\n', ' ')
+            if text in page_text:
+                found_page = i
+                break
+        if found_page is None:
+            continue
+        parent = None
+        for l in range(level - 1, 0, -1):
+            if l in last_parent and last_parent[l] is not None:
+                parent = last_parent[l]
+                break
+        item = writer.add_outline_item(
+          text, found_page, parent=parent,
+        )
+        last_parent[level] = item
+
+
+def _find_chrome() -> str | None:
+    env_path = os.environ.get('PUPPETEER_EXECUTABLE_PATH')
+    if env_path and Path(env_path).exists():
+        return env_path
+
+    candidates: list[str] = []
+    if sys.platform == 'linux':
+        candidates = [
+          'google-chrome', 'google-chrome-stable',
+          'chromium', 'chromium-browser',
+        ]
+    elif sys.platform == 'darwin':
+        candidates = [
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          '/Applications/Chromium.app/Contents/MacOS/Chromium',
+        ]
+    elif sys.platform == 'win32':
+        candidates = [
+          'chrome', 'chromium',
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        ]
+
+    for candidate in candidates:
+        if '/' in candidate or '\\' in candidate:
+            if Path(candidate).exists():
+                return candidate
+        else:
+            found = shutil.which(candidate)
+            if found:
+                return found
+    return None
+
+
+def _parse_config_js(config_path: Path) -> Dict[str, Any]:
+    text = config_path.read_text(encoding='utf-8')
+    # keep only from module.exports = onward
+    match = re.search(r'module\.exports\s*=\s*', text)
+    if not match:
+        return {}
+    text = text[match.end():].strip().rstrip(';')
+    # remove leading block comment if any
+    text = re.sub(r'^/\*.*?\*/\s*', '', text, flags=re.DOTALL)
+    # replace process.env.X || undefined → null
+    text = re.sub(r'process\.env\.\w+(?:\s*\|\|\s*undefined)?', 'null', text)
+    # capture template literals
+    templates: list[str] = []
+    def _capture(m: re.Match[str]) -> str:
+        templates.append(m.group(1))
+        return f'"__TPL_{len(templates) - 1}__"'
+    text = re.sub(r'`([^`]*)`', _capture, text)
+    # remove JS comments
+    text = re.sub(r'/\*.*?\*/', '', text, flags=re.DOTALL)
+    text = re.sub(r'//[^\n]*', '', text)
+    # quote unquoted keys (word before colon that's not already quoted)
+    text = re.sub(
+      r'([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:',
+      r'\1"\2":',
+      text,
+    )
+    # remove trailing commas
+    text = re.sub(r',(\s*[}\]])', r'\1', text)
+    # convert single-quoted values to double-quoted (JSON)
+    text = re.sub(r":\s*'([^']*)'", r': "\1"', text)
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        return {}
+
+    def _restore(obj: Any) -> Any:
+        if isinstance(obj, dict):
+            return {k: _restore(v) for k, v in obj.items()}
+        if isinstance(obj, str) and obj.startswith('__TPL_'):
+            idx = int(obj[len('__TPL_'):-len('__')])
+            return templates[idx]
+        return obj
+
+    # extract versionDate = new Date().toISOString().slice(0, 10);
+    raw = config_path.read_text(encoding='utf-8')
+    ver_match = re.search(
+      r"const\s+versionDate\s*=\s*new\s+Date\(\)"
+      r"\.toISOString\(\)\.slice\(\s*0\s*,\s*10\s*\)",
+      raw,
+    )
+    version_date = ''
+    if ver_match:
+        from datetime import date
+        version_date = date.today().isoformat()
+
+    result = _restore(parsed)
+    # interpolate ${versionDate} in templates
+    if version_date:
+        for key in ('headerTemplate', 'footerTemplate'):
+            po = result.get('pdf_options', {})
+            if key in po and '${versionDate}' in po[key]:
+                po[key] = po[key].replace('${versionDate}', version_date)
+    return result
+
+
+async def _render_pdf_async(
+  html_path: Path,
+  output_path: Path,
+  config: Dict[str, Any],
+  chrome_path: str | None,
+) -> None:
+    # pyppeteer import deferred so pip install order does not matter
+    from pyppeteer import launch
+    browser = await launch(
+      headless=True,
+      executablePath=chrome_path,
+      args=['--no-sandbox', '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'],
+    )
+    try:
+        page = await browser.newPage()
+        await page.goto(
+          html_path.as_uri(),
+          waitUntil='networkidle0',
+        )
+        pdf_opts = config.get('pdf_options', {})
+        await page.pdf({
+          'path': str(output_path),
+          'format': pdf_opts.get('format', 'A4'),
+          'margin': pdf_opts.get('margin', {}),
+          'displayHeaderFooter': pdf_opts.get(
+            'displayHeaderFooter', False,
+          ),
+          'headerTemplate': pdf_opts.get('headerTemplate', ''),
+          'footerTemplate': pdf_opts.get('footerTemplate', ''),
+          'printBackground': True,
+        })
+    finally:
+        await browser.close()
 
 
 def extract_metadata_from_front_matter(
@@ -156,7 +335,6 @@ def render(
   output_path: Path,
   context: Dict[str, Any],
 ) -> Tuple[bool, str, list[str]]:
-    pdf_css = context.get('pdf_css', '')
     tags = context.get('tags', {})
 
     raw_content = input_path.read_text(encoding='utf-8')
@@ -171,9 +349,6 @@ def render(
     warnings.extend(tag_warnings)
 
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
-    _ = md
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     workdir = input_path.parent
     style_src = input_path.parent.parent / 'style'
@@ -183,16 +358,15 @@ def render(
     logo_path = style_src / 'logo.svg'
     has_style = style_src.exists()
     has_config = config_src.exists()
-    has_css = style_css_src.exists()
 
-    if not has_style:
-        warnings.append(f'No assessments/style/ found for {input_path.name}; building unstyled')
-    elif not has_config:
-        warnings.append(f'Missing config.js for {input_path.name}; building unstyled')
+    if not has_config:
+        warnings.append(
+          f'Missing config.js for {input_path.name}; '
+          f'building with defaults'
+        )
 
     created_style = False
-    temp_md_path: Path | None = None
-    result: subprocess.CompletedProcess[str] | None = None
+    temp_html_path: Path | None = None
     success = False
     msg = ''
 
@@ -203,59 +377,96 @@ def render(
             shutil.copytree(style_src, style_dst)
             created_style = True
 
-        if has_config:
-            config_content = config_src.read_text(encoding='utf-8')
-            if logo_path.exists():
-                svg_markup = logo_path.read_text(encoding='utf-8').strip()
-                config_content = config_content.replace(
-                  '<!--INLINE_LOGO_MARKUP-->', svg_markup
-                )
-            else:
-                config_content = config_content.replace(
-                  '<!--INLINE_LOGO_MARKUP-->', ''
-                )
-                warnings.append(f'Missing logo asset for {input_path.name}')
-            config_dst = style_dst / 'config.js'
-            config_dst.write_text(config_content, encoding='utf-8')
+        # parse config for pdf_options and chrome path
+        config = _parse_config_js(config_src) if has_config else {}
+        chrome_path = config.get(
+          'launch_options', {},
+        ).get('executablePath') or _find_chrome()
 
-        with tempfile.NamedTemporaryFile(
-          'w', delete=False, dir=workdir, suffix='.md', encoding='utf-8'
-        ) as temp_md:
-            temp_md.write(body)
-            temp_md_path = Path(temp_md.name)
+        if not chrome_path:
+            return (
+              False,
+              f'{input_path} -> {output_path} failed: '
+              f'no Chrome/Chromium found. Install Chrome or set '
+              f'PUPPETEER_EXECUTABLE_PATH',
+              warnings,
+            )
 
-        is_windows = Path.home().anchor != '/'
-        bin_name = 'md-to-pdf.cmd' if is_windows else 'md-to-pdf'
-        local_bin = TOOL_ROOT / 'node_modules' / '.bin' / bin_name
-        if local_bin.exists():
-            cmd = [str(local_bin.resolve()), temp_md_path.name]
-        else:
-            cmd = ['npx', 'md-to-pdf', temp_md_path.name]
-        if has_css:
-            cmd.extend(['--stylesheet', 'style/style.css'])
-        if has_config:
-            cmd.extend(['--config-file', 'style/config.js'])
+        # render markdown → HTML body
+        html_body = md.render(body)
 
-        result = subprocess.run(
-          cmd, capture_output=True, text=True, cwd=str(workdir)
+        # inline logo SVG into header template
+        logo_markup = ''
+        if logo_path.exists():
+            logo_markup = logo_path.read_text(encoding='utf-8').strip()
+
+        # build full HTML document with inlined CSS
+        # (inlining ensures font url() paths resolve relative
+        #  to the HTML file, matching md-to-pdf behavior)
+        css_content = ''
+        if has_style and style_css_src.exists():
+            css_content = style_css_src.read_text(encoding='utf-8')
+
+        # inject header/footer with logo
+        header_html = config.get(
+          'pdf_options', {},
+        ).get('headerTemplate', '')
+        footer_html = config.get(
+          'pdf_options', {},
+        ).get('footerTemplate', '')
+        if logo_markup and 'INLINE_LOGO_MARKUP' in header_html:
+            header_html = header_html.replace(
+              '<!--INLINE_LOGO_MARKUP-->', logo_markup,
+            )
+        # override templates in config for pyppeteer
+        pdf_opts = config.get('pdf_options', {}).copy()
+        pdf_opts['headerTemplate'] = header_html
+        pdf_opts['footerTemplate'] = footer_html
+        render_config: Dict[str, Any] = {
+          'pdf_options': pdf_opts,
+        }
+
+        # derive title from first h1 in processed body, fallback to filename
+        h1_match = re.search(r'^#\s+(.+)$', body, re.M)
+        doc_title = h1_match.group(1).strip() if h1_match else input_path.stem
+
+        full_html = (
+          '<!DOCTYPE html>\n'
+          '<html><head>\n'
+          '<meta charset="utf-8">\n'
+          f'<title>{doc_title}</title>\n'
+          f'<style>{css_content}</style>\n'
+          '</head><body>\n'
+          f'{html_body}\n'
+          '</body></html>'
         )
 
-        pdf_temp = workdir / f'{temp_md_path.stem}.pdf'
-        if result.returncode == 0 and pdf_temp.exists():
-            shutil.move(str(pdf_temp), output_path)
-            _stamp_pdf_metadata(output_path, input_path, now_iso())
+        # write temp HTML in workdir (so relative CSS/font paths resolve)
+        fd, tmp_path = tempfile.mkstemp(
+          suffix='.html', dir=str(workdir),
+        )
+        os.close(fd)
+        temp_html_path = Path(tmp_path)
+        temp_html_path.write_text(full_html, encoding='utf-8')
 
-        success = result.returncode == 0 and output_path.exists()
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        asyncio.run(
+          _render_pdf_async(
+            temp_html_path, output_path, render_config, chrome_path,
+          )
+        )
+
+        success = output_path.exists()
         if success:
+            _stamp_pdf_metadata(output_path, input_path, doc_title, body, now_iso())
             msg = f'{input_path} -> {output_path}'
         else:
-            stderr_output = result.stderr.strip() if result else ''
-            msg = f'{input_path} -> {output_path} failed: {stderr_output}'
-    except FileNotFoundError as exc:
+            msg = f'{input_path} -> {output_path} failed: no output'
+    except Exception as exc:
         msg = f'{input_path} -> {output_path} failed: {exc}'
     finally:
-        if temp_md_path and temp_md_path.exists():
-            temp_md_path.unlink(missing_ok=True)
+        if temp_html_path and temp_html_path.exists():
+            temp_html_path.unlink(missing_ok=True)
         if created_style and style_dst.exists():
             shutil.rmtree(style_dst, ignore_errors=True)
 

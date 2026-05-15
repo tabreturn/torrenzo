@@ -84,37 +84,41 @@ def optimize_assets(build_dir: Path) -> list[str]:
     elif not png_files:
         messages.append(fmt('info', 'No PNG assets to optimize'))
 
-    svgo_tool = locate_command([
-      PROJECT_ROOT / 'node_modules' / '.bin' / 'svgo',
-      'svgo',
-    ])
+    scour_tool = locate_command(['scour'])
     svg_files = sorted(build_dir.rglob('*.svg'))
-    if svgo_tool and svg_files:
+    if scour_tool and svg_files:
+        import tempfile, os
         optimized_svgs = 0
         for path in svg_files:
+            fd, tmp = tempfile.mkstemp(suffix='.svg')
+            os.close(fd)
+            tmp_path = Path(tmp)
             cmd = [
-              svgo_tool, '--quiet', '--multipass',
-              '--input', str(path), '--output', str(path),
+              scour_tool, '--quiet',
+              '-i', str(path), '-o', str(tmp_path),
             ]
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode == 0:
+                tmp_path.replace(path)
                 optimized_svgs += 1
             else:
+                tmp_path.unlink(missing_ok=True)
                 error = result.stderr.strip() or result.stdout.strip()
                 rel = path.relative_to(build_dir)
                 if error:
-                    msg = f'SVG optimize failed (svgo): {rel}: {error}'
+                    msg = f'SVG optimize failed (scour): {rel}: {error}'
                 else:
-                    msg = f'SVG optimize failed (svgo): {rel}'
+                    msg = f'SVG optimize failed (scour): {rel}'
                 messages.append(fmt('error', msg))
         if optimized_svgs:
             messages.append(fmt(
-              'info', f'Optimized {optimized_svgs} SVG file(s) with svgo'
+              'info', f'Optimized {optimized_svgs} SVG file(s) with scour'
             ))
-    elif not svgo_tool:
+    elif not scour_tool:
         messages.append(fmt(
           'warning',
-          'Skipping SVG optimization (svgo not installed; run npm install)',
+          'Skipping SVG optimization (scour not installed; '
+          'pip install scour)',
         ))
     elif not svg_files:
         messages.append(fmt('info', 'No SVG assets to optimize'))

@@ -50,7 +50,7 @@ python -m torrenzo /path/to/your-subject
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
-> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. This feature requires SVGO for SVG (provided via `npm install`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. SVG optimisation uses `scour` (included in `requirements.txt`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 > 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
 >
@@ -86,13 +86,12 @@ Custom components live in `torrenzo/components/` and plug into the tag system vi
 ## Prerequisites
 
 - **Python 3.10+**
-- **Node 18+** with `npm`
+- **Google Chrome or Chromium** (for PDF generation)
 - **Terminal environment** of your choice
 
 ### Setup
 Clone or download the Torrenzo repository. All setup commands run from the **Torrenzo repo root** -- subject content lives separately.
 
-### Python Setup
 To create and activate a virtual environment, then install dependencies:
 ```bash
 python3 -m venv env
@@ -100,11 +99,7 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-### Node Setup
-Required for PDF generation via `md-to-pdf`. To install Node dependencies locally:
-```bash
-npm install
-```
+> 💡 PDF generation uses your system's Chrome/Chromium. If Chrome is installed in a non-standard location, set the `PUPPETEER_EXECUTABLE_PATH` environment variable (e.g., `export PUPPETEER_EXECUTABLE_PATH=/path/to/chrome`).
 
 ---
 
@@ -119,8 +114,6 @@ torrenzo/               # tool repo -- clone once, reuse for all subjects
 │   ├── __main__.py
 │   └── torrenzo_engine/
 ├── demo/               # sample subject
-├── node_modules/
-├── package.json
 └── requirements.txt
 ```
 
@@ -235,7 +228,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 
 ### 'Maybe' Goals
 
-- [ ] Consolidate on a single runtime stack (Python or Node)
+- [x] Consolidate on a single runtime stack (Python or Node)
 - [ ] Add support for Marp slide decks
 - [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
 - [ ] ...

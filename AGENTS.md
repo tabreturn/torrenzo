@@ -13,9 +13,9 @@
 
 ## Setup & Dependencies
 
-- Python 3.10+; `pip install -r requirements.txt` (use a venv if present). Key deps: `pypdf` (PDF metadata), `Pillow` (PNG metadata); both pure Python.
-- Node 18+ with `npm`; `npm install` for `md-to-pdf` (PDF only; HTML renderers are pure Python).
-- Run as `python -m torrenzo <subject-root>` from the repo root. `node_modules/` and `requirements.txt` live here; subject content lives elsewhere. Obsidian vault config included.
+- Python 3.10+; `pip install -r requirements.txt` (use a venv if present). Key deps: `pypdf` (PDF metadata), `Pillow` (PNG metadata), `pyppeteer` (PDF via Chromium); all pure Python.
+- Google Chrome or Chromium required for PDF generation; set `PUPPETEER_EXECUTABLE_PATH` if Chrome is not on PATH.
+- Run as `python -m torrenzo <subject-root>` from the repo root. `requirements.txt` lives here; subject content lives elsewhere. Obsidian vault config included.
 
 ## Tagging (current behavior)
 
@@ -49,7 +49,7 @@
 
 ## Testing & Validation
 
-- No automated suite; run `python -m torrenzo <subject>` to rebuild and inspect `build/` artifacts. PDF generation requires Node/npm (`npx`).
+- No automated suite; run `python -m torrenzo <subject>` to rebuild and inspect `build/` artifacts.
 
 ## Extensibility
 
