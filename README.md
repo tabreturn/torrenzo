@@ -2,6 +2,8 @@
 
 *Lightweight publishing pipeline for digital learning content*
 
+---
+
 ![banner](README_banner.png)  
 *Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word.*
 
