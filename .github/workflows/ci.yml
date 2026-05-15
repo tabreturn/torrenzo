@@ -13,13 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            chrome_binary: google-chrome-stable
-          - os: macos-latest
-            chrome_binary: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-          - os: windows-latest
-            chrome_binary: 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -33,13 +27,21 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: choco install googlechrome --no-progress -y
 
+      - name: Find Chrome (Windows)
+        if: matrix.os == 'windows-latest'
+        id: chrome
+        shell: bash
+        run: |
+          CHROME=$(find "/c/Program Files" "/c/Program Files (x86)" -name chrome.exe -path "*/Google/Chrome/*" 2>/dev/null | head -1)
+          echo "path=$CHROME" >> $GITHUB_OUTPUT
+
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
       - name: Build demo subject
         run: python -m torrenzo demo --force
         env:
-          PUPPETEER_EXECUTABLE_PATH: ${{ matrix.chrome_binary }}
+          PUPPETEER_EXECUTABLE_PATH: ${{ matrix.os == 'windows-latest' && steps.chrome.outputs.path || '' }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
