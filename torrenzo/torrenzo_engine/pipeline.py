@@ -117,7 +117,7 @@ class Pipeline:
                 if output_path in seen_outputs:
                     entries.append((
                         'warning',
-                        f'{job.name}: collision — {self._shorten(str(input_path))} '
+                        f'{job.name}: collision -- {self._shorten(str(input_path))} '
                         f'and {self._shorten(str(seen_outputs[output_path]))} '
                         f'both target {self._shorten(str(output_path))}',
                     ))
@@ -188,7 +188,7 @@ class Pipeline:
             )
             formatted.append(fmt(
               'info',
-              f'build log → {self._shorten(str(log_path))}',
+              f'build log -> {self._shorten(str(log_path))}',
             ))
         return formatted
 
