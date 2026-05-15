@@ -20,7 +20,7 @@ module.exports = {
           align-items: center;
           color: #666;
           display: flex;
-          font-family: ui-sans-serif, Helvetica, Arial, sans-serif;
+          font-family: 'Helvetica', 'Arial', 'Liberation Sans', 'DejaVu Sans', sans-serif;
           font-size: 9pt;
           justify-content: space-between;
           padding: 8mm 18mm;
@@ -42,7 +42,7 @@ module.exports = {
       <style>
         footer {
           color: #666;
-          font-family: ui-sans-serif, Helvetica, Arial, sans-serif;
+          font-family: 'Helvetica', 'Arial', 'Liberation Sans', 'DejaVu Sans', sans-serif;
           font-size: 9pt;
           padding-bottom: 5mm;
           text-align: center;
