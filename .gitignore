@@ -36,8 +36,6 @@ npm-debug.log
 
 # Obsidian
 **/.obsidian/*
-!**/.obsidian/app.json
-!**/.obsidian/appearance.json
 !**/.obsidian/community-plugins.json
 !**/.obsidian/plugins/
 !**/.obsidian/plugins/**
