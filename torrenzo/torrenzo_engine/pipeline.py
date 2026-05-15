@@ -73,8 +73,10 @@ class Pipeline:
     def _shorten(self, msg: str) -> str:
         """Replace absolute subject-root and build-dir prefixes with
         relative paths in a renderer message string."""
-        msg = msg.replace(str(self.root) + '/', '')
-        msg = msg.replace(str(self.build_dir) + '/', 'build/')
+        import os
+        sep = os.sep
+        msg = msg.replace(str(self.root) + sep, '')
+        msg = msg.replace(str(self.build_dir) + sep, 'build/')
         return msg
 
     def iter_jobs(
