@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    name: ${{ matrix.os }} binary
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: torrenzo-gui-linux
+          - os: windows-latest
+            artifact: torrenzo-gui-windows
+          - os: macos-latest
+            artifact: torrenzo-gui-macos
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build binary (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: >
+          pyinstaller
+          --onefile
+          --name torrenzo-gui
+          --hidden-import pyppeteer
+          --collect-all pyppeteer
+          torrenzo_gui/__main__.py
+
+      - name: Build binary (macOS)
+        if: matrix.os == 'macos-latest'
+        run: >
+          pyinstaller
+          --onefile
+          --windowed
+          --name torrenzo-gui
+          --hidden-import pyppeteer
+          --collect-all pyppeteer
+          torrenzo_gui/__main__.py
+
+      - name: Build binary (Windows)
+        if: matrix.os == 'windows-latest'
+        run: >
+          pyinstaller
+          --onefile
+          --noconsole
+          --name torrenzo-gui
+          --hidden-import pyppeteer
+          --collect-all pyppeteer
+          torrenzo_gui/__main__.py
+
+      - name: Package (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: tar -czf ${{ matrix.artifact }}.tar.gz -C dist torrenzo-gui
+
+      - name: Package (macOS)
+        if: matrix.os == 'macos-latest'
+        run: cd dist && zip -r ../${{ matrix.artifact }}.zip 'torrenzo-gui.app' 2>/dev/null || zip -r ../${{ matrix.artifact }}.zip torrenzo-gui
+
+      - name: Package (Windows)
+        if: matrix.os == 'windows-latest'
+        run: Compress-Archive -Path dist/torrenzo-gui.exe -DestinationPath ${{ matrix.artifact }}.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.*
+
+  release:
+    name: GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
