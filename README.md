@@ -55,7 +55,7 @@ Torrenzo includes a desktop application for point-and-click builds.
 Launch the GUI using one of the following methods:
 
 - Prebuilt binary from the Releases page: https://github.com/tabreturn/torrenzo/releases
-- From source (repo root): `python -m torrenzo_gui`
+- From source (repo root): `python -m torrenzo_gui` (ensure to install [prerequisites](#prerequisites) first)
 
 > 💡 To start working on a Torrenzo project, it's easiest to [download the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
 
