@@ -1,8 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags: ['v*']
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -81,7 +81,7 @@ jobs:
           path: ${{ matrix.artifact }}.*
 
   release:
-    name: GitHub Release
+    name: Attach to release
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -92,7 +92,7 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: Publish
-        uses: softprops/action-gh-release@v2
-        with:
-          files: artifacts/*
+      - name: Upload to release
+        run: gh release upload ${{ github.event.release.tag_name }} artifacts/* --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
