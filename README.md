@@ -2,7 +2,8 @@
 
 *Lightweight publishing pipeline for digital learning content*
 
-![banner](README_banner.png)
+![banner](README_banner.png)  
+*Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word.*
 
 ---
 
@@ -36,7 +37,7 @@ Instead of authoring material directly in a learning management system (LMS), co
 
 ---
 
-## GUI
+## Usage: GUI
 
 Torrenzo includes a desktop application for point-and-click builds.
 
@@ -56,9 +57,7 @@ Launch the GUI using one of the following methods:
 
 > 💡 To start working on a Torrenzo project, it's easiest to [download the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
 
----
-
-## Usage (Command Line)
+## Usage: Command Line
 
 1. Ensure to install [prerequisites](#prerequisites).
 2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
