@@ -26,13 +26,13 @@ This subject is a playful exploration of observation skills. Learning to notice 
 
 ---
 
-## Submission Instructions
+## Submission Instructions [[cc-section]]
 
 Upload the ZIP to the LMS submission portal, and place a short README inside the archive that lists the files included, the sources of the images (if not original), and one sentence about what you learned from the exercise.
 
 ---
 
-## Referencing
+## Referencing [[cc-section]]
 
 There is no formal referencing style required for this playful assessment. But please acknowledge any sourced images or borrowed descriptors directly in the README or as small captions in the catalogue.
 
@@ -59,7 +59,7 @@ This exercise helped me practice observing small sensory details and describing 
 ---
 
 
-## Academic Integrity Declaration
+## Academic Integrity Declaration [[cc-section]]
 
 I declare that, except where I have referenced, the work I am submitting is my own. I have kept notes on the sources I used and can share them if required.
 

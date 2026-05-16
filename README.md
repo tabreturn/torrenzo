@@ -237,7 +237,7 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 
 ### Common Cartridge (.imscc)
 
-Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal build output. The `.imscc` file bundles all module pages as Canvas WikiPages (with inter-page navigation and asset paths rewritten to Canvas's `$WIKI_REFERENCE$` / `$IMS-CC-FILEBASE$` tokens), and assessment briefs as assignments (with rubrics including assignment weightings).
+Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal build output. The `.imscc` file bundles all module pages as Canvas WikiPages (with inter-page navigation and asset paths rewritten to Canvas's `$WIKI_REFERENCE$` / `$IMS-CC-FILEBASE$` tokens).
 
 **Importing into Canvas:**
 
@@ -246,9 +246,11 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
   - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
   - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via **Pages → View All Pages → ⁝ → Use as Front Page**.
-  - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the last table in the brief markdown).
+  - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the **last table** in the brief markdown).
   - **Files** -- assessment PDFs and image assets uploaded to course Files.
 - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
+
+Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the linked PDF, with its full branch of sub-sections and content included.
 
 ---
 

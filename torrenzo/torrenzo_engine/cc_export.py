@@ -21,6 +21,8 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from markdown_it import MarkdownIt
+
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
 LOM_RES_NS = 'http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource'
@@ -402,31 +404,49 @@ def _course_settings_xml(subject_code: str, subject_title: str) -> str:
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml + '\n'
 
 
+CC_SECTION_TAG = '[[cc-section]]'
+
+_HEADING_RE = re.compile(r'^(#{1,6})\s')
+
+
 def _parse_brief_sections(brief_path: Path) -> dict[str, str]:
-    """Extract Submission Instructions and Academic Integrity Declaration
-    sections from the brief markdown."""
+    """Extract sections tagged with [[cc-section]] from the brief.
+
+    Each heading (any level) that carries the tag is included with its
+    full branch of the hierarchy — subsections, code blocks, and content
+    are captured until a heading at the same or higher level appears.
+    The tag is stripped from the displayed name."""
     text = brief_path.read_text(encoding='utf-8')
+
     sections: dict[str, str] = {}
     current_section: str | None = None
+    current_level: int = 0
     current_lines: list[str] = []
-    targets = {'## Submission Instructions', '## Academic Integrity Declaration'}
-    stop_markers = {'## ', '---', '<div class="page-break">'}
+
+    def _clean(lines: list[str]) -> str:
+        kept = [l for l in lines
+                if l.strip() not in ('---', '<div class="page-break">')
+                and not l.strip().startswith('<div class="page-break">')]
+        return '\n'.join(kept).strip()
 
     for line in text.splitlines():
         stripped = line.strip()
-        if stripped in targets:
-            if current_section:
-                sections[current_section] = '\n'.join(current_lines).strip()
-            current_section = stripped.removeprefix('## ')
-            current_lines = []
-        elif current_section:
-            if any(stripped.startswith(m) for m in stop_markers):
-                sections[current_section] = '\n'.join(current_lines).strip()
+        hm = _HEADING_RE.match(stripped)
+        if hm:
+            level = len(hm.group(1))
+            if current_section and level <= current_level:
+                sections[current_section] = _clean(current_lines)
                 current_section = None
-            else:
-                current_lines.append(line)
+                current_lines = []
+            if current_section is None:
+                name = stripped[hm.end():].replace(CC_SECTION_TAG, '').strip()
+                if CC_SECTION_TAG in stripped and name:
+                    current_section = name
+                    current_level = level
+        elif current_section:
+            current_lines.append(line)
     if current_section:
-        sections[current_section] = '\n'.join(current_lines).strip()
+        sections[current_section] = _clean(current_lines)
     return sections
 
 
@@ -444,18 +464,11 @@ def _assignment_description_html(ass: dict, brief_md: Path | None) -> str:
 
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md)
-        submission = sections.get('Submission Instructions', '')
-        integrity = sections.get('Academic Integrity Declaration', '')
-        if submission:
-            body += (
-                f'<h4>Submission Instructions</h4>\n'
-                f'<p>{submission}</p>\n'
-            )
-        if integrity:
-            body += (
-                f'<h4>Academic Integrity Declaration</h4>\n'
-                f'<p>{integrity}</p>\n'
-            )
+        md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+        for name, content in sections.items():
+            if content:
+                html_content = md.render(content)
+                body += f'<h4>{name}</h4>\n{html_content}\n'
 
     return _wrap_wiki_html(body, ass['title'], ass['assignment_id'])
 
