@@ -24,6 +24,34 @@ from PySide6.QtWidgets import (
 )
 
 TORRENZO_DIR = Path(__file__).resolve().parents[1]
+
+
+def _find_browser() -> str | None:
+    """Find Chrome/Chromium/Firefox for preview."""
+    import shutil
+    if sys.platform == 'win32':
+        candidates = [
+            r'C:\Program Files\Google\Chrome\Application\chrome.exe',
+            r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+            r'C:\Program Files\Mozilla Firefox\firefox.exe',
+        ]
+        for p in candidates:
+            if Path(p).exists():
+                return p
+    elif sys.platform == 'darwin':
+        candidates = [
+            '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+            '/Applications/Firefox.app/Contents/MacOS/firefox',
+        ]
+        for p in candidates:
+            if Path(p).exists():
+                return p
+    else:
+        for name in ('google-chrome', 'chromium', 'firefox'):
+            found = shutil.which(name)
+            if found:
+                return found
+    return None
 ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
 
 
@@ -189,9 +217,10 @@ class MainWindow(QMainWindow):
         build_dir = Path(subject) / 'build'
         if build_dir.is_dir():
             url = build_dir.resolve().as_uri()
-            if sys.platform == 'win32':
+            chrome = _find_browser()
+            if chrome:
                 import subprocess
-                subprocess.Popen(['cmd', '/c', 'start', '', url])
+                subprocess.Popen([chrome, url])
             else:
                 webbrowser.open(url)
 
