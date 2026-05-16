@@ -76,7 +76,7 @@ python -m torrenzo /path/to/your-subject
 > 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. SVG optimisation uses `scour` (included in `requirements.txt`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 > 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
->
+
 > 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. Use this to identify which files need updating in your LMS across multiple builds. Delete the log once you've uploaded everything to reset tracking.
 
 ---
