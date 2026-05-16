@@ -33,7 +33,7 @@ SCHEMA_LOCATION = (
 
 MOD_HTML_RE = re.compile(r'^mod_(\d+)_(\d+)_(.+)\.html$')
 ASSESS_PDF_RE = re.compile(r'^assessment_(\d+)\.pdf$')
-ASSET_SRC_RE = re.compile(r'(src=["\'])assets/([^"\']+)(["\'])')
+ASSET_REF_RE = re.compile(r'((?:src|href)=["\'])assets/([^"\']+)(["\'])')
 PAGE_HREF_RE = re.compile(r'(href=["\'])(mod_\d+_\d+_[^"\']+\.html)(["\'])')
 
 
@@ -70,7 +70,7 @@ def _wrap_wiki_html(body: str, title: str, identifier: str) -> str:
 def _rewrite_html(html_text: str, page_id_map: dict[str, str]) -> str:
     html_text = re.sub(r'<!-- built:.*?-->\n?', '', html_text)
 
-    html_text = ASSET_SRC_RE.sub(
+    html_text = ASSET_REF_RE.sub(
         r'\1$IMS-CC-FILEBASE$/assets/\2\3', html_text,
     )
 
