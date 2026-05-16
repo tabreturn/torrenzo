@@ -237,23 +237,19 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
-- [x] Add asset optimisation step for images (pngquant/oxipng for PNG, svgo for SVG)
-- [x] Include MS Word sample template (with Word styles that approximate the LMS styling)
-- [x] Devise mechanism to flag what is new build content (see `build/build-log.json`) (versus what won't need updating in LMS)
-- [x] Add meta/commented timestamp to built items
-- [ ] Add Image sizing support in Markdown (perhaps follow https://marpit.marp.app/image-syntax)
-- [ ] Add support for common page elements (e.g., tabbed navigation components) -- via YAML metadata in header of Markdown?
-- [ ] Build to `.imscc` (Common Cartridge) format for bulk populating subjects (see [research/common_cartridge](research/common_cartridge)), otherwise
-- [ ] ... Implement a batch LMS content importer (via Tampermonkey or similar)?
-- [ ] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
-- [ ] ... and add one-click executable runner to the above?
-- [ ] ...
-
-### 'Maybe' Goals
-
+- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: svgo)
+- [x] Include MS Word sample template with styles approximating LMS formatting
+- [x] Devise mechanism to flag new build content vs LMS-stable content (see `build/build-log.json`)
+- [x] Add metadata timestamp to built items
+- [x] Add support for common page elements (e.g., tabbed navigation components)
+- [x] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
 - [x] Consolidate on a single runtime stack (Python or Node)
 - [x] Add GUI desktop application
+
+## Stretch Goals
+
+- [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
+- [ ] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import (see `research/common_cartridge`)
+- [ ] Design batch LMS content importer (e.g., Tampermonkey or alternative injection-based approach)
 - [ ] Add support for Marp slide decks
-- [ ] Build an Obsidian extension/plugin to streamline authoring workflows (configuration, build commands, etc.)
-- [ ] ...
 
