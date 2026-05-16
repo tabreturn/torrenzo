@@ -250,17 +250,28 @@ def build_assessment_metadata_tags(
     return tags
 
 
+def find_outline(root: Path) -> Path:
+    for name in ('outline.md', 'outline.yaml', 'outline.yml'):
+        p = root / name
+        if p.exists():
+            return p
+    raise SystemExit(
+      'outline.md or outline.yaml is required at the subject root'
+    )
+
+
 def load_outline(root: Path) -> dict[str, Any]:
-    md_path = root / 'outline.md'
-    if not md_path.exists():
-        raise SystemExit('outline.md is required at the project root')
-    text = md_path.read_text(encoding='utf-8')
-    frontmatter_match = re.match(r'\A---\n(.*?)\n---\n', text, re.S)
-    yaml_text = frontmatter_match.group(1) if frontmatter_match else text
+    path = find_outline(root)
+    text = path.read_text(encoding='utf-8')
+    if path.suffix == '.md':
+        frontmatter_match = re.match(r'\A---\n(.*?)\n---\n', text, re.S)
+        yaml_text = frontmatter_match.group(1) if frontmatter_match else text
+    else:
+        yaml_text = text
     try:
         data = yaml.safe_load(yaml_text) or {}
     except yaml.YAMLError as exc:
-        raise SystemExit(f'Failed to parse outline.md: {exc}') from exc
+        raise SystemExit(f'Failed to parse {path.name}: {exc}') from exc
     return data
 
 
@@ -497,7 +508,7 @@ def make_jobs(
 
     built = built or now_iso()
 
-    outline = subject_root / 'outline.md'
+    outline = find_outline(subject_root)
     module_css = subject_root / 'modules' / 'style' / 'style.css'
     module_bib = subject_root / 'modules' / 'references.bib'
     assess_css = subject_root / 'assessments' / 'style' / 'style.css'

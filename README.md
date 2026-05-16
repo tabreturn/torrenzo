@@ -63,14 +63,14 @@ Launch the GUI using one of the following methods:
 ## Usage: Command Line
 
 1. Ensure to install [prerequisites](#prerequisites).
-2. [Populate subject content](#populating-content) (`outline.md`, `assessments/`, and `modules/`).
+2. [Populate subject content](#populating-content) (`outline.md` or `outline.yaml`, `assessments/`, and `modules/`).
 3. Run Torrenzo from the repository root, passing your subject directory:
 
 ```bash
 python -m torrenzo /path/to/your-subject
 ```
 
-`outline.md`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically.
+`outline.[md|yaml]`), `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically.
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
@@ -84,9 +84,9 @@ python -m torrenzo /path/to/your-subject
 
 ## Configuration & Tags
 
-Use `outline.md` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
+Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
-Starter keys in `outline.md` define your subject metadata and automatically populate across all content via tags/placeholders.
+Starter keys in `outline.[md|yaml]` define your subject metadata and automatically populate across all content via tags/placeholders.
 
 - **Subject:**  
   `subject.code`, `subject.title`, `subject.descriptor`
@@ -159,7 +159,7 @@ your-subject/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
 ├── build/              # generated output
-└── outline.md          # subject configuration (YAML)
+└── outline.[md|yaml]   # subject configuration (YAML)
 ```
 
 > 💡 To get started, you could simply duplicate the `demo/` subject, rename it, and use it as a starting point for developing new learning materials.
@@ -168,7 +168,7 @@ your-subject/
 
 Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions in these directories to locate and process files.
 
-- **Define global metadata** in `outline.md` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
+- **Define global metadata** in `outline.[md|yaml]` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
 
 - **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory.
 
@@ -182,14 +182,14 @@ Use `modules/module_00/` for subject overview and introductory content (e.g., we
 
 > 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`
 
-During the build process, Torrenzo reads metadata from `outline.md` (SLOs, etc.) and converts source content into:
+During the build process, Torrenzo reads metadata from `outline.[md|yaml]` (SLOs, etc.) and converts source content into:
 
 - PDF assessment briefs
 - LMS-ready HTML module pages (including separate activity pages)
 
 Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
 
-Torrenzo only rebuilds files whose source (or a shared dependency such as `outline.md` or the stylesheet) is newer than the existing output. Outputs for deleted or renamed source files are removed automatically. Each build output embeds a timestamp (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
+Torrenzo only rebuilds files whose source (or a shared dependency such as `outline.[md|yaml]` or the stylesheet) is newer than the existing output. Outputs for deleted or renamed source files are removed automatically. Each build output embeds a timestamp (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
 
 Use `--clean` to wipe `build/` and force a full rebuild, or `--force` to rebuild all files without clearing first.
 
