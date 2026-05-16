@@ -67,9 +67,9 @@ I declare that, except where I have referenced, the work I am submitting is my o
 
 ## Assessment Rubric
 
-| Assessment Attributes | Fail 0–49% | Pass 50–64% | Credit 65–74% | Distinction 75–84% | High Distinction 85–100% |
+| Assessment Attributes | Fail *0--49%* | Pass *50--64%* | Credit *65--74%* | Distinction *75--84%* | High Distinct. *85--100%* |
 |--|--|--|--|--|--|
-| Observation Notes 40%| Missing detail or shows little attention to the fruits described. | Includes minimal detail; descriptions are hard to visualise. | Provides accurate and tidy observations that match the selected fruits. | Consistent, vivid detail makes the fruits easy to imagine. | Exceptional storytelling; each entry feels intentional and evocative. |
-| Visual Pairing 20%| Images absent or unrelated to the written content. | Images present but loosely connected to the descriptions. | Images complement the text and are suitably sized. | Images enhance the narrative with thoughtful composition. | Images and text work together seamlessly, showing strong curation. |
-| Reflection 40%| Reflection absent or not connected to the work. | Reflection is present but vague, repeating task steps. | Reflection explains basic choices and notices at least one learning point. | Reflection explores what stood out and how it informs future storytelling. | Reflection connects the experience to broader contexts with insight. |
+| Observation Notes *40%*| Missing detail or shows little attention to the fruits described. | Includes minimal detail; descriptions are hard to visualise. | Provides accurate and tidy observations that match the selected fruits. | Consistent, vivid detail makes the fruits easy to imagine. | Exceptional storytelling; each entry feels intentional and evocative. |
+| Visual Pairing *20%*| Images absent or unrelated to the written content. | Images present but loosely connected to the descriptions. | Images complement the text and are suitably sized. | Images enhance the narrative with thoughtful composition. | Images and text work together seamlessly, showing strong curation. |
+| Reflection *40%*| Reflection absent or not connected to the work. | Reflection is present but vague, repeating task steps. | Reflection explains basic choices and notices at least one learning point. | Reflection explores what stood out and how it informs future storytelling. | Reflection connects the experience to broader contexts with insight. |
 
