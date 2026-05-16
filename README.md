@@ -74,7 +74,7 @@ python -m torrenzo /path/to/your-subject
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
-> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. SVG optimisation uses `scour` (included in `requirements.txt`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. SVG optimisation uses `scour` (included in `requirements.txt` and bundled in GUI release). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 > 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
 
@@ -258,7 +258,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
-- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: svgo)
+- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: scour)
 - [x] Include MS Word sample template with styles approximating LMS formatting
 - [x] Devise mechanism to flag new build content vs LMS-stable content (see `build/build-log.json`)
 - [x] Add metadata timestamp to built items
