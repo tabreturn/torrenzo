@@ -5,7 +5,7 @@
 ---
 
 ![banner](README_banner.png)  
-*Figure 1: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word.*
+*Figure 1: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word, with potential to support other formats in future.*
 
 ---
 
@@ -44,7 +44,7 @@ Instead of authoring material directly in a learning management system (LMS), co
 Torrenzo includes a desktop application for point-and-click builds.
 
 ![GUI](README_gui.png)
-*Figure 2: The Torrenzo GUI running on Linux. You can use any desktop OS.*
+*Figure 2: The Torrenzo GUI running on Linux. The GUI is available for Linux, macOS, and Windows.*
 
 **Features:**
 
