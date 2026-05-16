@@ -10,7 +10,6 @@ import html
 import re
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any
 import yaml
@@ -87,10 +86,6 @@ def optimize_assets(build_dir: Path) -> list[str]:
         messages.append(fmt('info', 'No PNG assets to optimize'))
 
     scour_tool = locate_command(['scour'])
-    scour_args: list[str] = []
-    if not scour_tool and getattr(sys, 'frozen', False):
-        scour_tool = sys.executable
-        scour_args = ['-m', 'scour']
     svg_files = sorted(build_dir.rglob('*.svg'))
     if scour_tool and svg_files:
         import tempfile, os
@@ -100,7 +95,7 @@ def optimize_assets(build_dir: Path) -> list[str]:
             os.close(fd)
             tmp_path = Path(tmp)
             cmd = [
-              scour_tool, *scour_args, '--quiet',
+              scour_tool, '--quiet',
               '-i', str(path), '-o', str(tmp_path),
             ]
             result = subprocess.run(cmd, capture_output=True, text=True)
