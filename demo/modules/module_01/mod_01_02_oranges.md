@@ -7,7 +7,7 @@
 
 ## The Orange
 
-*One of the most widely recognised citrus fruits, known for its bright colour and balanced sweet–tart flavour.*
+*One of the most widely recognised citrus fruits, known for its bright colour and balanced sweet--tart flavour.*
 
 Welcome to Module 1. This module explores how fruits can be carefully observed, described, and organised into a simple catalogue format. Citrus fruits are particularly useful for this kind of practice because they combine vivid colour, distinctive scent, varied textures, and complex flavours. The orange provides an excellent starting point.
 

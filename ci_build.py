@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CI helper — builds demo HTML (skips PDF, no Chrome needed)."""
+"""CI helper -- builds demo HTML (skips PDF, no Chrome needed)."""
 
 import sys
 sys.path.insert(0, '.')

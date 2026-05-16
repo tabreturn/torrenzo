@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Torrenzo GUI — point, click, build."""
+"""Torrenzo GUI -- point, click, build."""
 
 import re
 import sys

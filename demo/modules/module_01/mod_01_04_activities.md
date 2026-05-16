@@ -11,7 +11,7 @@
 
 ### Observing Everyday Objects (Henderson, 2021)
 
-Chapter 3, *‘Describing Familiar Objects’* (pp. 41–58), explores how careful observation can transform ordinary objects into interesting subjects for description. The chapter introduces practical techniques for noticing colour variation, surface texture, scent, and shape. It also demonstrates how short descriptive passages can highlight the distinctive qualities of everyday items such as fruits.
+Chapter 3, *‘Describing Familiar Objects’* (pp. 41--58), explores how careful observation can transform ordinary objects into interesting subjects for description. The chapter introduces practical techniques for noticing colour variation, surface texture, scent, and shape. It also demonstrates how short descriptive passages can highlight the distinctive qualities of everyday items such as fruits.
 
 Access [Observing Everyday Objects](https://orangeuni.edu/library)
 
