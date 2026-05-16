@@ -20,8 +20,12 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Chrome (Windows)
+        if: matrix.os == 'windows-latest'
+        run: choco install googlechrome --no-progress -y
+
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Build demo subject (HTML only)
-        run: python ci_build.py
+      - name: Build demo subject
+        run: python -m torrenzo demo --force
