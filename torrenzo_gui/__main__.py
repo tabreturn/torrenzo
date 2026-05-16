@@ -101,9 +101,11 @@ class MainWindow(QMainWindow):
         self._opt_force = QCheckBox('--force')
         self._opt_clean = QCheckBox('--clean')
         self._opt_optimize = QCheckBox('--optimize-assets')
+        self._opt_cc = QCheckBox('--cc')
         opts_layout.addWidget(self._opt_force)
         opts_layout.addWidget(self._opt_clean)
         opts_layout.addWidget(self._opt_optimize)
+        opts_layout.addWidget(self._opt_cc)
         opts_layout.addStretch()
         layout.addWidget(opts_group)
 
@@ -189,6 +191,8 @@ class MainWindow(QMainWindow):
             args.append('--clean')
         if self._opt_optimize.isChecked():
             args.append('--optimize-assets')
+        if self._opt_cc.isChecked():
+            args.append('--cc')
 
         self._process = QProcess()
         self._process.setWorkingDirectory(str(TORRENZO_DIR))
