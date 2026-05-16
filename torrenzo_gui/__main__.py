@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
             self._dir_combo.sizePolicy().horizontalPolicy(),
             self._dir_combo.sizePolicy().verticalPolicy(),
         )
-        self._dir_combo.lineEdit().setPlaceholderText('Path to subject root (e.g. /home/me/my-subject)')
+        self._dir_combo.lineEdit().setPlaceholderText('Path to subject root (folder that holds outline.md)')
         self._dir_combo.currentTextChanged.connect(self._on_dir_changed)
         dir_layout.addWidget(self._dir_combo, stretch=1)
         browse_btn = QPushButton('Browse…')
