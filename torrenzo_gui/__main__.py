@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """Torrenzo GUI -- point, click, build."""
 
-import re
 import sys
+
+if __name__ == '__main__' and '--cli' in sys.argv:
+    from torrenzo.__main__ import main as cli_main
+    sys.argv = [a for a in sys.argv if a != '--cli']
+    cli_main()
+    sys.exit(0)
+
+import re
 import webbrowser
 from pathlib import Path
 
@@ -241,9 +248,4 @@ def main():
 
 
 if __name__ == '__main__':
-    if '--cli' in sys.argv:
-        from torrenzo.__main__ import main as cli_main
-        sys.argv = [a for a in sys.argv if a != '--cli']
-        cli_main()
-    else:
-        main()
+    main()
