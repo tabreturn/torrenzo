@@ -60,7 +60,7 @@ Launch the GUI using one of the following methods:
 
 > 💡 To start working on a Torrenzo project, it's easiest to [download the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
 
-## Usage: Command Line
+## Usage: Command-Line Interface (CLI)
 
 1. Ensure to install [prerequisites](#prerequisites).
 2. [Populate subject content](#populating-content) (`outline.md` or `outline.yaml`, `assessments/`, and `modules/`).
@@ -107,7 +107,7 @@ Custom components live in `torrenzo/components/` and plug into the tag system vi
 
 ---
 
-## Prerequisites
+## Prerequisites (to Run Torrenzo or Launch the GUI via CLI)
 
 - **Python 3.10+**
 - **Google Chrome or Chromium** (for PDF generation)
@@ -122,6 +122,8 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
+
+> 💡 Running the GUI from the CLI is useful when you don't have administrative privileges on your computer (but already have Python).
 
 > 💡 PDF generation uses your system's Chrome/Chromium. If Chrome is installed in a non-standard location, set the `PUPPETEER_EXECUTABLE_PATH` environment variable (e.g., `export PUPPETEER_EXECUTABLE_PATH=/path/to/chrome`).
 
