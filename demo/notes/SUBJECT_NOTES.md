@@ -11,8 +11,8 @@ FRU101 runs across a single learning block with four modules. The landing page (
 | Week | Module | Focus |
 |------|--------|-------|
 | 0 | Welcome | Subject intro, expectations, key docs |
-| 1 | 1.1–1.2 | Observation skills; the orange as a case study |
-| 2 | 1.3–1.4 | Lemons and comparative notes; learning resources & activities |
+| 1 | 1.1--1.2 | Observation skills; the orange as a case study |
+| 2 | 1.3--1.4 | Lemons and comparative notes; learning resources & activities |
 
 Assessment 1 (Seasonal Fruit Catalogue) is due at the end of Module 4.
 
@@ -35,7 +35,7 @@ Bring a few actual citrus fruits to class (or ask students to bring one). Give e
 
 ### Module 1: Mini Catalogue Entry
 
-Supply three high-quality fruit photographs (or use the demo assets). Each student writes a 4–6 sentence catalogue entry for one fruit, pairing the image with descriptive text. Swap with a neighbour and give feedback using two questions:
+Supply three high-quality fruit photographs (or use the demo assets). Each student writes a 4--6 sentence catalogue entry for one fruit, pairing the image with descriptive text. Swap with a neighbour and give feedback using two questions:
 
 - What does the description tell you that the image alone cannot?
 - Is there anything the image shows that the description missed?
