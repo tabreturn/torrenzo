@@ -24,6 +24,7 @@ from .torrenzo_engine.renderers import (
   render_copy_asset,
 )
 from .torrenzo_engine.build_stamp import now_iso
+from .torrenzo_engine.cc_export import export_cc
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PDF_USER_CSS = ''
@@ -570,6 +571,15 @@ def make_jobs(
         output_ext='',
         output_namer=lambda p: p.name,
       ),
+      RenderJob(
+        name='lecturer_notes',
+        input_pattern='notes/**/*',
+        output_dir=Path('lecturer_notes'),
+        renderer='copy_asset',
+        context={},
+        output_ext='',
+        output_namer=lambda p: p.name,
+      ),
     ]
 
 
@@ -602,6 +612,11 @@ def main() -> None:
       action='store_true',
       help='Rebuild all files even if outputs are up-to-date',
     )
+    parser.add_argument(
+      '--cc',
+      action='store_true',
+      help='Export a Common Cartridge (.imscc) package after building',
+    )
     args = parser.parse_args()
 
     subject_root = args.root.resolve()
@@ -627,6 +642,10 @@ def main() -> None:
     )
     if args.optimize_assets:
         diagnostics.extend(optimize_assets(build_dir))
+    if args.cc:
+        outline = load_outline(subject_root)
+        _, cc_diagnostics = export_cc(subject_root, build_dir, outline)
+        diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
     for message in diagnostics:
         print(message)
 

@@ -159,6 +159,13 @@ class Pipeline:
                 prior_entries = []
         expected_outputs.add(log_path)
 
+        for f in self.build_dir.rglob('*'):
+            if f.is_file() and f.suffix.lower() in (
+                '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp',
+                '.bmp', '.tiff', '.ico', '.imscc',
+            ):
+                expected_outputs.add(f)
+
         pruned_count = self._prune_orphans(expected_outputs)
 
         ordered_entries = order_levels(entries)

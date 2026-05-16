@@ -17,7 +17,7 @@ assessment:
     length: One page of notes plus a small media folder
     learning_outcomes: [a, b, c]
     submission: Due by 23h55 GMT on the final weekend of the learning block
-    weighting: 10%
-    total_marks: 25
+    weighting: 15%
+    total_marks: 100
 ---
 

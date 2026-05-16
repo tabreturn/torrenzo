@@ -7,7 +7,7 @@
 
 - Python package (`torrenzo/`) with entry point `torrenzo/__main__.py`; run as `python -m torrenzo <subject>`.
 - `torrenzo/torrenzo_engine/` contains the renderer registry and pipeline.
-- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, and `build/` -- all resolved relative to the subject root passed as the CLI argument. `build/` is not wiped on each run; only stale files are rebuilt and orphans are pruned.
+- Subject content (e.g. `demo/`) has `outline.md`, `assessments/`, `modules/`, `notes/`, and `build/` -- all resolved relative to the subject root passed as the CLI argument. `build/` is not wiped on each run; only stale files are rebuilt and orphans are pruned.
 - `demo/` is a self-contained sample subject checked into this repo.
 - No automated tests or linters; validation is manual.
 
@@ -28,7 +28,7 @@
 
 - `torrenzo/__main__.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
 - `torrenzo/torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
-- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_<seq>_<name>.[md|docx]` → HTML.
+- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_<seq>_<name>.[md|docx]` → HTML; `notes/**/*` → `build/lecturer_notes/` (copied as-is, no conversion).
 - `modules/style/style.css` is inlined into module HTML; output HTML is body-only for LMS pasting.
 - `assessments/style/` is copied alongside each brief; `logo.svg` injected into the PDF header; swap to change branding.
 - `modules/references.bib` contains subject-level BibTeX sources.
@@ -54,3 +54,4 @@
 ## Extensibility
 
 - Plugin-style renderers; register new renderer names and job specs for additional targets (e.g., `.docx` → HTML, Marp `.md` → PDF, extended Markdown widgets).
+- `--cc` exports Common Cartridge; lecturer notes included as unpublished module hidden from students. CC import overwrites (not additive).
