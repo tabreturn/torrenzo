@@ -1,5 +1,3 @@
-`=[[component.module-navigation]]`
-
 # FRU101: Tropical Fruit Studies
 
 ![placeholder img](assets/mod_00_01_placeholder.png)
