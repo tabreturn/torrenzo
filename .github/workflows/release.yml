@@ -36,8 +36,8 @@ jobs:
           pyinstaller
           --onefile
           --name torrenzo-gui
-          --hidden-import pyppeteer
           --collect-all pyppeteer
+          --collect-all PySide6
           torrenzo_gui/__main__.py
 
       - name: Build binary (macOS)
@@ -47,8 +47,8 @@ jobs:
           --onefile
           --windowed
           --name torrenzo-gui
-          --hidden-import pyppeteer
           --collect-all pyppeteer
+          --collect-all PySide6
           torrenzo_gui/__main__.py
 
       - name: Build binary (Windows)
@@ -58,8 +58,8 @@ jobs:
           --onefile
           --noconsole
           --name torrenzo-gui
-          --hidden-import pyppeteer
           --collect-all pyppeteer
+          --collect-all PySide6
           torrenzo_gui/__main__.py
 
       - name: Package (Linux)
