@@ -10,7 +10,6 @@ import html
 import re
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any
 import yaml
@@ -87,10 +86,6 @@ def optimize_assets(build_dir: Path) -> list[str]:
         messages.append(fmt('info', 'No PNG assets to optimize'))
 
     scour_tool = locate_command(['scour'])
-    scour_args: list[str] = []
-    if not scour_tool and getattr(sys, 'frozen', False):
-        scour_tool = sys.executable
-        scour_args = ['-m', 'scour']
     svg_files = sorted(build_dir.rglob('*.svg'))
     if scour_tool and svg_files:
         import tempfile, os
@@ -100,7 +95,7 @@ def optimize_assets(build_dir: Path) -> list[str]:
             os.close(fd)
             tmp_path = Path(tmp)
             cmd = [
-              scour_tool, *scour_args, '--quiet',
+              scour_tool, '--quiet',
               '-i', str(path), '-o', str(tmp_path),
             ]
             result = subprocess.run(cmd, capture_output=True, text=True)
@@ -120,12 +115,33 @@ def optimize_assets(build_dir: Path) -> list[str]:
             messages.append(fmt(
               'info', f'Optimized {optimized_svgs} SVG file(s) with scour'
             ))
-    elif not scour_tool:
-        messages.append(fmt(
-          'warning',
-          'Skipping SVG optimization (scour not installed; '
-          'pip install scour)',
-        ))
+    elif not scour_tool and svg_files:
+        try:
+            from scour.scour import generateDefaultOptions, sanitizeOptions, scourString
+            optimized_svgs = 0
+            opts = sanitizeOptions(generateDefaultOptions())
+            opts.quiet = True
+            for path in svg_files:
+                try:
+                    in_str = path.read_text(encoding='utf-8')
+                    out_str = scourString(in_str, opts)
+                    path.write_text(out_str, encoding='utf-8')
+                    optimized_svgs += 1
+                except Exception as e:
+                    rel = path.relative_to(build_dir)
+                    messages.append(fmt('error', f'SVG optimize failed (scour): {rel}: {e}'))
+            if optimized_svgs:
+                messages.append(fmt(
+                  'info', f'Optimized {optimized_svgs} SVG file(s) with scour'
+                ))
+        except ImportError:
+            messages.append(fmt(
+              'warning',
+              'Skipping SVG optimization (scour not installed; '
+              'pip install scour)',
+            ))
+    elif not scour_tool and not svg_files:
+        pass
     elif not svg_files:
         messages.append(fmt('info', 'No SVG assets to optimize'))
 
