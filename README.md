@@ -258,7 +258,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 - [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
 - [x] Refine CSS styles for assessment briefs
 - [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
-- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: svgo)
+- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: scour)
 - [x] Include MS Word sample template with styles approximating LMS formatting
 - [x] Devise mechanism to flag new build content vs LMS-stable content (see `build/build-log.json`)
 - [x] Add metadata timestamp to built items
