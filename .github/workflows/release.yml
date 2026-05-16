@@ -53,14 +53,10 @@ jobs:
 
       - name: Build binary (Windows)
         if: matrix.os == 'windows-latest'
-        run: >
-          pyinstaller
-          --onefile
-          --noconsole
-          --name torrenzo-gui
-          --collect-all pyppeteer
-          --collect-all PySide6
-          torrenzo_gui/__main__.py
+        shell: pwsh
+        run: |
+          $icuDlls = python -c "import PySide6; from pathlib import Path; print(';'.join(f'{f};PySide6' for f in Path(PySide6.__file__).parent.glob('icu*.dll')))"
+          pyinstaller --onefile --noconsole --name torrenzo-gui --collect-all pyppeteer --collect-all PySide6 --add-binary "$icuDlls" torrenzo_gui/__main__.py
 
       - name: Package (Linux)
         if: matrix.os == 'ubuntu-latest'

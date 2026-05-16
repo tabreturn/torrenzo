@@ -179,7 +179,10 @@ class MainWindow(QMainWindow):
         self._build_btn.setEnabled(False)
         self.statusBar().showMessage('Building…')
 
-        args = [sys.executable, '-m', 'torrenzo', subject]
+        if getattr(sys, 'frozen', False):
+            args = [sys.executable, '--cli', subject]
+        else:
+            args = [sys.executable, '-m', 'torrenzo', subject]
         if self._opt_force.isChecked():
             args.append('--force')
         if self._opt_clean.isChecked():
@@ -234,4 +237,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if '--cli' in sys.argv:
+        from torrenzo.__main__ import main as cli_main
+        sys.argv = [a for a in sys.argv if a != '--cli']
+        cli_main()
+    else:
+        main()
