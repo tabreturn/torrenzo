@@ -53,10 +53,18 @@ jobs:
 
       - name: Build binary (Windows)
         if: matrix.os == 'windows-latest'
-        shell: pwsh
         run: |
-          $icuDlls = python -c "import PySide6; from pathlib import Path; print(';'.join(f'{f};PySide6' for f in Path(PySide6.__file__).parent.glob('icu*.dll')))"
-          pyinstaller --onefile --noconsole --name torrenzo-gui --collect-all pyppeteer --collect-all PySide6 --add-binary "$icuDlls" torrenzo_gui/__main__.py
+          python -c "
+          import subprocess, sys; from pathlib import Path; import PySide6
+          p = Path(PySide6.__file__).parent
+          cmd = [sys.executable, '-m', 'PyInstaller', '--onefile', '--noconsole', '--name', 'torrenzo-gui', '--collect-all', 'pyppeteer', '--collect-all', 'PySide6']
+          for dll in p.rglob('icu*.dll'):
+              dest = str(dll.relative_to(p))
+              cmd.extend(['--add-binary', f'{dll};PySide6/{dest}'])
+              print(f'Adding ICU DLL: {dll.relative_to(p.parent.parent)} -> PySide6/{dest}')
+          cmd.append('torrenzo_gui/__main__.py')
+          subprocess.run(cmd, check=True)
+          "
 
       - name: Package (Linux)
         if: matrix.os == 'ubuntu-latest'
