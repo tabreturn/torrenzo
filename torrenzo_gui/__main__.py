@@ -47,7 +47,7 @@ def _find_browser() -> str | None:
             if Path(p).exists():
                 return p
     else:
-        for name in ('google-chrome', 'chromium', 'firefox'):
+        for name in ('firefox', 'google-chrome', 'chromium'):
             found = shutil.which(name)
             if found:
                 return found
