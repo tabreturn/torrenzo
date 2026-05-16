@@ -266,6 +266,7 @@ def _rubrics_xml(assessments: list[dict]) -> str:
 def _module_meta_xml(
     module_pages: dict[int, list[dict]],
     assessment_items: list[dict],
+    lecturer_notes: list[dict] | None = None,
 ) -> str:
     root = ET.Element('modules')
     root.set('xmlns', CANVAS_NS)
@@ -316,6 +317,27 @@ def _module_meta_xml(
             _el(item, 'workflow_state', 'active')
             _el(item, 'title', ass['title'])
             _el(item, 'identifierref', ass['assignment_id'])
+            _el(item, 'position', str(pi + 1))
+            _el(item, 'new_tab', 'false')
+            _el(item, 'indent', '0')
+
+    if lecturer_notes:
+        position += 1
+        mod = _el(root, 'module', identifier=_id('section/lecturer_notes'))
+        _el(mod, 'title', 'Lecturer Notes')
+        _el(mod, 'workflow_state', 'unpublished')
+        _el(mod, 'position', str(position))
+        _el(mod, 'require_sequential_progress', 'false')
+        _el(mod, 'locked', 'false')
+        items = _el(mod, 'items')
+
+        for pi, note in enumerate(lecturer_notes):
+            item = _el(items, 'item',
+                       identifier=_id(f'item/lecturer/{note["filename"]}'))
+            _el(item, 'content_type', 'Attachment')
+            _el(item, 'workflow_state', 'unpublished')
+            _el(item, 'title', note['filename'])
+            _el(item, 'identifierref', note['resource_id'])
             _el(item, 'position', str(pi + 1))
             _el(item, 'new_tab', 'false')
             _el(item, 'indent', '0')
@@ -423,6 +445,7 @@ def _build_manifest(
     module_pages: dict[int, list[dict]],
     assessment_items: list[dict],
     assets: list[dict],
+    lecturer_notes: list[dict] | None = None,
     has_course_settings: bool = False,
 ) -> str:
     ET.register_namespace('', CC_NS)
@@ -495,6 +518,16 @@ def _build_manifest(
                      identifierref=ass['assignment_id'])
             _el(ai, f'{{{ns}}}title', ass['title'])
 
+    if lecturer_notes:
+        sec = _el(root_item, f'{{{ns}}}item',
+                  identifier=_id('section/lecturer_notes'))
+        _el(sec, f'{{{ns}}}title', 'Lecturer Notes')
+        for note in lecturer_notes:
+            ni = _el(sec, f'{{{ns}}}item',
+                     identifier=_id(f'item/lecturer/{note["filename"]}'),
+                     identifierref=note['resource_id'])
+            _el(ni, f'{{{ns}}}title', note['filename'])
+
     # -- resources --
     resources = _el(manifest, f'{{{ns}}}resources')
 
@@ -544,6 +577,14 @@ def _build_manifest(
                   identifier=asset['resource_id'],
                   type='webcontent', href=cc_href)
         _el(res, f'{{{ns}}}file', href=cc_href)
+
+    if lecturer_notes:
+        for note in lecturer_notes:
+            cc_href = f'web_resources/lecturer_notes/{note["filename"]}'
+            res = _el(resources, f'{{{ns}}}resource',
+                      identifier=note['resource_id'],
+                      type='webcontent', href=cc_href)
+            _el(res, f'{{{ns}}}file', href=cc_href)
 
     ET.indent(manifest)
     xml_str = ET.tostring(manifest, encoding='unicode', xml_declaration=False)
@@ -653,11 +694,24 @@ def export_cc(
                     'resource_id': resource_id,
                 })
 
+    lecturer_notes: list[dict] = []
+    lecturer_notes_dir = build_dir / 'lecturer_notes'
+    if lecturer_notes_dir.exists():
+        for f in sorted(lecturer_notes_dir.rglob('*')):
+            if f.is_file():
+                resource_id = _id(f'resource/lecturer_notes/{f.name}')
+                lecturer_notes.append({
+                    'filename': f.name,
+                    'path': f,
+                    'resource_id': resource_id,
+                })
+
     has_course_settings = bool(assessment_items) or bool(module_pages)
 
     manifest_xml = _build_manifest(
         subject_code, subject_title,
         module_pages, assessment_items, assets,
+        lecturer_notes=lecturer_notes,
         has_course_settings=has_course_settings,
     )
 
@@ -703,13 +757,18 @@ def export_cc(
             zf.writestr('course_settings/rubrics.xml',
                         _rubrics_xml(assessment_items))
             zf.writestr('course_settings/module_meta.xml',
-                        _module_meta_xml(module_pages, assessment_items))
+                        _module_meta_xml(module_pages, assessment_items,
+                                         lecturer_notes=lecturer_notes))
             zf.writestr('course_settings/course_settings.xml',
                         _course_settings_xml(subject_code, subject_title))
 
         for asset in assets:
             zf.write(asset['path'],
                      f'web_resources/assets/{asset["filename"]}')
+
+        for note in lecturer_notes:
+            zf.write(note['path'],
+                     f'web_resources/lecturer_notes/{note["filename"]}')
 
     page_count = sum(len(v) for v in module_pages.values())
     diagnostics.insert(0,

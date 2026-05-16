@@ -158,7 +158,10 @@ your-subject/
 │   │   └── assets/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
+├── notes/              # lecturer-only notes (copied as-is, hidden in cartidge)
+│   └── *.md (or any format)
 ├── build/              # generated output
+│   └── lecturer_notes/ # notes output (retains original format)
 └── outline.[md|yaml]   # subject configuration (YAML)
 ```
 
@@ -192,6 +195,10 @@ Torrenzo writes all output to `build/`. Module assets copy to `build/modules_htm
 Torrenzo only rebuilds files whose source (or a shared dependency such as `outline.[md|yaml]` or the stylesheet) is newer than the existing output. Outputs for deleted or renamed source files are removed automatically. Each build output embeds a timestamp (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
 
 Use `--clean` to wipe `build/` and force a full rebuild, or `--force` to rebuild all files without clearing first.
+
+### Lecturer Notes
+
+Place lecturer-only materials (teaching notes, facilitation guides, answer keys) in `notes/`. Files are copied to `build/lecturer_notes/` retaining their original format -- no conversion applies (`.md` stays `.md`, `.docx` stays `.docx`, etc.). When exporting a Common Cartridge (via `--cc`), lecturer notes end up in the `.imscc` package under an **unpublished** module, hidden from students.
 
 ### Module Styling & Assessment Branding
 
@@ -239,8 +246,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
   - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via **Pages → View All Pages → ⁝ → Use as Front Page**.
   - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the last table in the brief markdown).
   - **Files** -- assessment PDFs and image assets uploaded to course Files.
-
-> 💡 Canvas imports are *additive* -- they never replace or wipe existing content, i.e. re-importing the same cartridge into a course twice will create duplicates. For a clean import, use an empty course shell or manually clear existing modules and other content before importing.
+- **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
 
 ---
 

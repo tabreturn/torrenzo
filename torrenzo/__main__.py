@@ -571,6 +571,15 @@ def make_jobs(
         output_ext='',
         output_namer=lambda p: p.name,
       ),
+      RenderJob(
+        name='lecturer_notes',
+        input_pattern='notes/**/*',
+        output_dir=Path('lecturer_notes'),
+        renderer='copy_asset',
+        context={},
+        output_ext='',
+        output_namer=lambda p: p.name,
+      ),
     ]
 
 
