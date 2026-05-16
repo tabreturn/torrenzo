@@ -56,6 +56,29 @@ def _title_from_slug(slug: str) -> str:
     return slug.replace('_', ' ').title()
 
 
+MOD_FOLDER_RE = re.compile(r'^module_(\d+)(?:_(.+))?$')
+
+
+def _module_labels(subject_root: Path) -> dict[int, str]:
+    modules_dir = subject_root / 'modules'
+    if not modules_dir.exists():
+        return {}
+    labels: dict[int, str] = {}
+    for d in sorted(modules_dir.iterdir()):
+        if not d.is_dir():
+            continue
+        m = MOD_FOLDER_RE.match(d.name)
+        if not m:
+            continue
+        mod_num = int(m.group(1))
+        name = m.group(2)
+        if mod_num == 0:
+            labels[mod_num] = 'Welcome'
+        elif name:
+            labels[mod_num] = f'Module {mod_num} \u2013 {name.replace("_", " ").title()}'
+    return labels
+
+
 def _el(parent: ET.Element, tag: str, text: str | None = None,
         **attrib: str) -> ET.Element:
     e = ET.SubElement(parent, tag, **attrib)
@@ -267,6 +290,7 @@ def _module_meta_xml(
     module_pages: dict[int, list[dict]],
     assessment_items: list[dict],
     lecturer_notes: list[dict] | None = None,
+    module_labels: dict[int, str] | None = None,
 ) -> str:
     root = ET.Element('modules')
     root.set('xmlns', CANVAS_NS)
@@ -276,7 +300,8 @@ def _module_meta_xml(
     position = 0
     for mod_num in sorted(module_pages):
         pages = sorted(module_pages[mod_num], key=lambda p: p['seq'])
-        mod_label = 'Welcome' if mod_num == 0 else f'Module {mod_num}'
+        mod_label = (module_labels or {}).get(
+            mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
         position += 1
         mod = _el(root, 'module', identifier=_id(f'module/{mod_num}'))
         _el(mod, 'title', mod_label)
@@ -294,7 +319,7 @@ def _module_meta_xml(
             if mod_num == 0:
                 _el(item, 'title', page['title'])
             else:
-                _el(item, 'title', f'Module {mod_num}: {page["title"]}')
+                _el(item, 'title', f'Module {mod_num}.{page["seq"]}: {page["title"]}')
             _el(item, 'identifierref', page['resource_id'])
             _el(item, 'position', str(pi + 1))
             _el(item, 'new_tab', 'false')
@@ -446,6 +471,7 @@ def _build_manifest(
     assessment_items: list[dict],
     assets: list[dict],
     lecturer_notes: list[dict] | None = None,
+    module_labels: dict[int, str] | None = None,
     has_course_settings: bool = False,
 ) -> str:
     ET.register_namespace('', CC_NS)
@@ -490,7 +516,8 @@ def _build_manifest(
 
     for mod_num in sorted(module_pages):
         pages = sorted(module_pages[mod_num], key=lambda p: p['seq'])
-        mod_label = 'Welcome' if mod_num == 0 else f'Module {mod_num}'
+        mod_label = (module_labels or {}).get(
+            mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
 
         mod_item = _el(root_item, f'{{{ns}}}item',
                        identifier=_id(f'module/{mod_num}'))
@@ -506,7 +533,7 @@ def _build_manifest(
                 _el(page_item, f'{{{ns}}}title', page['title'])
             else:
                 _el(page_item, f'{{{ns}}}title',
-                    f'Module {mod_num}: {page["title"]}')
+                    f'Module {mod_num}.{page["seq"]}: {page["title"]}')
 
     if assessment_items:
         sec = _el(root_item, f'{{{ns}}}item',
@@ -669,7 +696,7 @@ def export_cc(
                 'pdf_filename': f.name,
                 'pdf_path': f,
                 'num': ass_num,
-                'title': f'Assessment {ass_num} \u2013 {name}',
+                'title': f'Assessment {ass_num}: {name}',
                 'pdf_resource_id': pdf_resource_id,
                 'assignment_id': assignment_id,
                 'rubric_id': rubric_id if rubric else None,
@@ -707,11 +734,13 @@ def export_cc(
                 })
 
     has_course_settings = bool(assessment_items) or bool(module_pages)
+    module_labels = _module_labels(subject_root)
 
     manifest_xml = _build_manifest(
         subject_code, subject_title,
         module_pages, assessment_items, assets,
         lecturer_notes=lecturer_notes,
+        module_labels=module_labels,
         has_course_settings=has_course_settings,
     )
 
@@ -721,13 +750,15 @@ def export_cc(
         zf.writestr('imsmanifest.xml', manifest_xml)
 
         for mod_num in sorted(module_pages):
+            mod_label = module_labels.get(
+                mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
             for page in sorted(module_pages[mod_num], key=lambda p: p['seq']):
                 body = page['path'].read_text(encoding='utf-8')
                 body = _rewrite_html(body, page_id_map)
                 if mod_num == 0:
                     title = page['title']
                 else:
-                    title = f'Module {mod_num}: {page["title"]}'
+                    title = f'Module {mod_num}.{page["seq"]}: {page["title"]}'
                 wrapped = _wrap_wiki_html(body, title, page['resource_id'])
                 zf.writestr(f'wiki_content/{page["filename"]}', wrapped)
 
@@ -758,7 +789,8 @@ def export_cc(
                         _rubrics_xml(assessment_items))
             zf.writestr('course_settings/module_meta.xml',
                         _module_meta_xml(module_pages, assessment_items,
-                                         lecturer_notes=lecturer_notes))
+                                         lecturer_notes=lecturer_notes,
+                                         module_labels=module_labels))
             zf.writestr('course_settings/course_settings.xml',
                         _course_settings_xml(subject_code, subject_title))
 
