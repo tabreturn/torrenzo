@@ -226,9 +226,21 @@ Torrenzo supports additional transformers without modifying the core pipeline. D
 - Extended Markdown features for module pages (accordions, navigation tabs, and other LMS-specific markup)
 - Really, the limit is your imagination and whatever an LMS can handle ...
 
-### Common Cartridge
+### Common Cartridge (.imscc)
 
-Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/standards/cc)** suggests it can effectively bulk-populate new subjects, though it is likely less useful for ongoing maintenance where individual components change more sporadically and 'manual' updates remain manageable. The [research/common_cartridge](research/common_cartridge) directory contains exploratory work to understand the format and generate new cartridges that may later integrate into the build process.
+Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal build output. The `.imscc` file bundles all module pages as Canvas WikiPages (with inter-page navigation and asset paths rewritten to Canvas's `$WIKI_REFERENCE$` / `$IMS-CC-FILEBASE$` tokens), and assessment briefs as assignments (with rubrics including assignment weightings).
+
+**Importing into Canvas:**
+
+1. Navigate to the target course and select **Settings → Import Course Content**.
+2. Set *Content Type* to **Common Cartridge 1.x Package**, choose the `.imscc` file, and click **Import**.
+3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
+  - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
+  - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via **Pages → View All Pages → ⁝ → Use as Front Page**.
+  - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the last table in the brief markdown).
+  - **Files** -- assessment PDFs and image assets uploaded to course Files.
+
+> 💡 Canvas imports are *additive* -- they never replace or wipe existing content, i.e. re-importing the same cartridge into a course twice will create duplicates. For a clean import, use an empty course shell or manually clear existing modules and other content before importing.
 
 ---
 
@@ -250,7 +262,7 @@ Preliminary investigation into **[Common Cartridge](https://www.1edtech.org/stan
 ## Stretch Goals
 
 - [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
-- [ ] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import (see `research/common_cartridge`)
+- [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
 - [ ] Design batch LMS content importer (e.g., Tampermonkey or alternative injection-based approach)
 - [ ] Add support for Marp slide decks
 
