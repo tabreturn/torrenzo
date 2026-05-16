@@ -344,6 +344,7 @@ def render(
     warnings: list[str] = list(meta_warnings)
     if METADATA_TOKEN in body and metadata:
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
+    body = body.replace('[[cc-section]]', '')
     body, tag_warnings = apply_tags(body, tags)
     body = convert_dashes(body)
     warnings.extend(tag_warnings)

@@ -92,6 +92,35 @@ def sanitize_html_attributes(html_text: str) -> str:
     return lxml_html.tostring(document, encoding='unicode', method='html')
 
 
+_FONT_WEIGHT_RE = re.compile(r'font-weight\s*:\s*(bold|700|bolder)\s*;?\s*')
+
+
+def replace_inline_bold(html_text: str) -> str:
+    try:
+        document = lxml_html.fromstring(html_text)
+    except Exception:
+        return html_text
+    for elem in document.iter():
+        style = elem.get('style', '')
+        if not style:
+            continue
+        m = _FONT_WEIGHT_RE.search(style)
+        if not m:
+            continue
+        new_style = _FONT_WEIGHT_RE.sub('', style).strip()
+        if new_style:
+            elem.set('style', new_style)
+        else:
+            del elem.attrib['style']
+        b = lxml_html.Element('b')
+        b.text = elem.text
+        elem.text = None
+        for child in list(elem):
+            b.append(child)
+        elem.append(b)
+    return lxml_html.tostring(document, encoding='unicode', method='html')
+
+
 def load_bibliography(input_path: Path) -> dict[str, Any]:
     modules_root = input_path.parent.parent
     entries: dict[str, Any] = {}
@@ -233,6 +262,7 @@ def render(
               remove_classes=False,
             )
             html_body = sanitize_html_attributes(html_body)
+            html_body = replace_inline_bold(html_body)
             html_body = strip_html_wrapper(html_body)
         except Exception as exc:
             return (

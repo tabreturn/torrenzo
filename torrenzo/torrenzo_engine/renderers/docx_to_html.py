@@ -16,6 +16,7 @@ from .md_to_html import (
   load_module_css,
   render_references,
   replace_citations,
+  replace_inline_bold,
   sanitize_html_attributes,
   strip_html_wrapper,
   substitute_css_variables,
@@ -146,6 +147,7 @@ def render(
 
     try:
         raw_html = sanitize_html_attributes(raw_html)
+        raw_html = replace_inline_bold(raw_html)
         raw_html = strip_html_wrapper(raw_html)
     except Exception:
         pass
