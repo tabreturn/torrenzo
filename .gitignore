@@ -8,9 +8,6 @@ __pycache__/
 .Python
 pip-log.txt
 
-# Build
-build/build-log.json
-
 # macOS
 .DS_Store
 .AppleDouble
