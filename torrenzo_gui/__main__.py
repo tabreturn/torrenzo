@@ -38,17 +38,17 @@ def _find_browser() -> str | None:
     import shutil
     if sys.platform == 'win32':
         candidates = [
+            r'C:\Program Files\Mozilla Firefox\firefox.exe',
             r'C:\Program Files\Google\Chrome\Application\chrome.exe',
             r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
-            r'C:\Program Files\Mozilla Firefox\firefox.exe',
         ]
         for p in candidates:
             if Path(p).exists():
                 return p
     elif sys.platform == 'darwin':
         candidates = [
-            '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
             '/Applications/Firefox.app/Contents/MacOS/firefox',
+            '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         ]
         for p in candidates:
             if Path(p).exists():
