@@ -1,0 +1,26 @@
+<!-- built: 2026-05-17T17:38:14+10:00  source: fruit_bowl.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+
+  <!-- BACK FRUIT -->
+  <circle cx="400" cy="210" r="70" fill="#f39c12"/>
+  <circle cx="300" cy="250" r="65" fill="#7cb342"/>
+  <circle cx="500" cy="250" r="65" fill="#d8433e"/>
+
+  <!-- BOWL RIM -->
+  <ellipse cx="400" cy="340" rx="200" ry="45" fill="#f5f5f5"/>
+
+  <!-- FRONT FRUIT -->
+  <circle cx="340" cy="330" r="70" fill="#d8433e"/>
+  <circle cx="460" cy="330" r="70" fill="#f39c12"/>
+
+  <!-- BOWL BODY (FRONT LIP) -->
+  <path d="
+    M200 340
+    C230 470 300 520 400 520
+    C500 520 570 470 600 340
+    C520 370 460 385 400 385
+    C340 385 280 370 200 340
+  "
+  fill="#e0e0e0"/>
+
+</svg>

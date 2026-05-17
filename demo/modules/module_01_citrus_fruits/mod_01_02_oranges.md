@@ -2,7 +2,7 @@
 
 # Module 1.2: Oranges
 
-![placeholder img](assets/mod_01_placeholder.png)  
+![placeholder img](assets/fruit_bowl.png)  
 *Image: FruitStock*
 
 ## The Orange

@@ -4,7 +4,7 @@
 
 ## Resources
 
-![placeholder img](assets/mod_01_placeholder.svg)  
+![placeholder img](assets/fruit_bowl.svg)  
 *Image: FruitStock*
 
 <section>

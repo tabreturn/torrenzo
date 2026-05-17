@@ -217,6 +217,17 @@ thead {
 
 table:last-of-type {
   font-size: 8pt;
+  line-height: 1.5em;
+  table-layout: fixed;
+}
+
+table:last-of-type em {
+  display: block;
+}
+
+table:last-of-type th,
+table:last-of-type td {
+  width: calc(100% / 6);
 }
 
 

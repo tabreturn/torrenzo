@@ -1,6 +1,6 @@
 # FRU101: Tropical Fruit Studies
 
-![placeholder img](assets/mod_00_01_placeholder.png)
+![placeholder img](assets/welcome.png)
 *Image: Placeholder*
 
 ## Subject Introduction
@@ -27,5 +27,5 @@ Use this time to discuss content with your facilitator and peers, ask questions,
 
 These documents provide essential information about learning resources, assessments, and learning outcomes:
 
-- [**Subject Outline**](assets/mod_00_01_placeholder.png) -- Overview of module content, outcomes, and expectations.
-- [**Subject Planner**](assets/mod_00_01_placeholder.png) -- Weekly schedule, learning activities, and assessment deadlines.
+- [**Subject Outline**](#) -- Overview of module content, outcomes, and expectations.
+- [**Subject Planner**](#) -- Weekly schedule, learning activities, and assessment deadlines.
