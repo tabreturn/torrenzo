@@ -49,7 +49,7 @@ Torrenzo includes a desktop application for point-and-click builds.
 **Features:**
 
 - **Directory picker** with history (remembers your subject folders)
-- **Build options** as checkboxes: `--force`, `--clean`, `--optimize-assets`
+- **Build options** as checkboxes: `--force`, `--clean`, `--optimize-assets`, `-cc`
 - **Live build log** displayed in the window
 - **Preview in Browser** button opens the build output for review
 
