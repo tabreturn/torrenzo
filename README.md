@@ -107,7 +107,8 @@ Custom components live in `torrenzo/components/` and plug into the tag system vi
 
 ---
 
-## Prerequisites (to Run Torrenzo or Launch the GUI via CLI)
+## Prerequisites
+*(to Run Torrenzo or Launch the GUI via CLI)*
 
 - **Python 3.10+**
 - **Google Chrome or Chromium** (for PDF generation)
