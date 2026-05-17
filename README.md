@@ -271,8 +271,7 @@ Additionally, any heading in the brief tagged with `[[cc-section]]` (at any leve
 
 ## Stretch Goals
 
-- [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
 - [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
-- [ ] Design batch LMS content importer (e.g., Tampermonkey or alternative injection-based approach)
 - [ ] Add support for Marp slide decks
+- [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
 
