@@ -1,0 +1,47 @@
+[
+  {
+    "built_at": "2026-05-17T10:22:53+10:00",
+    "files": [
+      "build/assessments_briefs/assessment_01.pdf",
+      "build/modules_html/mod_00_01_welcome.html",
+      "build/modules_html/mod_01_01_introduction.html",
+      "build/modules_html/mod_01_02_oranges.html",
+      "build/modules_html/mod_01_04_activities.html",
+      "build/modules_html/mod_01_03_lemons.html",
+      "build/modules_html/assets/mod_00_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.svg",
+      "build/lecturer_notes/SUBJECT_NOTES.md"
+    ]
+  },
+  {
+    "built_at": "2026-05-17T13:23:06+10:00",
+    "files": [
+      "build/assessments_briefs/assessment_01.pdf",
+      "build/modules_html/mod_00_01_welcome.html",
+      "build/modules_html/mod_01_01_introduction.html",
+      "build/modules_html/mod_01_02_oranges.html",
+      "build/modules_html/mod_01_04_activities.html",
+      "build/modules_html/mod_01_03_lemons.html",
+      "build/modules_html/assets/mod_00_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.svg",
+      "build/lecturer_notes/SUBJECT_NOTES.md"
+    ]
+  },
+  {
+    "built_at": "2026-05-17T13:23:12+10:00",
+    "files": [
+      "build/assessments_briefs/assessment_01.pdf",
+      "build/modules_html/mod_00_01_welcome.html",
+      "build/modules_html/mod_01_01_introduction.html",
+      "build/modules_html/mod_01_02_oranges.html",
+      "build/modules_html/mod_01_04_activities.html",
+      "build/modules_html/mod_01_03_lemons.html",
+      "build/modules_html/assets/mod_00_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.png",
+      "build/modules_html/assets/mod_01_placeholder.svg",
+      "build/lecturer_notes/SUBJECT_NOTES.md"
+    ]
+  }
+]

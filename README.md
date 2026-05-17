@@ -21,7 +21,7 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_<seq>_<name>.md`   | HTML   |
 | `modules/module_<n>/mod_<n>_<seq>_<name>.docx` | HTML   |
 
-See the `demo/` directory for sample subject content, and `demo/build/` for example output artefacts.
+See the [`demo/`](demo) directory for sample subject content, and [`demo/build/`](demo/build/) for example output artefacts.
 
 ### Yeah, But Why?
 

@@ -9,7 +9,7 @@ __pycache__/
 pip-log.txt
 
 # Build
-build/
+build/build-log.json
 
 # macOS
 .DS_Store
