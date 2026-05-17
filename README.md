@@ -49,7 +49,7 @@ Torrenzo includes a desktop application for point-and-click builds.
 **Features:**
 
 - **Directory picker** with history (remembers your subject folders)
-- **Build options** as checkboxes: `--force`, `--clean`, `--optimize-assets`, `-cc`
+- **Build options** as checkboxes
 - **Live build log** displayed in the window
 - **Preview in Browser** button opens the build output for review
 
@@ -70,13 +70,15 @@ Launch the GUI using one of the following methods:
 python -m torrenzo /path/to/your-subject
 ```
 
-`outline.[md|yaml]`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically.
+`outline.[md|yaml]`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically. Use build options to override/control this behaviour.
 
-> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
+## Usage: Build Options
 
-> 💡 Use `python -m torrenzo <subject> --optimize-assets` to optimise assets. SVG optimisation uses the system `scour` CLI tool (`pip install scour`). PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+- By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
 
-> 💡 By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
+- Use `--optimize-assets` to optimise graphic assets. SVG optimisation uses the system `scour` CLI tool (`pip install scour`); PNG optimisation requires `pngquant` or `oxipng` installed on your system.
+
+- Use `--cc` to output a [Common Cartridge](#common-cartridge-imscc) file for bulk-importing Canvas content.
 
 > 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. Use this to identify which files need updating in your LMS across multiple builds. Delete the log once you've uploaded everything to reset tracking.
 
@@ -180,6 +182,8 @@ During the build process, Torrenzo reads metadata from `outline.[md|yaml]` (SLOs
 
 - PDF assessment briefs
 - LMS-ready HTML module pages (including separate activity pages)
+
+> 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
 Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
 
