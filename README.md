@@ -129,19 +129,9 @@ pip install -r requirements.txt
 
 ---
 
-## Repository Architecture
+### Populating Content
 
-Torrenzo separates the **tool** (this repo) from **subject content** (your working directory). The tool is filesystem-driven: file names and directory structure determine how content is processed.
-
-**Torrenzo repo layout:**
-```text
-torrenzo/               # tool repo -- clone once, reuse for all subjects
-├── torrenzo/           # Python package
-│   ├── __main__.py
-│   └── torrenzo_engine/
-├── demo/               # sample subject
-└── requirements.txt
-```
+The tool is filesystem-driven: file names and directory structure determine how content is processed.
 
 **Subject directory layout:**
 ```text
@@ -168,8 +158,6 @@ your-subject/
 ```
 
 > 💡 To get started, you could simply duplicate the `demo/` subject, rename it, and use it as a starting point for developing new learning materials.
-
-### Populating Content
 
 Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions in these directories to locate and process files.
 
