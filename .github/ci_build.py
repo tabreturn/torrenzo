@@ -5,7 +5,8 @@ import sys
 sys.path.insert(0, '.')
 
 from pathlib import Path
-from torrenzo.__main__ import build_tag_map, make_jobs, prepare_build_dir
+from torrenzo.__main__ import make_jobs, prepare_build_dir
+from torrenzo.torrenzo_engine.tags import build_tag_map
 from torrenzo.torrenzo_engine import Pipeline, RendererRegistry
 from torrenzo.torrenzo_engine.renderers import (
     register_renderer, render_md_to_html,
