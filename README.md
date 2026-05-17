@@ -129,7 +129,7 @@ pip install -r requirements.txt
 
 ---
 
-### Populating Content
+## Populating Content
 
 The tool is filesystem-driven: file names and directory structure determine how content is processed.
 
