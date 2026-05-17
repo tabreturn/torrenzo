@@ -232,11 +232,11 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 1. Navigate to the target course and select **Settings → Import Course Content**.
 2. Set *Content Type* to **Common Cartridge 1.x Package**, choose the `.imscc` file, and click **Import**.
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
-  - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
-  - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via *Pages → View All Pages → ⁝ → Use as Front Page*.
-  - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the **last table** in the brief markdown).
-  - **Files** -- assessment PDFs and image assets uploaded to course Files.
-- **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
+    - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
+    - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via *Pages → View All Pages → ⁝ → Use as Front Page*.
+    - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the **last table** in the brief markdown).
+    - **Files** -- assessment PDFs and image assets uploaded to course Files.
+    - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
 
 Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the linked PDF, with its full branch of sub-sections and content included.
 
