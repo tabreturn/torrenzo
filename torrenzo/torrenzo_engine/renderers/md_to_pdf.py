@@ -124,7 +124,7 @@ def _find_chrome() -> str | None:
     return None
 
 
-def _parse_config_js(config_path: Path) -> Dict[str, Any]:
+def _parse_config_js(config_path: Path, version_override: str = '') -> Dict[str, Any]:
     text = config_path.read_text(encoding='utf-8')
     # keep only from module.exports = onward
     match = re.search(r'module\.exports\s*=\s*', text)
@@ -177,7 +177,7 @@ def _parse_config_js(config_path: Path) -> Dict[str, Any]:
     version_date = ''
     if ver_match:
         from datetime import date
-        version_date = date.today().isoformat()
+        version_date = version_override or date.today().isoformat()
 
     result = _restore(parsed)
     # interpolate ${versionDate} in templates
@@ -379,7 +379,9 @@ def render(
             created_style = True
 
         # parse config for pdf_options and chrome path
-        config = _parse_config_js(config_src) if has_config else {}
+        config = _parse_config_js(
+            config_src, version_override=context.get('version_stamp', '')
+        ) if has_config else {}
         chrome_path = config.get(
           'launch_options', {},
         ).get('executablePath') or _find_chrome()

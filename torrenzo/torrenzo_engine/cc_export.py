@@ -17,7 +17,7 @@ import hashlib
 import re
 import xml.etree.ElementTree as ET
 import zipfile
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -639,6 +639,7 @@ def export_cc(
     subject_root: Path,
     build_dir: Path,
     outline: dict[str, Any],
+    version_stamp: str = '',
 ) -> tuple[Path, list[str]]:
     subject = outline.get('subject', {})
     subject_code = str(subject.get('code', 'SUBJECT')).strip()
@@ -691,7 +692,10 @@ def export_cc(
             submission = str(info.get('submission', ''))
 
             assignment_id = _id(f'assignment/{ass_key}')
-            pdf_resource_id = _id(f'resource/{f.name}')
+
+            pdf_stamp = version_stamp or datetime.now().strftime('%Y%m%d-%H%M%S')
+            pdf_filename = f'{f.stem}-{pdf_stamp}{f.suffix}'
+            pdf_resource_id = _id(f'resource/{pdf_filename}')
             rubric_id = _id(f'rubric/{ass_key}')
             group_id = _id(f'group/{ass_key}')
 
@@ -706,7 +710,7 @@ def export_cc(
                     )
 
             assessment_items.append({
-                'pdf_filename': f.name,
+                'pdf_filename': pdf_filename,
                 'pdf_path': f,
                 'num': ass_num,
                 'title': f'Assessment {ass_num}: {name}',

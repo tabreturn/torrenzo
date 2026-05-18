@@ -8,6 +8,7 @@ LMS-ready HTML snippets.
 import argparse
 import shutil
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 from .torrenzo_engine import Pipeline, RenderJob, RendererRegistry
@@ -140,6 +141,7 @@ def make_jobs(
   tags: dict[str, str],
   subject_root: Path,
   built: str | None = None,
+  version_stamp: str = '',
 ) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
     module_md_pattern = 'modules/*/mod_*.md'
@@ -171,6 +173,7 @@ def make_jobs(
         context={
           'tags': tags,
           'pdf_css': PDF_USER_CSS,
+          'version_stamp': version_stamp,
           'header_html': (
             f'<div class="header">ver.2026-03-04 &nbsp; built: {built}</div>'
           ),
@@ -261,6 +264,7 @@ def main() -> None:
     build_dir = subject_root / 'build'
 
     built = now_iso()
+    version_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
     force = args.force or args.clean
     prepare_build_dir(build_dir, clean=args.clean)
     tags = build_tag_map(subject_root)
@@ -275,14 +279,16 @@ def main() -> None:
 
     pipeline = Pipeline(subject_root, build_dir, registry)
     diagnostics = pipeline.execute(
-      make_jobs(tags, subject_root=subject_root, built=built),
+      make_jobs(tags, subject_root=subject_root, built=built,
+                version_stamp=version_stamp),
       force=force,
     )
     if args.optimize_assets:
         diagnostics.extend(optimize_assets(build_dir))
     if args.cc:
         outline = load_outline(subject_root)
-        _, cc_diagnostics = export_cc(subject_root, build_dir, outline)
+        _, cc_diagnostics = export_cc(subject_root, build_dir, outline,
+                                      version_stamp)
         diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
     for message in diagnostics:
         print(message)
