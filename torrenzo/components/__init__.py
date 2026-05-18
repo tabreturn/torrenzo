@@ -50,9 +50,15 @@ def render_module_navigation(input_path: Path) -> str:
     )
 
 
+def render_page_spacer() -> str:
+    return '<p>&nbsp;</p>'
+
+
 def build_component_tags(input_path: Path) -> dict[str, str]:
     tags: dict[str, str] = {}
     nav = render_module_navigation(input_path)
     if nav:
         tags['outline.component.module-navigation'] = nav
+    spacer = render_page_spacer()
+    tags['outline.component.page-spacer'] = spacer
     return tags

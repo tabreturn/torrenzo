@@ -23,7 +23,7 @@ from .md_to_html import (
 )
 from ..build_stamp import html_comment, now_iso
 from ..preprocess import unicode_to_entities
-from ...components import build_component_tags
+from ...components import build_component_tags, render_page_spacer
 
 
 HEADING_PREFIX = 'heading '
@@ -122,6 +122,7 @@ def render(
         references = render_references(ordered_keys, bib_entries)
         if references:
             raw_html = f'{raw_html}\n{references}'
+    raw_html = f'{raw_html}\n{render_page_spacer()}'
 
     css_text = load_module_css(input_path)
     if not css_text:

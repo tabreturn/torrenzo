@@ -13,7 +13,7 @@ from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
 from ..preprocess import convert_dashes, unicode_to_entities
-from ...components import build_component_tags
+from ...components import build_component_tags, render_page_spacer
 
 
 CITATION_BRACKET_RE = re.compile(r'\[@([^\]]+)\]')
@@ -252,6 +252,7 @@ def render(
         references = render_references(ordered_keys, bib_entries)
         if references:
             html_body = f'{html_body}\n{references}'
+    html_body = f'{html_body}\n{render_page_spacer()}'
     if css_text.strip():
         try:
             import cssutils
