@@ -80,6 +80,8 @@ python -m torrenzo /path/to/your-subject
 
 - Use `--cc` to output a [Common Cartridge](#common-cartridge-imscc) file for bulk-importing Canvas content.
 
+Each build output embeds timestamps on file outputs (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
+
 > 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. Use this to identify which files need updating in your LMS across multiple builds. Delete the log once you've uploaded everything to reset tracking.
 
 ---
@@ -110,7 +112,7 @@ Custom components live in `torrenzo/components/` and plug into the tag system vi
 ---
 
 ## Prerequisites
-*(to Run Torrenzo or Launch the GUI via CLI)*
+*(to run Torrenzo or launch the GUI via CLI)*
 
 - **Python 3.10+**
 - **Google Chrome or Chromium** (for PDF generation)
@@ -164,7 +166,7 @@ your-subject/
 
 Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions in these directories to locate and process files.
 
-- **Define global metadata** in `outline.[md|yaml]` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown files.
+- **Define global metadata** in `outline.[md|yaml]` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown or Word files.
 
 - **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory.
 
@@ -186,10 +188,6 @@ During the build process, Torrenzo reads metadata from `outline.[md|yaml]` (SLOs
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
 Torrenzo writes all output to `build/`. Module assets copy to `build/modules_html/assets`
-
-Torrenzo only rebuilds files whose source (or a shared dependency such as `outline.[md|yaml]` or the stylesheet) is newer than the existing output. Outputs for deleted or renamed source files are removed automatically. Each build output embeds a timestamp (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
-
-Use `--clean` to wipe `build/` and force a full rebuild, or `--force` to rebuild all files without clearing first.
 
 ### Lecturer Notes
 
@@ -220,7 +218,7 @@ Torrenzo uses a plugin-style architecture with an extensible set of transformers
 | `torrenzo/torrenzo_engine/renderers/md_to_html.py`   | Markdown → HTML |
 | `torrenzo/torrenzo_engine/renderers/md_to_pdf.py`    | Markdown → PDF  |
 
-> 💡 Note that MS Word is not a priority source format, so this has received the least attention. As a matter of personal preference, the Torrenzo contributor(s) do not spend time authoring content outside of Markdown.
+> 💡 MS Word is not a priority source format, so it has received comparatively little attention. As a matter of preference, the Torrenzo contributor(s) work exclusively in Markdown. While `modules` content can handle Word documents, `assessments` support is limited to Markdown, as Word-formatted PDF briefs require manual exporting to ensure formatting accuracy.
 
 Torrenzo supports additional transformers without modifying the core pipeline. Developers should extend it to new targets (e.g., Marp slides) without expanding the CLI driver. Potential candidates include:
 
@@ -239,11 +237,11 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
     - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
     - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via *Pages → View All Pages → ⁝ → Use as Front Page*.
-    - **Assignments** -- A submission point with its total marks, weighting, and rubric (parsed from the **last table** in the brief markdown).
-    - **Files** -- assessment PDFs and image assets uploaded to course Files.
+    - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the **last table** in the brief markdown).
+    - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
 
-Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the linked PDF, with its full branch of sub-sections and content included.
+Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included.
 
 ---
 
@@ -261,10 +259,10 @@ Additionally, any heading in the brief tagged with `[[cc-section]]` (at any leve
 - [x] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
 - [x] Consolidate on a single runtime stack (Python or Node)
 - [x] Add GUI desktop application
+- [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
 
 ## Stretch Goals
 
-- [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
 - [ ] Add support for Marp slide decks
 - [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
 
