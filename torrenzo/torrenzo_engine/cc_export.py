@@ -59,6 +59,30 @@ def _title_from_slug(slug: str) -> str:
 
 
 MOD_FOLDER_RE = re.compile(r'^module_(\d+)(?:_(.+))?$')
+CSS_VAR_RE = re.compile(r'var\(\s*--([A-Za-z0-9_-]+)(?:\s*,\s*([^)]+))?\)')
+
+
+def _module_css(subject_root: Path) -> str:
+    """Load and resolve CSS variables from modules/style/style.css."""
+    css_path = subject_root / 'modules' / 'style' / 'style.css'
+    if not css_path.exists():
+        return ''
+    css_text = css_path.read_text(encoding='utf-8')
+    # extract :root variables
+    root_blocks = re.findall(r':root\s*{([^}]*)}', css_text, re.S)
+    mapping: dict[str, str] = {}
+    for block in root_blocks:
+        for m in re.finditer(r'--([A-Za-z0-9_-]+)\s*:\s*([^;]+);', block):
+            mapping[m.group(1).strip()] = m.group(2).strip()
+    if mapping:
+        def _replace(m: re.Match) -> str:
+            name = m.group(1).strip()
+            return mapping.get(name, m.group(2) or m.group(0))
+        css_text = CSS_VAR_RE.sub(_replace, css_text)
+    # remove :root blocks and bare custom-property declarations
+    css_text = re.sub(r':root\s*{[^}]*}', '', css_text, flags=re.S)
+    css_text = re.sub(r'\s*--[A-Za-z0-9_-]+\s*:\s*[^;]+;\s*', '', css_text)
+    return css_text.strip()
 
 
 def _module_labels(subject_root: Path) -> dict[int, str]:
@@ -450,7 +474,8 @@ def _parse_brief_sections(brief_path: Path) -> dict[str, str]:
     return sections
 
 
-def _assignment_description_html(ass: dict, brief_md: Path | None) -> str:
+def _assignment_description_html(ass: dict, brief_md: Path | None,
+                                 module_css: str = '') -> str:
     """Build an HTML description page for a Canvas assignment."""
     body = (
         f'<p>\n'
@@ -470,7 +495,28 @@ def _assignment_description_html(ass: dict, brief_md: Path | None) -> str:
                 html_content = md.render(content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 
-    return _wrap_wiki_html(body, ass['title'], ass['assignment_id'])
+    css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''
+    doc = (
+        '<html>\n<head>\n'
+        '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
+        f'<title>{ass["title"]}</title>\n'
+        f'<meta name="identifier" content="{ass["assignment_id"]}"/>\n'
+        '<meta name="editing_roles" content="teachers"/>\n'
+        '<meta name="workflow_state" content="active"/>\n'
+        f'{css_block}'
+        '</head>\n<body>\n'
+        f'{body}\n'
+        '</body>\n</html>\n'
+    )
+
+    if module_css:
+        try:
+            from premailer import transform
+            doc = transform(doc, remove_classes=False,
+                            keep_style_tags=False)
+        except Exception:
+            pass
+    return doc
 
 
 # ---------------------------------------------------------------------------
@@ -752,6 +798,7 @@ def export_cc(
 
     has_course_settings = bool(assessment_items) or bool(module_pages)
     module_labels = _module_labels(subject_root)
+    assignment_css = _module_css(subject_root)
 
     manifest_xml = _build_manifest(
         subject_code, subject_title,
@@ -784,7 +831,7 @@ def export_cc(
                      f'web_resources/{ass["pdf_filename"]}')
 
             aid = ass['assignment_id']
-            desc_html = _assignment_description_html(ass, ass.get('brief_md'))
+            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css)
             zf.writestr(f'{aid}/{aid}.html', desc_html)
 
             settings = _assignment_settings_xml(
