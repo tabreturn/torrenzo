@@ -1,3 +1,4 @@
+from __future__ import annotations
 """cc_export -- package build/ artifacts into an IMS Common Cartridge (.imscc).
 
 Walks the build directory for actual artifacts, combines with the outline
@@ -22,6 +23,8 @@ from pathlib import Path
 from typing import Any
 
 from markdown_it import MarkdownIt
+
+from .preprocess import convert_dashes
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -170,7 +173,7 @@ def _parse_rubric(brief_path: Path, total_marks: float) -> dict | None:
     if not tables:
         return None
 
-    rubric_lines = tables[-1]
+    rubric_lines = [convert_dashes(line) for line in tables[-1]]
     if len(rubric_lines) < 3:
         return None
 
@@ -492,6 +495,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
         for name, content in sections.items():
             if content:
+                content = convert_dashes(content)
                 html_content = md.render(content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 

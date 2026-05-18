@@ -1,3 +1,4 @@
+from __future__ import annotations
 #!/usr/bin/env python3
 """torrenzo.__main__
 Converts assessment briefs into PDFs and module activities into

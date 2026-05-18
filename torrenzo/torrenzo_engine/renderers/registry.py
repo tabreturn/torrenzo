@@ -1,7 +1,12 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, Protocol, Tuple, TypeAlias
+from typing import Any, Callable, Dict, Iterable, Protocol, Tuple
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias  # type: ignore[assignment]
 
 
 class Renderer(Protocol):

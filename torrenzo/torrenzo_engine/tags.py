@@ -1,3 +1,4 @@
+from __future__ import annotations
 """tags -- build the tag map from an outline file.
 
 Parses `outline.md` (or `.yaml`/`.yml`) YAML front-matter and produces
