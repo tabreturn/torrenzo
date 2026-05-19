@@ -109,6 +109,8 @@ class Pipeline:
             for input_path in sorted(self.root.glob(job.input_pattern)):
                 if input_path.is_dir():
                     continue
+                if input_path.name in ('.gitkeep', '.DS_Store', 'Thumbs.db', 'desktop.ini'):
+                    continue
                 if job.output_namer:
                     output_name = job.output_namer(input_path)
                 elif job.output_ext:
