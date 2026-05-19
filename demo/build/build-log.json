@@ -44,5 +44,12 @@
       "build/modules_html/assets/fruitbowl.svg",
       "build/lecturer_notes/SUBJECT_NOTES.md"
     ]
+  },
+  {
+    "built_at": "2026-05-19T19:34:49+10:00",
+    "files": [
+      "build/modules_html/mod_12_01_reflection.html",
+      "build/modules_html/mod_12_02_portfolio.html"
+    ]
   }
 ]
