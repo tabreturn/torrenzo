@@ -2,9 +2,6 @@
 
 # Module 1.2: Oranges
 
-![placeholder img](assets/fruit_bowl.png)  
-*Image: FruitStock*
-
 ## The Orange
 
 *One of the most widely recognised citrus fruits, known for its bright colour and balanced sweet--tart flavour.*

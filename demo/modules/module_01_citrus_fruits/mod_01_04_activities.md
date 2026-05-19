@@ -4,9 +4,6 @@
 
 ## Resources
 
-![placeholder img](assets/fruit_bowl.svg)  
-*Image: FruitStock*
-
 <section>
 
 ### Observing Everyday Objects (Henderson, 2021)

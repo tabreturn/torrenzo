@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 600" version="1.1" xml:space="preserve">
+
+  <metadata id="metadata">
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="">
+        <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Fruit Bowl Illustration</dc:title>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Torrenzo Demo</dc:creator>
+        <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">A simple vector illustration of fruits in a bowl for the Tropical Fruit Studies subject.</dc:description>
+        <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">2026-01-15</dc:date>
+        <dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+
+  <defs id="unused-defs">
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0000ff;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient id="grad2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffff00;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00ff00;stop-opacity:1"/>
+    </radialGradient>
+    <filter id="unused-blur">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <g id="unused-group-1">
+    <g id="unused-group-2">
+    </g>
+  </g>
+
+  <g id="main-scene" style="display:inline">
+
+    <!-- BACK FRUIT -->
+    <circle cx="400" cy="210" r="70" fill="#f39c12" style="display:inline"/>
+    <circle cx="300" cy="250" r="65" fill="#7cb342" style="display:inline"/>
+    <circle cx="500" cy="250" r="65" fill="#d8433e" style="display:inline"/>
+
+    <!-- BOWL RIM -->
+    <ellipse cx="400" cy="340" rx="200" ry="45" fill="#f5f5f5" style="display:inline"/>
+
+    <!-- FRONT FRUIT -->
+    <circle cx="340" cy="330" r="70" fill="#d8433e" style="display:inline"/>
+    <circle cx="460" cy="330" r="70" fill="#f39c12" style="display:inline"/>
+
+    <!-- BOWL BODY (FRONT LIP) -->
+    <path d="
+      M200 340
+      C230 470 300 520 400 520
+      C500 520 570 470 600 340
+      C520 370 460 385 400 385
+      C340 385 280 370 200 340
+    "
+    fill="#e0e0e0" style="display:inline"/>
+
+  </g>
+
+  <text id="unused-text" font-size="12" fill="#ffffff" style="display:none">hidden text nobody will see</text>
+
+</svg>

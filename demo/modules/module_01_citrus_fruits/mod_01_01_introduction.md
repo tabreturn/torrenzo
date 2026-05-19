@@ -2,9 +2,6 @@
 
 # Module 1.1: Introduction to Citrus Module
 
-![placeholder img](assets/fruit_bowl.png)  
-*Image: FruitStock*
-
 ## Introduction
 
 Welcome to Module 1. This module explores how fruits can be carefully observed, described, and organised into a simple catalogue format. Citrus fruits provide an excellent opportunity to practice observation skills because they combine distinctive colour, scent, texture, and flavour. The orange is a familiar example. While it may seem ordinary at first glance, closer observation reveals many interesting features: the textured skin, the segmented interior, the fine membranes separating each wedge, and the sharp burst of citrus aroma released when the peel is broken.

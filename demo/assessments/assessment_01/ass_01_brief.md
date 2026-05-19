@@ -12,7 +12,7 @@ Gather sensory impressions and create a simple catalogue entry for three tropica
 
 This subject is a playful exploration of observation skills. Learning to notice detail, record it clearly, and pair text with visuals makes it easier to work in any creative or research-focused space -- whether you are documenting ingredients, discoveries, or experiences.
 
-![placeholder img](./assets/placeholder.png)
+![placeholder img](./assets/fruitbowl.png)
 
 ---
 
