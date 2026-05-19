@@ -243,7 +243,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 
 Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included.
 
-> 💡 Observation note: when importing cartridges into Canvas, module content overwrites; however, assets appear to duplicate. Recommended solution: delete all *Files* (in Canvas) before import.
+> 💡 Observation note: when importing cartridges into Canvas, module content overwrites; however, assets appear to duplicate. Recommended solution: delete all *Files* (in Canvas) before import **except the course_image folder**.
 
 ---
 
