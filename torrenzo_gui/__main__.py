@@ -13,8 +13,8 @@ import re
 import webbrowser
 from pathlib import Path
 
-from PySide6.QtCore import QProcess, QSettings, QUrl
-from PySide6.QtGui import QDesktopServices, QFont
+from PySide6.QtCore import QProcess, QSettings, Qt, QUrl
+from PySide6.QtGui import QColor, QDesktopServices, QFont, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -243,9 +243,27 @@ class MainWindow(QMainWindow):
                 webbrowser.open(url)
 
 
+def _make_app_icon(size: int = 256) -> QIcon:
+    """Draw an orange circle with a white T."""
+    pixmap = QPixmap(size, size)
+    pixmap.fill(Qt.transparent)
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.Antialiasing)
+    painter.setBrush(QColor(0xFF, 0x6A, 0x00))  # orange
+    painter.setPen(Qt.NoPen)
+    painter.drawEllipse(20, 20, size - 40, size - 40)
+    painter.setPen(Qt.white)
+    font = QFont('sans-serif', int(size * 0.55), QFont.Bold)
+    painter.setFont(font)
+    painter.drawText(pixmap.rect(), Qt.AlignCenter, 'T')
+    painter.end()
+    return QIcon(pixmap)
+
+
 def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+    app.setWindowIcon(_make_app_icon())
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
