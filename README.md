@@ -170,7 +170,7 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 
 - **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory.
 
-- **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `@refname` syntax. Torrenzo renders the corresponding references at the bottom of the page.
+- **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `[@refname]` syntax. Torrenzo renders the corresponding references at the bottom of the page.
 
 - **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
   - `mod_<n>_<seq>_<name>.[md|docx]` -- module page(s) (content and activities)

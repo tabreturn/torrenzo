@@ -17,7 +17,6 @@ from ...components import build_component_tags, render_page_spacer
 
 
 CITATION_BRACKET_RE = re.compile(r'\[@([^\]]+)\]')
-CITATION_BARE_RE = re.compile(r'(?<!\w)@([A-Za-z0-9:_-]+)')
 
 
 def load_module_css(input_path: Path) -> str:
@@ -163,10 +162,6 @@ def collect_citation_numbers(
             key = token.strip().lstrip('@')
             if key:
                 add_key(key)
-    for match in CITATION_BARE_RE.finditer(text):
-        key = match.group(1).strip()
-        if key:
-            add_key(key)
     return mapping, ordered, missing
 
 
@@ -185,15 +180,7 @@ def replace_citations(text: str, mapping: dict[str, int]) -> str:
                 pieces.append(f'<sup><a href="#ref-{key}">[{number}]</a></sup>')
         return ' '.join(pieces) if pieces else match.group(0)
 
-    def replace_bare(match: re.Match[str]) -> str:
-        key = match.group(1)
-        number = mapping.get(key)
-        if number is None:
-            return match.group(0)
-        return f'<sup><a href="#ref-{key}">[{number}]</a></sup>'
-
     text = CITATION_BRACKET_RE.sub(replace_bracket, text)
-    text = CITATION_BARE_RE.sub(replace_bare, text)
     return text
 
 
