@@ -1,6 +1,6 @@
 [
   {
-    "built_at": "2026-05-19T19:11:41+10:00",
+    "built_at": "2026-05-20T17:28:41+10:00",
     "files": [
       "build/assessments_briefs/assessment_01.pdf",
       "build/assessments_briefs/assessment_02.pdf",
@@ -39,17 +39,12 @@
       "build/modules_html/mod_11_01_introduction.html",
       "build/modules_html/mod_11_02_exhibition_polish.html",
       "build/modules_html/mod_11_03_activities.html",
+      "build/modules_html/mod_12_01_reflection.html",
+      "build/modules_html/mod_12_02_portfolio.html",
       "build/modules_html/mod_01_03_lemons.html",
       "build/modules_html/assets/welcome.png",
       "build/modules_html/assets/fruitbowl.svg",
       "build/lecturer_notes/SUBJECT_NOTES.md"
-    ]
-  },
-  {
-    "built_at": "2026-05-19T19:34:49+10:00",
-    "files": [
-      "build/modules_html/mod_12_01_reflection.html",
-      "build/modules_html/mod_12_02_portfolio.html"
     ]
   }
 ]

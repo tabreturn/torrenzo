@@ -8,11 +8,11 @@
 
 ### Symbolism and Mythology
 
-Fruits appear in the mythology and religious traditions of nearly every culture. The mango is sacred in Hinduism and Buddhism, associated with love, fertility, and prosperity. Mango leaves are strung across doorways during festivals and weddings across India. The fruit appears in ancient Sanskrit texts and Mughal miniature paintings, where its golden flesh symbolises the sweetness of divine love.@ramirez2021citrus
+Fruits appear in the mythology and religious traditions of nearly every culture. The mango is sacred in Hinduism and Buddhism, associated with love, fertility, and prosperity. Mango leaves are strung across doorways during festivals and weddings across India. The fruit appears in ancient Sanskrit texts and Mughal miniature paintings, where its golden flesh symbolises the sweetness of divine love.[@ramirez2021citrus]
 
 The coconut holds similar significance across the Pacific Islands, South Asia, and the Caribbean. In Hindu rituals, the coconut represents the human ego -- hard on the outside, sweet within -- and is broken as an offering to signify surrender. In Pacific Island cultures, the coconut palm is the "tree of life," providing food, drink, fibre, timber, and medicine. Every part of the tree has a use and a name.
 
-The pomegranate, while not strictly tropical, illustrates how fruit symbolism travels across cultures. In Greek myth, Persephone's consumption of pomegranate seeds binds her to the underworld. In Jewish tradition, the pomegranate's 613 seeds (by some counts) correspond to the 613 mitzvot. In Chinese culture, the pomegranate symbolises fertility and abundance, its many seeds representing many offspring.@delgado2022citrus
+The pomegranate, while not strictly tropical, illustrates how fruit symbolism travels across cultures. In Greek myth, Persephone's consumption of pomegranate seeds binds her to the underworld. In Jewish tradition, the pomegranate's 613 seeds (by some counts) correspond to the 613 mitzvot. In Chinese culture, the pomegranate symbolises fertility and abundance, its many seeds representing many offspring.[@delgado2022citrus]
 
 ### Trade and Colonialism
 

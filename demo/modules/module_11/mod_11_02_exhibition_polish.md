@@ -45,7 +45,7 @@ Your 500-word curator's reflection is your opportunity to explain the thinking b
 5. **Articulates learning**: What did you learn about curation, collaboration, and communication through this project?
 6. **Considers alternatives**: If you were to do it again, what would you do differently?
 
-The reflection should demonstrate critical self-awareness, not just describe what you did. The best reflections show that you understand why you made the choices you made and can evaluate those choices honestly.@marshall2020catalogue
+The reflection should demonstrate critical self-awareness, not just describe what you did. The best reflections show that you understand why you made the choices you made and can evaluate those choices honestly.[@marshall2020catalogue]
 
 ### The README
 

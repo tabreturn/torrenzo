@@ -6,7 +6,7 @@
 
 This module marks the end of your structured journey through Tropical Fruit Studies. Over twelve modules, you have moved from simple observation to sophisticated curation, building skills that transfer far beyond the fruit bowl. This final module invites you to pause, reflect, and consolidate what you have learned.
 
-The skills you have practiced — careful observation, vivid description, structured comparison, cultural research, digital curation — are not fruit-specific. They are fundamental to any discipline that requires close attention to the world and clear communication of what you find.@harper2021sensory
+The skills you have practiced — careful observation, vivid description, structured comparison, cultural research, digital curation — are not fruit-specific. They are fundamental to any discipline that requires close attention to the world and clear communication of what you find.[@harper2021sensory]
 
 ## Subject Learning Outcomes
 

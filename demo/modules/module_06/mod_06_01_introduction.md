@@ -6,7 +6,7 @@
 
 Fruit is ephemeral. A perfectly ripe mango has a window of perhaps 48 hours before it passes into overripeness and decay. Throughout human history, people have developed techniques to extend this window: drying, sugaring, pickling, fermenting, freezing, and canning. Each method transforms the fruit, sometimes subtly and sometimes dramatically, creating new textures, concentrated flavours, and entirely new food products.
 
-Understanding preservation is essential for fruit documentation because it reveals how a fruit's structure and composition respond to environmental stress. A fruit that browns quickly when cut has high polyphenol oxidase activity. A fruit that collapses into mush when frozen has fragile cell walls. These responses tell you something fundamental about the fruit's biology.@kimura2022acidity
+Understanding preservation is essential for fruit documentation because it reveals how a fruit's structure and composition respond to environmental stress. A fruit that browns quickly when cut has high polyphenol oxidase activity. A fruit that collapses into mush when frozen has fragile cell walls. These responses tell you something fundamental about the fruit's biology.[@kimura2022acidity]
 
 ## Subject Learning Outcomes
 

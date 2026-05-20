@@ -6,7 +6,7 @@
 
 Berries are among the most visually striking and sensorially complex fruits. Unlike stone fruits with their single large pit, berries typically contain multiple small seeds distributed throughout the flesh. This structural difference affects everything from texture to eating experience. In this module, you will explore strawberries, blueberries, raspberries, and other small fruits that punch above their weight in flavour intensity.
 
-Berries present unique challenges for observation and documentation. Their small size demands closer attention to detail, and their delicate structure means they degrade quickly once picked. These constraints make berries an excellent subject for practising rapid, precise sensory description.@harper2021sensory
+Berries present unique challenges for observation and documentation. Their small size demands closer attention to detail, and their delicate structure means they degrade quickly once picked. These constraints make berries an excellent subject for practising rapid, precise sensory description.[@harper2021sensory]
 
 ## Subject Learning Outcomes
 

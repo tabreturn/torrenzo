@@ -10,7 +10,7 @@
 
 The most straightforward comparative tool is a matrix that scores each fruit on standardised sensory dimensions such as skin texture, flesh colour, sweetness, acidity, aroma intensity, juiciness, fibre content, and seed-to-flesh ratio. By assigning ratings to each dimension, you can quickly see where fruits differ and where they overlap.
 
-This matrix approach is useful, but it has limitations. Numerical scores collapse complex sensory experiences into single numbers, and the choice of dimensions shapes the comparison. Be explicit about what your matrix captures -- and what it does not.@ramirez2021citrus
+This matrix approach is useful, but it has limitations. Numerical scores collapse complex sensory experiences into single numbers, and the choice of dimensions shapes the comparison. Be explicit about what your matrix captures -- and what it does not.[@ramirez2021citrus]
 
 ### The Structural Comparison
 
@@ -32,7 +32,7 @@ How does each fruit respond to the same treatment? This is the comparison requir
 - **Freezing**: Does it become mushy on thawing? Does the colour change? Are ice crystals visible?
 - **Sugar preservation**: Does it release liquid? Does it absorb sugar? Does the texture become translucent?
 
-A fruit that browns rapidly on cutting has high polyphenol oxidase activity. A fruit that retains its texture after freezing has robust cell walls. These observations connect sensory experience to underlying biology.@kimura2022acidity
+A fruit that browns rapidly on cutting has high polyphenol oxidase activity. A fruit that retains its texture after freezing has robust cell walls. These observations connect sensory experience to underlying biology.[@kimura2022acidity]
 
 ### Writing the Comparison
 

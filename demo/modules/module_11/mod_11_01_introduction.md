@@ -6,7 +6,7 @@
 
 Over the past eleven modules, you have developed a comprehensive set of skills: sensory observation, structured comparison, cultural research, photography, metadata management, and digital curation. This final module helps you integrate these skills into a cohesive exhibition that demonstrates everything you have learned.
 
-Your digital exhibition is not just a collection of fruit entries. It is a portfolio that showcases your ability to observe carefully, describe vividly, organise systematically, and present professionally. These are transferable skills that extend far beyond tropical fruit studies.@marshall2020catalogue
+Your digital exhibition is not just a collection of fruit entries. It is a portfolio that showcases your ability to observe carefully, describe vividly, organise systematically, and present professionally. These are transferable skills that extend far beyond tropical fruit studies.[@marshall2020catalogue]
 
 ## Subject Learning Outcomes
 

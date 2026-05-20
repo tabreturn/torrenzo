@@ -15,7 +15,7 @@ Metadata is "data about data" -- information that describes, explains, or locate
 - **Administrative metadata**: File format, image dimensions, rights and permissions
 - **Subject metadata**: Tags, keywords, categories that enable browsing and searching
 
-Good metadata is consistent, comprehensive, and useful. It helps visitors find what they are looking for and discover connections they did not expect.@marshall2020catalogue
+Good metadata is consistent, comprehensive, and useful. It helps visitors find what they are looking for and discover connections they did not expect.[@marshall2020catalogue]
 
 ### Designing a Tagging System
 

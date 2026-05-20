@@ -6,7 +6,7 @@
 
 Fruit is never just fruit. Throughout human history, fruits have carried symbolic meanings, shaped trade routes, inspired art and literature, and defined cultural identities. The apple in the Garden of Eden, the pomegranate in Greek mythology, the mango as a symbol of love and prosperity in South Asia -- these associations enrich our experience of fruit far beyond the sensory.
 
-This module explores how cultural and historical contexts deepen our understanding of tropical fruits. A durian is not just a fruit with a strong smell; it is a cultural icon that divides communities, fuels economies, and embodies competing ideas about modernity and tradition in Southeast Asia. A coconut is not just a drupe; it is a staple food, a source of fibre and building material, and a symbol of tropical paradise in global tourism imagery.@delgado2022citrus
+This module explores how cultural and historical contexts deepen our understanding of tropical fruits. A durian is not just a fruit with a strong smell; it is a cultural icon that divides communities, fuels economies, and embodies competing ideas about modernity and tradition in Southeast Asia. A coconut is not just a drupe; it is a staple food, a source of fibre and building material, and a symbol of tropical paradise in global tourism imagery.[@delgado2022citrus]
 
 ## Subject Learning Outcomes
 

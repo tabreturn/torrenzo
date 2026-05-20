@@ -10,7 +10,7 @@
 
 Lighting is the single most important factor in fruit photography. Poor lighting mutes colours, obscures texture, and creates distracting shadows. Good lighting reveals the subtle bloom on a blueberry, the glossy sheen of a cherry, the crystalline structure of a cut citrus segment.
 
-For documentation purposes, diffuse natural light is ideal. Position your fruit near a large window but out of direct sunlight. A piece of white paper or foam board on the opposite side can bounce light back into the shadows, reducing contrast and revealing detail. For consistent results across multiple sessions, note the time of day and weather conditions -- or invest in a simple LED light panel that you can position identically each time.@harper2021sensory
+For documentation purposes, diffuse natural light is ideal. Position your fruit near a large window but out of direct sunlight. A piece of white paper or foam board on the opposite side can bounce light back into the shadows, reducing contrast and revealing detail. For consistent results across multiple sessions, note the time of day and weather conditions -- or invest in a simple LED light panel that you can position identically each time.[@harper2021sensory]
 
 For exhibition photography, you may want to be more creative with lighting. Side lighting emphasises texture and creates dramatic shadows. Backlighting makes translucent fruits (citrus segments, dragon fruit) glow. A dark background with a single light source can create a painterly, dramatic effect suitable for an exhibition.
 

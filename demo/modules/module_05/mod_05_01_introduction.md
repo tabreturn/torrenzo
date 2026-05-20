@@ -6,7 +6,7 @@
 
 Beyond the familiar oranges, mangoes, and berries lies a world of fruits that challenge our expectations of what fruit can look, smell, and taste like. Dragon fruit with its shocking pink skin and speckled white flesh, rambutan with its hairy red exterior hiding translucent sweetness, and durian -- famously banned from hotels and public transport across Southeast Asia -- with its formidable aroma and custard-like flesh.
 
-These exotic fruits are excellent subjects for sensory observation precisely because they are unfamiliar. Without preconceptions, you must rely entirely on what your senses tell you. This makes the observation process more deliberate and often more revealing.@delgado2022citrus
+These exotic fruits are excellent subjects for sensory observation precisely because they are unfamiliar. Without preconceptions, you must rely entirely on what your senses tell you. This makes the observation process more deliberate and often more revealing.[@delgado2022citrus]
 
 ## Subject Learning Outcomes
 

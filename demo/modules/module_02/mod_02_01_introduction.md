@@ -6,7 +6,7 @@
 
 Stone fruits, also known as drupes, are characterised by a fleshy outer layer surrounding a single hard pit or stone that encloses the seed. This module introduces you to the diverse world of tropical and subtropical stone fruits, including mangoes, peaches, plums, and apricots. Stone fruits offer rich opportunities for sensory observation because they vary dramatically in colour, texture, juiciness, and flavour intensity.
 
-The mango, sometimes called the "king of fruits," is one of the most widely cultivated tropical stone fruits. Its golden flesh ranges from fibrous to buttery-smooth, and its flavour can shift from honey-sweet to resinous depending on the variety. Peaches, while often associated with temperate climates, also thrive in subtropical regions and offer a distinctly different stone fruit experience with their fuzzy skin and melting texture.@delgado2022citrus
+The mango, sometimes called the "king of fruits," is one of the most widely cultivated tropical stone fruits. Its golden flesh ranges from fibrous to buttery-smooth, and its flavour can shift from honey-sweet to resinous depending on the variety. Peaches, while often associated with temperate climates, also thrive in subtropical regions and offer a distinctly different stone fruit experience with their fuzzy skin and melting texture.[@delgado2022citrus]
 
 ## Subject Learning Outcomes
 

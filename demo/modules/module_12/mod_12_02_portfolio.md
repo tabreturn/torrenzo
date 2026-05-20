@@ -37,6 +37,6 @@ Consider how you might apply these skills in your next project, whatever it may 
 
 Your feedback helps improve this subject for future students. Please take a few minutes to complete the subject evaluation survey, available through the LMS. What worked well? What could be improved? What surprised you? Your honest responses are valued and will be used to refine the subject content and structure.
 
-Thank you for being part of Tropical Fruit Studies. May your observations always be sharp, your descriptions vivid, and your collections well-tagged.@delgado2022citrus
+Thank you for being part of Tropical Fruit Studies. May your observations always be sharp, your descriptions vivid, and your collections well-tagged.[@delgado2022citrus]
 
 <!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->

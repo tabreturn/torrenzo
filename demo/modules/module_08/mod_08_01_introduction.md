@@ -6,7 +6,7 @@
 
 Good documentation starts with good images. Throughout this subject you have been photographing fruits for your catalogue, your comparison report, and your preservation experiments. This module formalises those skills by introducing the principles of fruit photography for documentation and exhibition purposes.
 
-A documentation photograph has different goals from an artistic photograph. It should be clear, well-lit, accurately coloured, and composed to reveal the fruit's structure. An exhibition photograph, on the other hand, may also need to tell a story, evoke a mood, or draw the viewer into a curated narrative. Understanding the difference -- and knowing how to achieve both -- is essential for Assessment 3.@marshall2020catalogue
+A documentation photograph has different goals from an artistic photograph. It should be clear, well-lit, accurately coloured, and composed to reveal the fruit's structure. An exhibition photograph, on the other hand, may also need to tell a story, evoke a mood, or draw the viewer into a curated narrative. Understanding the difference -- and knowing how to achieve both -- is essential for Assessment 3.[@marshall2020catalogue]
 
 ## Subject Learning Outcomes
 
