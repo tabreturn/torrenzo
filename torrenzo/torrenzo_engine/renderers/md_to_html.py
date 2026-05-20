@@ -120,7 +120,10 @@ def replace_inline_bold(html_text: str) -> str:
     return lxml_html.tostring(document, encoding='unicode', method='html')
 
 
-def load_bibliography(input_path: Path) -> dict[str, Any]:
+def load_bibliography(
+  input_path: Path,
+  warnings: list[str] | None = None,
+) -> dict[str, Any]:
     modules_root = input_path.parent.parent
     entries: dict[str, Any] = {}
     bib_paths = [
@@ -132,7 +135,9 @@ def load_bibliography(input_path: Path) -> dict[str, Any]:
             continue
         try:
             bib_data = parse_file(str(bib_path))
-        except Exception:
+        except Exception as exc:
+            if warnings is not None:
+                warnings.append(f'Failed to parse {bib_path.name}: {exc}')
             continue
         for key, entry in bib_data.entries.items():
             if key not in entries:
@@ -187,6 +192,7 @@ def replace_citations(text: str, mapping: dict[str, int]) -> str:
 def render_references(
   keys_in_order: list[str],
   bib_entries: dict[str, Any],
+  warnings: list[str] | None = None,
 ) -> str:
     if not keys_in_order:
         return ''
@@ -197,7 +203,9 @@ def render_references(
             continue
         try:
             html_block = render_entry_to_html(entry)
-        except Exception:
+        except Exception as exc:
+            if warnings is not None:
+                warnings.append(f"Could not format entry '{key}': {exc}")
             continue
         items.append(f'<li id="ref-{key}">{html_block}</li>')
     if not items:
@@ -218,7 +226,8 @@ def render(
     raw, tag_warnings = apply_tags(raw, tags)
     raw = convert_dashes(raw)
 
-    bib_entries = load_bibliography(input_path)
+    warnings: list[str] = list(tag_warnings)
+    bib_entries = load_bibliography(input_path, warnings)
     citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(
       raw, bib_entries
     )
@@ -227,16 +236,13 @@ def render(
 
     css_text = load_module_css(input_path)
     if not css_text:
-        warnings: list[str] = list(tag_warnings)
         warnings.append(
           f'No modules/style/style.css found; {input_path.name} built unstyled'
         )
-    else:
-        warnings = list(tag_warnings)
     css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
     if ordered_keys:
-        references = render_references(ordered_keys, bib_entries)
+        references = render_references(ordered_keys, bib_entries, warnings)
         if references:
             html_body = f'{html_body}\n{references}'
     html_body = f'{html_body}\n{render_page_spacer()}'

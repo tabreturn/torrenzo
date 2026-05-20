@@ -112,14 +112,14 @@ def render(
     raw_html, tag_warnings = apply_tags(raw_html, tags)
     warnings.extend(tag_warnings)
 
-    bib_entries = load_bibliography(input_path)
+    bib_entries = load_bibliography(input_path, warnings)
     citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(
       raw_html, bib_entries
     )
     if citation_numbers:
         raw_html = replace_citations(raw_html, citation_numbers)
     if ordered_keys:
-        references = render_references(ordered_keys, bib_entries)
+        references = render_references(ordered_keys, bib_entries, warnings)
         if references:
             raw_html = f'{raw_html}\n{references}'
     raw_html = f'{raw_html}\n{render_page_spacer()}'
