@@ -515,6 +515,9 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
 
     if module_css:
         try:
+            import logging
+            import cssutils
+            cssutils.log.setLevel(logging.CRITICAL)
             from premailer import transform
             doc = transform(doc, remove_classes=False,
                             keep_style_tags=False)
