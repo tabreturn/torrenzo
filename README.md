@@ -81,7 +81,7 @@ python -m torrenzo /path/to/your-subject
 
 - Use `--cc` to output a [Common Cartridge](#common-cartridge-imscc) file for bulk-importing Canvas content.
 
-- Use `--diff LOCAL.imscc LIVE.imscc` to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import.
+- Use the **Diff** button (GUI) or `--diff LOCAL.imscc LIVE.imscc` (CLI) to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import. This is useful when you want to apply targeted updates using the Canvas editor rather than importing an entire Common Cartridge.
 
 Each build output embeds timestamps on file outputs (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
 
