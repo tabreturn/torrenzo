@@ -9,9 +9,26 @@
 
 ---
 
+**Think: static-site-generator-style workflow for publishing to LMS platforms.**
+
+---
+
+## Table of Contents
+
+- [What Does It Do?](#what-does-it-do)
+- [Usage: GUI](#usage-gui)
+- [Usage: Command-Line Interface (CLI)](#usage-command-line-interface-cli)
+- [Usage: Build Options (GUI & CLI)](#usage-build-options-gui--cli)
+- [Configuration & Tags](#configuration--tags)
+- [Prerequisites](#prerequisites)
+- [Populating Content](#populating-content)
+- [Technical Stuff](#technical-stuff)
+
+---
+
 ## What Does It Do?
 
-Torrenzo traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material. **Think: static-site-generator-style workflow for publishing to LMS platforms.**
+Torrenzo traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material.
 
 Torrenzo currently performs the following transformations:
 
@@ -22,20 +39,6 @@ Torrenzo currently performs the following transformations:
 | `modules/module_<n>/mod_<n>_<seq>_<name>.docx` | HTML   |
 
 See the [`demo/`](demo) directory for sample subject content, and [`demo/build/`](demo/build/) for example output artefacts.
-
----
-
-## Table of Contents
-
-- [Usage: GUI](#usage-gui)
-- [Usage: Command-Line Interface (CLI)](#usage-command-line-interface-cli)
-- [Usage: Build Options (GUI & CLI)](#usage-build-options-gui--cli)
-- [Configuration & Tags](#configuration--tags)
-- [Prerequisites](#prerequisites)
-- [Populating Content](#populating-content)
-- [Technical Stuff](#technical-stuff)
-
----
 
 ### Yeah, But Why?
 
