@@ -72,7 +72,7 @@ python -m torrenzo /path/to/your-subject
 
 `outline.[md|yaml]`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically. Use build options to override/control this behaviour.
 
-## Usage: Build Options
+## Usage: Build Options (GUI & CLI)
 
 - By default, Torrenzo skips files whose outputs are already newer than their sources. Use `--force` to rebuild everything regardless, or `--clean` to wipe `build/` first and then do a full rebuild.
 
@@ -90,7 +90,7 @@ Each build output embeds timestamps on file outputs (code comments for plain-tex
 
 Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
-Starter keys in `outline.[md|yaml]` define your subject metadata and automatically populate across all content via tags/placeholders.
+Keys in `outline.[md|yaml]` define your subject metadata and automatically populate across all content via tags/placeholders.
 
 - **Subject:**  
   `subject.code`, `subject.title`, `subject.descriptor`
