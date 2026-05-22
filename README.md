@@ -88,6 +88,8 @@ Launch the GUI using one of the following methods:
 
 > 💡 To start working on a Torrenzo project, it's easiest to [use the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
 
+---
+
 ## Usage: Command-Line Interface (CLI)
 
 1. Ensure to install [prerequisites](#prerequisites).
@@ -99,6 +101,8 @@ python -m torrenzo /path/to/your-subject
 ```
 
 `outline.[md|yaml]`, `assessments/`, `modules/`, and `build/` all resolve relative to the subject root. Torrenzo outputs everything (HTML, PDF, etc.) to `build/` inside the subject directory. Only files whose sources have changed since the last build are regenerated; orphaned outputs are removed automatically. Use build options to override/control this behaviour.
+
+---
 
 ## Usage: Build Options (GUI & CLI)
 
