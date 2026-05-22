@@ -116,7 +116,9 @@ def _el(parent: ET.Element, tag: str, text: str | None = None,
     return e
 
 
-def _wrap_wiki_html(body: str, title: str, identifier: str) -> str:
+def _wrap_wiki_html(body: str, title: str, identifier: str, *,
+                    front_page: bool = False) -> str:
+    fp = '<meta name="front_page" content="true"/>\n' if front_page else ''
     return (
         '<html>\n<head>\n'
         '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
@@ -124,6 +126,7 @@ def _wrap_wiki_html(body: str, title: str, identifier: str) -> str:
         f'<meta name="identifier" content="{identifier}"/>\n'
         '<meta name="editing_roles" content="teachers"/>\n'
         '<meta name="workflow_state" content="active"/>\n'
+        f'{fp}'
         '</head>\n<body>\n'
         f'{body}\n'
         '</body>\n</html>\n'
@@ -830,7 +833,10 @@ def export_cc(
                     title = page['title']
                 else:
                     title = f'Module {mod_num}.{page["seq"]}: {page["title"]}'
-                wrapped = _wrap_wiki_html(body, title, page['resource_id'])
+                front_page_seq = min(p['seq'] for p in module_pages.get(0, [])) if 0 in module_pages else None
+                is_front = mod_num == 0 and page['seq'] == front_page_seq
+                wrapped = _wrap_wiki_html(body, title, page['resource_id'],
+                                          front_page=is_front)
                 zf.writestr(f'wiki_content/{page["filename"]}', wrapped)
 
         for ass in assessment_items:

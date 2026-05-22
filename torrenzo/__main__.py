@@ -22,6 +22,7 @@ from .torrenzo_engine.renderers import (
   render_copy_asset,
 )
 from .torrenzo_engine.build_stamp import now_iso
+from .torrenzo_engine.cc_diff import diff_cc
 from .torrenzo_engine.cc_export import export_cc
 from .torrenzo_engine.tags import build_tag_map, find_outline, load_outline
 
@@ -259,7 +260,34 @@ def main() -> None:
       action='store_true',
       help='Export a Common Cartridge (.imscc) package after building',
     )
+    parser.add_argument(
+      '--diff',
+      nargs='+',
+      type=Path,
+      default=None,
+      metavar=('LOCAL', 'LIVE'),
+      help='Diff two .imscc files, or auto-discover local if only one given',
+    )
+    parser.add_argument(
+      '--diff-verbose',
+      action='store_true',
+      help='Show full content diffs in --diff output',
+    )
     args = parser.parse_args()
+
+    # Diff-only mode: no build needed
+    if args.diff and not args.cc and not args.force and not args.clean:
+        if len(args.diff) != 2:
+            print(fmt('error', '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
+            return
+        lc, rv = args.diff[0].resolve(), args.diff[1].resolve()
+        if not lc.exists():
+            print(fmt('error', f'{args.diff[0]}: file not found'))
+        elif not rv.exists():
+            print(fmt('error', f'{args.diff[1]}: file not found'))
+        else:
+            print(diff_cc(lc, rv, verbose=args.diff_verbose))
+        return
 
     subject_root = args.root.resolve()
     build_dir = subject_root / 'build'
@@ -288,9 +316,22 @@ def main() -> None:
         diagnostics.extend(optimize_assets(build_dir))
     if args.cc:
         outline = load_outline(subject_root)
-        _, cc_diagnostics = export_cc(subject_root, build_dir, outline,
-                                      version_stamp)
+        cc_path, cc_diagnostics = export_cc(subject_root, build_dir, outline,
+                                            version_stamp)
         diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
+        if args.diff:
+            if len(args.diff) != 2:
+                diagnostics.append(fmt('error',
+                    '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
+            else:
+                lc, rv = args.diff[0].resolve(), args.diff[1].resolve()
+                if not lc.exists():
+                    diagnostics.append(fmt('error', f'{args.diff[0]}: file not found'))
+                elif not rv.exists():
+                    diagnostics.append(fmt('error', f'{args.diff[1]}: file not found'))
+                else:
+                    print()
+                    print(diff_cc(lc, rv, verbose=args.diff_verbose))
     for message in diagnostics:
         print(message)
 

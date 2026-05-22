@@ -236,7 +236,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 2. Set *Content Type* to **Common Cartridge 1.x Package**, choose the `.imscc` file, and click **Import**.
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
     - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
-    - **Pages** -- All module pages appear as Wiki Pages; assign relevant `Module_00` page as the front page manually via *Pages → View All Pages → ⁝ → Use as Front Page*.
+    - **Pages** -- All module pages appear as Wiki Pages. The first page in `Module_00` includes a `front_page` meta tag, though you may need to set it manually in Canvas via *Pages → View All Pages → ⁝ → Use as Front Page*.
     - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the **last table** in the brief markdown).
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
@@ -244,6 +244,35 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included.
 
 > 💡 Observation note: when importing cartridges into Canvas, module content overwrites; however, assets appear to duplicate. Recommended solution: delete all *Files* (in Canvas) before import **except the course_image folder**.
+
+### Diffing Against a Live Course Export
+
+Pass `--diff` to compare two `.imscc` files -- typically your local build against a Canvas export:
+
+```bash
+python -m torrenzo demo --diff build/FRU101.imscc canvas-export.imscc
+```
+
+> 💡 To generate a log, redirect output to a file using `> diff.log` (or preffered filename).
+
+The diff groups results into three categories:
+
+| Category                  | Marker | Description                                                                  |
+|---------------------------|--------|------------------------------------------------------------------------------|
+| **CHANGES**               | `*`    | Content, points, or checksum differences                                     |
+| **LIVE-ONLY**             | `−`    | Items not in local build (prefixed `(wiki page)`, `(assessment)`, `(asset)`) |
+| **REBUILT, SAME CONTENT** | `→`    | PDFs re-rendered but identical after stripping timestamps                    |
+
+Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) appear under LIVE-ONLY with a `•` bullet.
+
+**How it works:**
+- Wiki pages compared by normalized body content 
+  (Normalizes away all: HTML entities, inline styles, GUIDs, attribute ordering, and Canvas-specific formatting)
+- Assessment PDFs compared by text-content checksum with build timestamps/versions stripped
+- Other assets (SVGs, images) compared by SHA-256 checksum
+- File rename quirks (from Canvas import-export roundtrips) handled automatically
+
+> 💡 Use `--diff-verbose` to see full content diffs for modified wiki pages.
 
 ---
 
@@ -262,6 +291,7 @@ Additionally, any heading in the brief tagged with `[[cc-section]]` (at any leve
 - [x] Consolidate on a single runtime stack (Python or Node)
 - [x] Add GUI desktop application
 - [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
+- [x] Diff tool for comparing local cartridge against live Canvas export (`--diff`)
 
 ## Stretch Goals
 
