@@ -23,6 +23,20 @@ Torrenzo currently performs the following transformations:
 
 See the [`demo/`](demo) directory for sample subject content, and [`demo/build/`](demo/build/) for example output artefacts.
 
+---
+
+## Table of Contents
+
+- [Usage: GUI](#usage-gui)
+- [Usage: Command-Line Interface (CLI)](#usage-command-line-interface-cli)
+- [Usage: Build Options (GUI & CLI)](#usage-build-options-gui--cli)
+- [Configuration & Tags](#configuration--tags)
+- [Prerequisites](#prerequisites)
+- [Populating Content](#populating-content)
+- [Technical Stuff](#technical-stuff)
+
+---
+
 ### Yeah, But Why?
 
 Torrenzo keeps learning content **portable, readable, and version-controlled**.
@@ -276,28 +290,4 @@ To generate a log, redirect output to a file using `> diff.log` (or preffered fi
 - File rename quirks (from Canvas import-export roundtrips) handled automatically
 
 > 💡 Use `--diff-verbose` to see full content diffs for modified WikiPages.
-
----
-
-## To-Do
-
-- [x] Match Obsidian (Dataview) tag syntax to better support WYSIWYG-style editing workflows
-- [x] Improve assessment brief templates (page numbers, versioning in headers, etc.)
-- [x] Refine CSS styles for assessment briefs
-- [x] Capture and expose build diagnostics (missing placeholders, logo assets, etc.)
-- [x] Add asset optimisation step for images (PNG: pngquant, oxipng; SVG: scour)
-- [x] Include MS Word sample template with styles approximating LMS formatting
-- [x] Devise mechanism to flag new build content vs LMS-stable content (see `build/build-log.json`)
-- [x] Add metadata timestamp to built items
-- [x] Add support for common page elements (e.g., tabbed navigation components)
-- [x] Add GUI desktop application
-- [x] Configure GitHub Actions to publish cross-platform GUI binaries (Windows/macOS/Linux)
-- [x] Consolidate on a single runtime stack (Python or Node)
-- [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
-- [x] Diff tool for comparing local cartridge against live Canvas export (`--diff`)
-
-## Stretch Goals
-
-- [ ] Add support for Marp slide decks
-- [ ] Evaluate Markdown image sizing support (e.g., Marpit image syntax: https://marpit.marp.app/image-syntax)
 
