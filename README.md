@@ -52,6 +52,7 @@ Torrenzo includes a desktop application for point-and-click builds.
 - **Build options** as checkboxes
 - **Live build log** displayed in the window
 - **Preview in Browser** button opens the build output for review
+- **Diff** button compares the local cartridge against a live Canvas export
 
 Launch the GUI using one of the following methods:
 
@@ -79,6 +80,8 @@ python -m torrenzo /path/to/your-subject
 - Use `--optimize-assets` to optimise graphic assets. SVG optimisation uses the system `scour` CLI tool (`pip install scour`); PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 - Use `--cc` to output a [Common Cartridge](#common-cartridge-imscc) file for bulk-importing Canvas content.
+
+- Use `--diff LOCAL.imscc LIVE.imscc` to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import.
 
 Each build output embeds timestamps on file outputs (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
 

@@ -129,11 +129,14 @@ class MainWindow(QMainWindow):
         self._preview_btn.setEnabled(False)
         self._preview_btn.clicked.connect(self._preview_in_browser)
         btn_layout.addWidget(self._preview_btn)
+        self._diff_btn = QPushButton('Diff')
+        self._diff_btn.clicked.connect(self._diff_cartridges)
+        btn_layout.addWidget(self._diff_btn)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
 
         # --- Log output ---
-        log_label = QLabel('Build log:')
+        log_label = QLabel('Log:')
         layout.addWidget(log_label)
         self._log = QPlainTextEdit()
         self._log.setReadOnly(True)
@@ -241,6 +244,30 @@ class MainWindow(QMainWindow):
                 subprocess.Popen([chrome, url])
             else:
                 webbrowser.open(url)
+
+    def _diff_cartridges(self):
+        subject = self._dir_combo.currentText().strip()
+        build_dir = Path(subject) / 'build'
+        local_candidates = sorted(build_dir.glob('*.imscc'))
+        if not local_candidates:
+            self._log.setPlainText(
+                'No .imscc found in build/ — run Build first.')
+            self.statusBar().showMessage('Diff failed')
+            return
+        local_cc = local_candidates[-1]
+        live_cc, _ = QFileDialog.getOpenFileName(
+            self, 'Select Live Canvas Export', '',
+            'Cartridge files (*.imscc)')
+        if not live_cc:
+            return
+        try:
+            from torrenzo.torrenzo_engine.cc_diff import diff_cc
+            self._log.setPlainText(
+                diff_cc(local_cc, Path(live_cc)))
+            self.statusBar().showMessage('Diff complete')
+        except Exception as e:
+            self._log.setPlainText(f'Diff failed: {e}')
+            self.statusBar().showMessage('Diff failed')
 
 
 def _make_app_icon(size: int = 256) -> QIcon:
