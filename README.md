@@ -11,7 +11,7 @@
 
 ## What Does It Do?
 
-Torrenzo traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material.
+Torrenzo traverses structured learning content directories and generates LMS-ready HTML module pages and PDF assessment briefs from Markdown, BibTeX, and other source material. **Think: static-site-generator-style workflow for publishing to LMS platforms.**
 
 Torrenzo currently performs the following transformations:
 
@@ -27,13 +27,13 @@ See the [`demo/`](demo) directory for sample subject content, and [`demo/build/`
 
 Torrenzo keeps learning content **portable, readable, and version-controlled**.
 
-Instead of authoring material directly in a learning management system (LMS), content is written in plain-text formats such as Markdown and BibTeX. This approach enables:
+Instead of authoring material directly in a learning management system (LMS), content is written in semantic, plain-text formats such as Markdown and BibTeX. This approach enables:
 
 - **Consistent metadata** defined once and reused everywhere (e.g., learning outcomes or assessment details)
 - **Version control** using Git and other standard tools
 - **Clear separation** of content and presentation
-- **Editor independence** so you can write with any tool (Obsidian, VS Code, Vim, even MS Word?)
-- **Machine-readable materials** that automation tools and AI can analyse and update
+- **Editor independence** so you can write with any tool (Obsidian, VS Code, Vim, even MS Word + Styles)
+- **Machine-readable materials** that automation tools and AI can locally analyse and update
 - **Extensible components** for reusable interface elements across multiple pages
 - **Adaptable open-source tooling** to extend or customise for *your* publishing workflow
 
@@ -54,12 +54,22 @@ Torrenzo includes a desktop application for point-and-click builds.
 - **Preview in Browser** button opens the build output for review
 - **Diff** button compares the local cartridge against a live Canvas export
 
+The Diff feature allows you to compare your active project against an exported Canvas file. This is especially helpful when you need to be selective about updating content, as importing a massive cartridge for every minor tweak can be inefficient, messy, or even restricted by institutional permissions. Diff groups results into three categories:
+
+| Category                  | Marker | Description                                                                 |
+|---------------------------|--------|-----------------------------------------------------------------------------|
+| **CHANGES**               | `*`    | Content, points, or checksum differences                                    |
+| **LIVE-ONLY**             | `−`    | Items not in local build (prefixed `(wikipage)`, `(assessment)`, `(asset)`) |
+| **REBUILT, SAME CONTENT** | `→`    | PDFs re-rendered but identical after stripping timestamps                   |
+
+Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) appear under LIVE-ONLY with a `•` bullet. You can jump to [more technical info on Diff's workings](#more-on-diffs-workings)
+
 Launch the GUI using one of the following methods:
 
 - Prebuilt binary from the Releases page: https://github.com/tabreturn/torrenzo/releases
 - From source (repo root): `python -m torrenzo_gui` (ensure to install [prerequisites](#prerequisites) first)
 
-> 💡 To start working on a Torrenzo project, it's easiest to [download the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
+> 💡 To start working on a Torrenzo project, it's easiest to [use the demo as a scaffold](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ftabreturn%2Ftorrenzo%2Ftree%2Fmain%2Fdemo), launch the GUI, and run a build to explore how everything works.
 
 ## Usage: Command-Line Interface (CLI)
 
@@ -85,7 +95,7 @@ python -m torrenzo /path/to/your-subject
 
 Each build output embeds timestamps on file outputs (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
 
-> 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. Use this to identify which files need updating in your LMS across multiple builds. Delete the log once you've uploaded everything to reset tracking.
+> 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. This provides one way to identify which files need updating in your LMS across multiple builds.
 
 ---
 
@@ -106,11 +116,9 @@ Keys in `outline.[md|yaml]` define your subject metadata and automatically popul
 
 Torrenzo includes built-in components for common page elements. Use the `component` tag prefix:
 
-| Tag                                      | Description                                       |
-|------------------------------------------|---------------------------------------------------|
-| `` `=[[component.module-navigation]]` `` | Tabbed navigation linking to sibling module files |
-
-Custom components live in `torrenzo/components/` and plug into the tag system via `build_component_tags()`.
+| Tag                                      | Description                                      |
+|------------------------------------------|--------------------------------------------------|
+| `` `=[[component.module-navigation]]` `` | Tabbed navigation linking to sibling sub-modules |
 
 ---
 
@@ -122,7 +130,7 @@ Custom components live in `torrenzo/components/` and plug into the tag system vi
 - **Terminal environment** of your choice
 
 ### Setup
-Clone or download the Torrenzo repository. All setup commands run from the **Torrenzo repo root** -- subject content lives separately.
+Clone or [download](https://github.com/tabreturn/torrenzo/archive/refs/heads/main.zip) the Torrenzo repository. All setup commands run from the **Torrenzo repo root** -- subject content typically lives separately (although the repo includes a `demo`).
 
 To create and activate a virtual environment, then install dependencies:
 ```bash
@@ -158,35 +166,36 @@ your-subject/
 │   │   └── assets/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
-├── notes/              # lecturer-only notes (copied as-is, hidden in cartidge)
+├── notes/              # lecturer-only notes (copied as-is, unpublished)
 │   └── *.md (or any format)
 ├── build/              # generated output
-│   └── lecturer_notes/ # notes output (retains original format)
+│   └── ...
 └── outline.[md|yaml]   # subject configuration (YAML)
 ```
 
-> 💡 To get started, you could simply duplicate the `demo/` subject, rename it, and use it as a starting point for developing new learning materials.
+During the build process, Torrenzo reads metadata from `outline.[md|yaml]` (SLOs, etc.) and converts source content into:
 
-Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions in these directories to locate and process files.
+- PDF assessment briefs
+- LMS-ready HTML module pages (including separate activity pages)
+
+> 💡 To get started, you could simply duplicate the `demo/` subject, rename it, perhaps move it, and use it as a starting point for developing new learning materials.
+
+Subject content lives in two directories -- `assessments/` and `modules/`. Torrenzo relies on strict naming conventions to locate and process files.
 
 - **Define global metadata** in `outline.[md|yaml]` (using YAML). Torrenzo injects these values wherever placeholders such as `` `=[[outline]].subject.title` `` appear in source Markdown or Word files.
 
-- **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory.
+- **Define assessment briefs** in `assessments/assessment_<n>/ass_<n>_brief.md`. Place any assets the brief references (images, etc.) in the adjacent `assets/` directory. Note that Torrenzo will only process Markdown (not Word briefs).
 
 - **Store reference sources** in `references.bib`. This file uses *BibTeX format*; in-text citations use the `[@refname]` syntax. Torrenzo renders the corresponding references at the bottom of the page.
 
 - **Organise module files** using the same pattern under `modules/module_<n>/`. Each module contains:
   - `mod_<n>_<seq>_<name>.[md|docx]` -- module page(s) (content and activities)
   - `assets/` -- supporting files (images, etc.) used within the module
+  - Note that Torrenzo extracts images from Word documents, so there is no need to place Word graphics in `assets/`
 
 Use `modules/module_00/` for subject overview and introductory content (e.g., welcome page, student expectations, key documents). This typically serves as the landing page(s) content.
 
-> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. Module folders accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1".
-
-During the build process, Torrenzo reads metadata from `outline.[md|yaml]` (SLOs, etc.) and converts source content into:
-
-- PDF assessment briefs
-- LMS-ready HTML module pages (including separate activity pages)
+> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. **Module folders** accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1".
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
@@ -194,15 +203,15 @@ Torrenzo writes all output to `build/`. Module assets copy to `build/modules_htm
 
 ### Lecturer Notes
 
-Place lecturer-only materials (teaching notes, facilitation guides, answer keys) in `notes/`. Files are copied to `build/lecturer_notes/` retaining their original format -- no conversion applies (`.md` stays `.md`, `.docx` stays `.docx`, etc.). When exporting a Common Cartridge (via `--cc`), lecturer notes end up in the `.imscc` package under an **unpublished** module, hidden from students.
+Place lecturer-only materials (teaching notes, facilitation guides, etc.) in `notes/`. These files copy to `build/lecturer_notes/` retaining their original format -- no conversion applies (`.md` stays `.md`, `.docx` stays `.docx`, and so forth). When exporting a Common Cartridge (via `--cc`), lecturer notes end up in the `.imscc` package under an **unpublished** module, hidden from students.
 
 ### Module Styling & Assessment Branding
 
-An optional global stylesheet lives at `modules/style/style.css`. Its inlines CSS into HTML output so styling survives LMS copy-paste without requiring additional stylesheets in the target LMS.
+An optional global stylesheet lives at `modules/style/style.css`. Its inlines CSS into HTML output so styling survives LMS copy-paste and cartidge imports without requiring additional stylesheets in the target LMS.
 
 Universal assessment branding assets live in `assessments/style/`. On each run, the build injects `logo.svg` into the PDF header. Replace `logo.svg` (must be an SVG) to use a different logo, and configure styling and header/footer elements via the `style.css` and `config.js`
 
-> 💡 Each stylesheet and `config.js` includes a metadata block at the top (`Theme`, `Output`, `Version`, `Modified`). Update these when you customise styles, ensuring theming is easier to track across subjects.
+> 💡 Each stylesheet and `config.js` includes a metadata block at the top (`Theme`, `Output`, `Version`, `Modified`). It's best practice to update these when you customise styles, so theming is easier to track across projects.
 
 ---
 
@@ -239,16 +248,16 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 2. Set *Content Type* to **Common Cartridge 1.x Package**, choose the `.imscc` file, and click **Import**.
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
     - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
-    - **Pages** -- All module pages appear as Wiki Pages. The first page in `Module_00` includes a `front_page` meta tag, though you may need to set it manually in Canvas via *Pages → View All Pages → ⁝ → Use as Front Page*.
-    - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the **last table** in the brief markdown).
+    - **Pages** -- All module pages appear as WikiPages. The first page in `Module_00` includes a `front_page` meta tag, though you may need to set it manually in Canvas via *Pages → View All Pages → ⁝ → Use as Front Page*.
+    - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the ***last table*** in the brief markdown).
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
 
 Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included.
 
-> 💡 Observation note: when importing cartridges into Canvas, module content overwrites; however, assets appear to duplicate. Recommended solution: delete all *Files* (in Canvas) before import **except the course_image folder**.
+> 💡 Observation note: When importing cartridges into Canvas, module content is overwritten *unless* it has been modified in the Canvas editor. However, assets may be duplicated during the process. Recommended approach: before bulk importing, delete all items in **Files** (in Canvas), except for the `course_image` folder.
 
-### Diffing Against a Live Course Export
+### Diffing Against a Live Course Export via CLI
 
 Pass `--diff` to compare two `.imscc` files -- typically your local build against a Canvas export:
 
@@ -256,26 +265,17 @@ Pass `--diff` to compare two `.imscc` files -- typically your local build agains
 python -m torrenzo demo --diff build/FRU101.imscc canvas-export.imscc
 ```
 
-> 💡 To generate a log, redirect output to a file using `> diff.log` (or preffered filename).
+To generate a log, redirect output to a file using `> diff.log` (or preffered filename).
 
-The diff groups results into three categories:
+### More on Diff's workings
 
-| Category                  | Marker | Description                                                                  |
-|---------------------------|--------|------------------------------------------------------------------------------|
-| **CHANGES**               | `*`    | Content, points, or checksum differences                                     |
-| **LIVE-ONLY**             | `−`    | Items not in local build (prefixed `(wiki page)`, `(assessment)`, `(asset)`) |
-| **REBUILT, SAME CONTENT** | `→`    | PDFs re-rendered but identical after stripping timestamps                    |
-
-Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) appear under LIVE-ONLY with a `•` bullet.
-
-**How it works:**
-- Wiki pages compared by normalized body content 
+- WikiPages compared by normalized body content 
   (Normalizes away all: HTML entities, inline styles, GUIDs, attribute ordering, and Canvas-specific formatting)
 - Assessment PDFs compared by text-content checksum with build timestamps/versions stripped
 - Other assets (SVGs, images) compared by SHA-256 checksum
 - File rename quirks (from Canvas import-export roundtrips) handled automatically
 
-> 💡 Use `--diff-verbose` to see full content diffs for modified wiki pages.
+> 💡 Use `--diff-verbose` to see full content diffs for modified WikiPages.
 
 ---
 
@@ -290,9 +290,9 @@ Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) app
 - [x] Devise mechanism to flag new build content vs LMS-stable content (see `build/build-log.json`)
 - [x] Add metadata timestamp to built items
 - [x] Add support for common page elements (e.g., tabbed navigation components)
-- [x] Configure GitHub Actions to publish cross-platform CLI packages (Windows/macOS/Linux)
-- [x] Consolidate on a single runtime stack (Python or Node)
 - [x] Add GUI desktop application
+- [x] Configure GitHub Actions to publish cross-platform GUI binaries (Windows/macOS/Linux)
+- [x] Consolidate on a single runtime stack (Python or Node)
 - [x] Build export to `.imscc` (Common Cartridge) format for bulk LMS subject import
 - [x] Diff tool for comparing local cartridge against live Canvas export (`--diff`)
 
