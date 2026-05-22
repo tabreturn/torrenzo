@@ -1,6 +1,6 @@
 """cc_diff -- compare two IMS Common Cartridge (.imscc) files.
 
-Extracts and diffs wiki pages, assessments, assets, and module structure.
+Extracts and diffs WikiPages, assessments, assets, and module structure.
 Designed to compare a local Torrenzo build against a live Canvas export.
 """
 
@@ -308,7 +308,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
     # Gather
     # =================================================================
 
-    # -- Wiki pages --
+    # -- WikiPages --
     wiki_added = sorted(set(local_pages) - set(live_pages))
     wiki_removed = sorted(set(live_pages) - set(local_pages))
     wiki_modified: list[str] = []
@@ -379,7 +379,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
     # =================================================================
     ll: list[str] = []
     for fn in wiki_removed:
-        ll.append(f'− (wiki page) {fn}')
+        ll.append(f'− (wikipage) {fn}')
     for title in assess_only_live:
         ll.append(f'− (assessment) {title}')
     for name, size in asset_only_live:
