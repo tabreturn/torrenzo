@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- built: 2026-05-20T17:28:41+10:00  source: fruitbowl.svg -->
-<svg version="1.1" viewBox="0 0 800 600" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+<!-- built: 2026-05-25T17:41:31+10:00  source: fruitbowl.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 600" version="1.1" xml:space="preserve">
 
   <metadata id="metadata">
     <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -14,35 +13,51 @@
     </rdf:RDF>
   </metadata>
 
-  
+  <defs id="unused-defs">
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0000ff;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient id="grad2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffff00;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00ff00;stop-opacity:1"/>
+    </radialGradient>
+    <filter id="unused-blur">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
 
   <g id="unused-group-1">
-    
+    <g id="unused-group-2">
+    </g>
   </g>
 
-  <g id="main-scene">
+  <g id="main-scene" style="display:inline">
 
-    
- <!-- BACK FRUIT -->
-    <circle cx="400" cy="210" r="70" fill="#f39c12"/>
-    <circle cx="300" cy="250" r="65" fill="#7cb342"/>
-    <circle cx="500" cy="250" r="65" fill="#d8433e"/>
+    <!-- BACK FRUIT -->
+    <circle cx="400" cy="210" r="70" fill="#f39c12" style="display:inline"/>
+    <circle cx="300" cy="250" r="65" fill="#7cb342" style="display:inline"/>
+    <circle cx="500" cy="250" r="65" fill="#d8433e" style="display:inline"/>
 
-    
- <!-- BOWL RIM -->
-    <ellipse cx="400" cy="340" rx="200" ry="45" fill="#f5f5f5"/>
+    <!-- BOWL RIM -->
+    <ellipse cx="400" cy="340" rx="200" ry="45" fill="#f5f5f5" style="display:inline"/>
 
-    
- <!-- FRONT FRUIT -->
-    <circle cx="340" cy="330" r="70" fill="#d8433e"/>
-    <circle cx="460" cy="330" r="70" fill="#f39c12"/>
+    <!-- FRONT FRUIT -->
+    <circle cx="340" cy="330" r="70" fill="#d8433e" style="display:inline"/>
+    <circle cx="460" cy="330" r="70" fill="#f39c12" style="display:inline"/>
 
-    
- <!-- BOWL BODY (FRONT LIP) -->
-    <path d="m200 340c30 130 100 180 200 180s170-50 200-180c-80 30-140 45-200 45s-120-15-200-45" fill="#e0e0e0"/>
+    <!-- BOWL BODY (FRONT LIP) -->
+    <path d="
+      M200 340
+      C230 470 300 520 400 520
+      C500 520 570 470 600 340
+      C520 370 460 385 400 385
+      C340 385 280 370 200 340
+    "
+    fill="#e0e0e0" style="display:inline"/>
 
   </g>
 
-  <text id="unused-text" display="none" fill="#ffffff" font-size="12">hidden text nobody will see</text>
+  <text id="unused-text" font-size="12" fill="#ffffff" style="display:none">hidden text nobody will see</text>
 
 </svg>
