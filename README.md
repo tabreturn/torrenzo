@@ -146,7 +146,7 @@ Torrenzo includes built-in components for common page elements. Use the `compone
 ## Prerequisites
 *(to run Torrenzo or launch the GUI via CLI)*
 
-- **Python 3.10+**
+- **Python 3.9+**
 - **Google Chrome or Chromium** (for PDF generation)
 - **Terminal environment** of your choice
 
