@@ -182,7 +182,10 @@ class MainWindow(QMainWindow):
             self._dir_combo.setEditText(path)
 
     def _on_dir_changed(self, text: str):
-        self._build_btn.setEnabled(bool(text.strip()) and Path(text.strip()).is_dir())
+        path = Path(text.strip())
+        is_dir = path.is_dir()
+        self._build_btn.setEnabled(bool(text.strip()) and is_dir)
+        self._preview_btn.setEnabled(is_dir and (path / 'build').is_dir())
 
     def _start_build(self):
         subject = self._dir_combo.currentText().strip()
