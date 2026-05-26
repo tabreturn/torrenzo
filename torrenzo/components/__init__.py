@@ -14,7 +14,7 @@ def _parse_module_filename(filepath: Path) -> tuple[int, str] | None:
         seq = int(parts[2])
     except (ValueError, IndexError):
         return None
-    name = ' '.join(w.capitalize() for w in parts[3:])
+    name = ' '.join('-'.join(p.capitalize() for p in w.split('-')) for w in parts[3:])
     if not name:
         name = parts[2]
     return seq, name
