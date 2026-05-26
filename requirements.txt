@@ -8,4 +8,5 @@ Pillow>=10.0
 pypdf>=4.0
 pyppeteer>=2.0
 PySide6>=6.5
+setuptools<70
 
