@@ -13,6 +13,7 @@ FALLBACK_STYLE = 'unsrt'
 
 URL_LATEX_RE = re.compile(r'\\\\url\s+([^\\\s<]+)')
 URL_PLAIN_RE = re.compile(r'((?:https?|ftp)://[^\s<>\\\'\"]+)')
+_LATEX_URL_RE = re.compile(r'\\url\{([^}]+)\}')
 
 
 def linkify_urls(text: str) -> str:
@@ -31,6 +32,23 @@ def linkify_urls(text: str) -> str:
     return URL_PLAIN_RE.sub(repl, text)
 
 
+_ONLINE_TYPES = frozenset({'misc', 'online', 'electronic', 'webpage'})
+
+
+def _extract_entry_url(entry) -> str | None:
+    """Return the best URL from a bib entry, checking *url* then *howpublished*."""
+    url = entry.fields.get('url', '').strip()
+    if url:
+        return url
+    howpub = entry.fields.get('howpublished', '').strip()
+    m = _LATEX_URL_RE.search(howpub)
+    if m:
+        return m.group(1).strip()
+    if howpub.startswith(('http://', 'https://', 'ftp://')):
+        return howpub
+    return None
+
+
 def render_entry_to_html(entry) -> str:
     style_plugin = None
     try:
@@ -46,7 +64,17 @@ def render_entry_to_html(entry) -> str:
     for item in formatted:
         parts.append(item.text.render(backend))
     html_text = '\n'.join(parts)
-    return linkify_urls(html_text)
+    html_text = linkify_urls(html_text)
+
+    entry_type = entry.type.lower() if hasattr(entry, 'type') else ''
+    if entry_type in _ONLINE_TYPES:
+        url = _extract_entry_url(entry)
+        if url and url not in html_text:
+            safe = html.escape(url, quote=True)
+            html_text = html_text.rstrip().rstrip('.')
+            html_text += f'. <a href="{safe}">{safe}</a>'
+
+    return html_text
 
 
 def render(
