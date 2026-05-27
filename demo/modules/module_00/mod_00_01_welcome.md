@@ -1,6 +1,6 @@
 # FRU101: Tropical Fruit Studies
 
-![placeholder img](assets/welcome.png)
+![placeholder img|max-width:300px;border-radius:8px](assets/welcome.png)
 *Image: Placeholder*
 
 ## Subject Introduction
