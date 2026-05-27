@@ -135,7 +135,7 @@ Keys in `outline.[md|yaml]` define your subject metadata and automatically popul
 
 ### Wiki Links
 
-Use wiki-style `[[...]]` syntax to link between modules and assessments. Torrenzo auto-derives display labels:
+Use wiki-style `[[...]]` syntax to create links between modules and assessments. Torrenzo automatically derives the display label unless you explicitly provide one using a `|` character.
 
 | Syntax                               | Renders as                                      |
 |--------------------------------------|-------------------------------------------------|
