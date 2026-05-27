@@ -9,6 +9,8 @@ LMS-ready HTML snippets.
 import argparse
 import shutil
 import subprocess
+import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -226,6 +228,133 @@ def make_jobs(
     ]
 
 
+def run_build(
+  subject_root: Path,
+  build_dir: Path,
+  *,
+  force: bool = False,
+  optimize: bool = False,
+  cc: bool = False,
+  diff_paths: list[Path] | None = None,
+  diff_verbose: bool = False,
+) -> None:
+    """Execute a single (possibly incremental) build cycle."""
+    built = now_iso()
+    version_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+    tags = build_tag_map(subject_root)
+
+    registry = RendererRegistry()
+    register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
+    register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
+    register_renderer(
+      registry, 'docx_to_html', lambda _: render_docx_to_html
+    )
+    register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
+
+    pipeline = Pipeline(subject_root, build_dir, registry)
+    diagnostics = pipeline.execute(
+      make_jobs(tags, subject_root=subject_root, built=built,
+                version_stamp=version_stamp),
+      force=force,
+    )
+    if optimize:
+        diagnostics.extend(optimize_assets(build_dir))
+    if cc:
+        outline = load_outline(subject_root)
+        cc_path, cc_diagnostics = export_cc(subject_root, build_dir, outline,
+                                            version_stamp)
+        diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
+        if diff_paths:
+            if len(diff_paths) != 2:
+                diagnostics.append(fmt('error',
+                    '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
+            else:
+                lc, rv = diff_paths[0].resolve(), diff_paths[1].resolve()
+                if not lc.exists():
+                    diagnostics.append(
+                      fmt('error', f'{diff_paths[0]}: file not found'))
+                elif not rv.exists():
+                    diagnostics.append(
+                      fmt('error', f'{diff_paths[1]}: file not found'))
+                else:
+                    print()
+                    print(diff_cc(lc, rv, verbose=diff_verbose))
+    for message in diagnostics:
+        print(message)
+
+
+def _snapshot_mtimes(subject_root: Path) -> dict[Path, float]:
+    """Return {path: mtime} for every source file, skipping build/."""
+    build_dir = subject_root / 'build'
+    snap: dict[Path, float] = {}
+    for p in subject_root.rglob('*'):
+        if p.is_dir():
+            continue
+        try:
+            if p.is_relative_to(build_dir):
+                continue
+        except AttributeError:
+            # Python < 3.9 fallback
+            try:
+                p.relative_to(build_dir)
+                continue
+            except ValueError:
+                pass
+        try:
+            snap[p] = p.stat().st_mtime
+        except OSError:
+            pass
+    return snap
+
+
+def watch_and_rebuild(
+  subject_root: Path,
+  build_dir: Path,
+  *,
+  optimize: bool = False,
+  cc: bool = False,
+  diff_paths: list[Path] | None = None,
+  diff_verbose: bool = False,
+  poll_interval: float = 1.0,
+) -> None:
+    """Poll for source changes and rebuild incrementally."""
+    print(fmt('info', f'Watching {subject_root} for changes (Ctrl+C to stop)'),
+          flush=True)
+    prev = _snapshot_mtimes(subject_root)
+    try:
+        while True:
+            time.sleep(poll_interval)
+            curr = _snapshot_mtimes(subject_root)
+            changed = {
+              p for p in curr
+              if p not in prev or curr[p] != prev[p]
+            }
+            deleted = set(prev) - set(curr)
+            if changed or deleted:
+                names = [p.relative_to(subject_root) for p in changed]
+                if deleted:
+                    names += [
+                      p.relative_to(subject_root) for p in deleted
+                    ]
+                summary = ', '.join(str(n) for n in sorted(names)[:5])
+                if len(names) > 5:
+                    summary += f' (+{len(names) - 5} more)'
+                print(flush=True)
+                print(fmt('info',
+                    f'Change detected: {summary}'), flush=True)
+                run_build(subject_root, build_dir, force=False,
+                          optimize=optimize, cc=cc,
+                          diff_paths=diff_paths,
+                          diff_verbose=diff_verbose)
+                sys.stdout.flush()
+                prev = _snapshot_mtimes(subject_root)
+            else:
+                prev = curr
+    except KeyboardInterrupt:
+        print(flush=True)
+        print(fmt('info', 'Watch stopped'), flush=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
       description=(
@@ -273,6 +402,11 @@ def main() -> None:
       action='store_true',
       help='Show full content diffs in --diff output',
     )
+    parser.add_argument(
+      '--watch',
+      action='store_true',
+      help='Watch source files and rebuild incrementally on change',
+    )
     args = parser.parse_args()
 
     # Diff-only mode: no build needed
@@ -292,48 +426,18 @@ def main() -> None:
     subject_root = args.root.resolve()
     build_dir = subject_root / 'build'
 
-    built = now_iso()
-    version_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
     force = args.force or args.clean
     prepare_build_dir(build_dir, clean=args.clean)
-    tags = build_tag_map(subject_root)
 
-    registry = RendererRegistry()
-    register_renderer(registry, 'md_to_pdf', lambda _: render_md_to_pdf)
-    register_renderer(registry, 'md_to_html', lambda _: render_md_to_html)
-    register_renderer(
-      registry, 'docx_to_html', lambda _: render_docx_to_html
-    )
-    register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
+    run_build(subject_root, build_dir, force=force,
+              optimize=args.optimize_assets, cc=args.cc,
+              diff_paths=args.diff, diff_verbose=args.diff_verbose)
 
-    pipeline = Pipeline(subject_root, build_dir, registry)
-    diagnostics = pipeline.execute(
-      make_jobs(tags, subject_root=subject_root, built=built,
-                version_stamp=version_stamp),
-      force=force,
-    )
-    if args.optimize_assets:
-        diagnostics.extend(optimize_assets(build_dir))
-    if args.cc:
-        outline = load_outline(subject_root)
-        cc_path, cc_diagnostics = export_cc(subject_root, build_dir, outline,
-                                            version_stamp)
-        diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
-        if args.diff:
-            if len(args.diff) != 2:
-                diagnostics.append(fmt('error',
-                    '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
-            else:
-                lc, rv = args.diff[0].resolve(), args.diff[1].resolve()
-                if not lc.exists():
-                    diagnostics.append(fmt('error', f'{args.diff[0]}: file not found'))
-                elif not rv.exists():
-                    diagnostics.append(fmt('error', f'{args.diff[1]}: file not found'))
-                else:
-                    print()
-                    print(diff_cc(lc, rv, verbose=args.diff_verbose))
-    for message in diagnostics:
-        print(message)
+    if args.watch:
+        watch_and_rebuild(subject_root, build_dir,
+                          optimize=args.optimize_assets, cc=args.cc,
+                          diff_paths=args.diff,
+                          diff_verbose=args.diff_verbose)
 
 
 if __name__ == '__main__':

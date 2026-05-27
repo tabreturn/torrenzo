@@ -73,6 +73,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(800, 600)
         self._process: QProcess | None = None
         self._build_ok = False
+        self._watching = False
         self._settings = QSettings('torrenzo', 'gui')
         self._setup_ui()
         self._load_history()
@@ -113,10 +114,14 @@ class MainWindow(QMainWindow):
         self._opt_force.setToolTip('Rebuild all files even if outputs are up-to-date')
         self._opt_optimize = QCheckBox('--optimize-assets')
         self._opt_optimize.setToolTip('Optimize PNG and SVG assets in the build output')
+        self._opt_watch = QCheckBox('--watch')
+        self._opt_watch.setToolTip('Watch source files and rebuild incrementally on change')
+        self._opt_watch.toggled.connect(self._on_watch_toggled)
         opts_layout.addWidget(self._opt_cc)
         opts_layout.addWidget(self._opt_clean)
         opts_layout.addWidget(self._opt_force)
         opts_layout.addWidget(self._opt_optimize)
+        opts_layout.addWidget(self._opt_watch)
         opts_layout.addStretch()
         layout.addWidget(opts_group)
 
@@ -187,7 +192,18 @@ class MainWindow(QMainWindow):
         self._build_btn.setEnabled(bool(text.strip()) and is_dir)
         self._preview_btn.setEnabled(is_dir and (path / 'build').is_dir())
 
+    def _on_watch_toggled(self, checked: bool):
+        self._opt_clean.setEnabled(not checked)
+        self._opt_force.setEnabled(not checked)
+        if checked:
+            self._opt_clean.setChecked(False)
+            self._opt_force.setChecked(False)
+
     def _start_build(self):
+        if self._watching:
+            self._stop_watch()
+            return
+
         subject = self._dir_combo.currentText().strip()
         if not subject:
             return
@@ -201,7 +217,7 @@ class MainWindow(QMainWindow):
         if getattr(sys, 'frozen', False):
             args = [sys.executable, '--cli', subject]
         else:
-            args = [sys.executable, '-m', 'torrenzo', subject]
+            args = [sys.executable, '-u', '-m', 'torrenzo', subject]
         if self._opt_force.isChecked():
             args.append('--force')
         if self._opt_clean.isChecked():
@@ -210,6 +226,8 @@ class MainWindow(QMainWindow):
             args.append('--optimize-assets')
         if self._opt_cc.isChecked():
             args.append('--cc')
+        if self._opt_watch.isChecked():
+            args.append('--watch')
 
         self._process = QProcess()
         self._process.setWorkingDirectory(str(TORRENZO_DIR))
@@ -217,6 +235,23 @@ class MainWindow(QMainWindow):
         self._process.readyReadStandardError.connect(self._on_stderr)
         self._process.finished.connect(self._on_finished)
         self._process.start(args[0], args[1:])
+
+        if self._opt_watch.isChecked():
+            self._watching = True
+            self._build_btn.setEnabled(True)
+            self._build_btn.setText('Stop Watching')
+            self.statusBar().showMessage('Watching for changes…')
+
+    def _stop_watch(self):
+        if self._process and self._process.state() != QProcess.NotRunning:
+            self._process.terminate()
+            if not self._process.waitForFinished(3000):
+                self._process.kill()
+                self._process.waitForFinished(2000)
+        self._watching = False
+        self._build_btn.setText('Build')
+        self._build_btn.setEnabled(True)
+        self.statusBar().showMessage('Watch stopped')
 
     def _on_stdout(self):
         text = self._process.readAllStandardOutput().data().decode(errors='replace')
@@ -227,8 +262,13 @@ class MainWindow(QMainWindow):
         self._log.appendPlainText(_strip(text).rstrip())
 
     def _on_finished(self, exit_code: int):
+        was_watching = self._watching
+        self._watching = False
+        self._build_btn.setText('Build')
         self._build_btn.setEnabled(True)
-        if exit_code == 0:
+        if was_watching:
+            self.statusBar().showMessage('Watch stopped')
+        elif exit_code == 0:
             self._build_ok = True
             self._preview_btn.setEnabled(True)
             self.statusBar().showMessage('Build complete ✓')
