@@ -95,6 +95,31 @@ def collect_valid_outputs(subject_root: Path) -> frozenset[str]:
     return frozenset(names)
 
 
+_ASSET_REF_RE = re.compile(r'assets/([^\s()"\'<>]+)')
+
+
+def check_asset_refs(text: str, input_path: Path) -> list[str]:
+    """Warn about asset references that don't resolve on disk.
+
+    Scans the markdown source for ``assets/<name>`` references and
+    warns if the named file does not exist in the module's assets
+    directory (``input_path.parent / 'assets'``).
+    """
+    warnings: list[str] = []
+    seen: set[str] = set()
+    assets_dir = input_path.parent / 'assets'
+    for m in _ASSET_REF_RE.finditer(text):
+        name = m.group(1)
+        if name in seen:
+            continue
+        seen.add(name)
+        if '.' not in name:
+            continue
+        if not (assets_dir / name).exists():
+            warnings.append(f'Missing asset: assets/{name}')
+    return warnings
+
+
 def convert_dashes(text: str) -> str:
     """Convert -- to en-dash and --- to em-dash in Markdown text.
 

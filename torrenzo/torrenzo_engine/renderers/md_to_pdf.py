@@ -13,7 +13,7 @@ import yaml
 from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs
+from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs
 
 
 DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
@@ -353,6 +353,7 @@ def render(
     body = convert_dashes(body)
     warnings.extend(tag_warnings)
     warnings.extend(link_warnings)
+    warnings.extend(check_asset_refs(body, input_path))
 
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
 
