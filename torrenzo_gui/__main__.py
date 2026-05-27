@@ -268,7 +268,7 @@ class MainWindow(QMainWindow):
                 self._live_url = m.group(1)
                 self._preview_btn.setEnabled(True)
                 self.statusBar().showMessage(
-                    f'Watching — live server at {self._live_url}')
+                    f'Watching. Live server at {self._live_url}')
 
     def _on_stderr(self):
         text = self._process.readAllStandardError().data().decode(errors='replace')
