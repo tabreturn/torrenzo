@@ -68,7 +68,8 @@ Torrenzo includes a desktop application for point-and-click builds.
 - **Directory picker** with history (remembers your subject folders)
 - **Build options** as checkboxes
 - **Live build log** displayed in the window
-- **Preview in Browser** button opens the build output for review
+- **Preview in Browser** button opens the build output for review (with live-reload for `--watch` mode)
+- **Watch mode** checkbox monitors source files and rebuilds automatically on change
 - **Diff** button compares the local cartridge against a live Canvas export
 
 The Diff feature allows you to compare your active project against an exported Canvas file. This is especially helpful when you need to be selective about updating content, as importing a massive cartridge for every minor tweak can be inefficient, messy, or even restricted by institutional permissions. Diff groups results into three categories:
@@ -111,6 +112,8 @@ python -m torrenzo /path/to/your-subject
 - Use `--optimize-assets` to optimise graphic assets. SVG optimisation uses the system `scour` CLI tool (`pip install scour`); PNG optimisation requires `pngquant` or `oxipng` installed on your system.
 
 - Use `--cc` to output a [Common Cartridge](#common-cartridge-imscc) file for bulk-importing Canvas content.
+
+* Use `--watch` to monitor source files and rebuild them incrementally upon saving. In the GUI, ticking the **--watch** checkbox additionally retargets **Preview in Browser** to a live reload server that automatically refreshes the browser preview after each rebuild. For the CLI, use `--live` (which implies `--watch`) to start this HTTP server.
 
 - Use the **Diff** button (GUI) or `--diff LOCAL.imscc LIVE.imscc` (CLI) to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import. This is useful when you want to apply targeted updates using the Canvas editor rather than importing an entire Common Cartridge.
 
@@ -323,10 +326,3 @@ To generate a log, redirect output to a file using `> diff.log` (or preffered fi
 - File rename quirks (from Canvas import-export roundtrips) handled automatically
 
 > 💡 Use `--diff-verbose` to see full content diffs for modified WikiPages.
-
----
-
-## To-Do
-
-[ ] Add 'watch' feature (so that build runs with any file change, and browser preview updates)?
-

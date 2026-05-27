@@ -39,6 +39,7 @@
 - Default run skips files whose output is newer than the source and all shared deps (`outline.md`, stylesheet, bib) -- mtime comparison via `torrenzo_engine/build_stamp.py`.
 - `--force` rebuilds all files without clearing `build/`; `--clean` wipes `build/` first then rebuilds all.
 - `--watch` does an initial incremental build then polls source files (1 s interval, skips `build/`) and re-runs an incremental build whenever changes are detected; Ctrl+C stops it.
+- `--live` implies `--watch`; additionally starts a localhost HTTP server (`torrenzo_engine/live_server.py`) that serves `build/`, injects an SSE-based reload script into HTML responses, and pushes reload events to all connected browsers after each rebuild. Port is auto-assigned; URL printed to stdout. GUI `--watch` checkbox passes `--live`, parses the URL from stdout, and uses it for the Preview button.
 - Orphaned outputs (source deleted/renamed) are pruned automatically after each run; empty directories are removed.
 - Diagnostics report "N file(s) up-to-date, skipped", "N file(s) newly built", and "N orphaned file(s) removed" at the end of each run.
 - Timestamp embedding per format:

@@ -12,6 +12,7 @@ if __name__ == '__main__' and '--cli' in sys.argv:
 import re
 import webbrowser
 from pathlib import Path
+from urllib.parse import urljoin
 
 from PySide6.QtCore import QProcess, QSettings, Qt, QUrl
 from PySide6.QtGui import QColor, QDesktopServices, QFont, QIcon, QPainter, QPixmap
@@ -60,6 +61,7 @@ def _find_browser() -> str | None:
                 return found
     return None
 ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
+_LIVE_URL_RE = re.compile(r'Live server at (http://\S+)')
 
 
 def _strip(text: str) -> str:
@@ -74,6 +76,7 @@ class MainWindow(QMainWindow):
         self._process: QProcess | None = None
         self._build_ok = False
         self._watching = False
+        self._live_url: str | None = None
         self._settings = QSettings('torrenzo', 'gui')
         self._setup_ui()
         self._load_history()
@@ -227,7 +230,7 @@ class MainWindow(QMainWindow):
         if self._opt_cc.isChecked():
             args.append('--cc')
         if self._opt_watch.isChecked():
-            args.append('--watch')
+            args.append('--live')
 
         self._process = QProcess()
         self._process.setWorkingDirectory(str(TORRENZO_DIR))
@@ -238,6 +241,7 @@ class MainWindow(QMainWindow):
 
         if self._opt_watch.isChecked():
             self._watching = True
+            self._live_url = None
             self._build_btn.setEnabled(True)
             self._build_btn.setText('Stop Watching')
             self.statusBar().showMessage('Watching for changes…')
@@ -249,13 +253,22 @@ class MainWindow(QMainWindow):
                 self._process.kill()
                 self._process.waitForFinished(2000)
         self._watching = False
+        self._live_url = None
         self._build_btn.setText('Build')
         self._build_btn.setEnabled(True)
         self.statusBar().showMessage('Watch stopped')
 
     def _on_stdout(self):
         text = self._process.readAllStandardOutput().data().decode(errors='replace')
-        self._log.appendPlainText(_strip(text).rstrip())
+        plain = _strip(text)
+        self._log.appendPlainText(plain.rstrip())
+        if self._watching and not self._live_url:
+            m = _LIVE_URL_RE.search(plain)
+            if m:
+                self._live_url = m.group(1)
+                self._preview_btn.setEnabled(True)
+                self.statusBar().showMessage(
+                    f'Watching — live server at {self._live_url}')
 
     def _on_stderr(self):
         text = self._process.readAllStandardError().data().decode(errors='replace')
@@ -264,6 +277,7 @@ class MainWindow(QMainWindow):
     def _on_finished(self, exit_code: int):
         was_watching = self._watching
         self._watching = False
+        self._live_url = None
         self._build_btn.setText('Build')
         self._build_btn.setEnabled(True)
         if was_watching:
@@ -277,16 +291,20 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(f'Build failed (exit code {exit_code})')
 
     def _preview_in_browser(self):
-        subject = self._dir_combo.currentText().strip()
-        build_dir = Path(subject) / 'build'
-        if build_dir.is_dir():
+        if self._live_url:
+            url = self._live_url
+        else:
+            subject = self._dir_combo.currentText().strip()
+            build_dir = Path(subject) / 'build'
+            if not build_dir.is_dir():
+                return
             url = build_dir.resolve().as_uri()
-            chrome = _find_browser()
-            if chrome:
-                import subprocess
-                subprocess.Popen([chrome, url])
-            else:
-                webbrowser.open(url)
+        chrome = _find_browser()
+        if chrome:
+            import subprocess
+            subprocess.Popen([chrome, url])
+        else:
+            webbrowser.open(url)
 
     def _diff_cartridges(self):
         subject = self._dir_combo.currentText().strip()

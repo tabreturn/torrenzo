@@ -26,6 +26,7 @@ from .torrenzo_engine.renderers import (
 from .torrenzo_engine.build_stamp import now_iso
 from .torrenzo_engine.cc_diff import diff_cc
 from .torrenzo_engine.cc_export import export_cc
+from .torrenzo_engine.live_server import LiveServer
 from .torrenzo_engine.tags import build_tag_map, find_outline, load_outline
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -316,8 +317,15 @@ def watch_and_rebuild(
   diff_paths: list[Path] | None = None,
   diff_verbose: bool = False,
   poll_interval: float = 1.0,
+  live: bool = False,
 ) -> None:
     """Poll for source changes and rebuild incrementally."""
+    server: LiveServer | None = None
+    if live:
+        server = LiveServer(build_dir)
+        server.start()
+        print(fmt('info', f'Live server at {server.url}'), flush=True)
+
     print(fmt('info', f'Watching {subject_root} for changes (Ctrl+C to stop)'),
           flush=True)
     prev = _snapshot_mtimes(subject_root)
@@ -347,12 +355,17 @@ def watch_and_rebuild(
                           diff_paths=diff_paths,
                           diff_verbose=diff_verbose)
                 sys.stdout.flush()
+                if server:
+                    server.notify_reload()
                 prev = _snapshot_mtimes(subject_root)
             else:
                 prev = curr
     except KeyboardInterrupt:
         print(flush=True)
         print(fmt('info', 'Watch stopped'), flush=True)
+    finally:
+        if server:
+            server.stop()
 
 
 def main() -> None:
@@ -407,7 +420,14 @@ def main() -> None:
       action='store_true',
       help='Watch source files and rebuild incrementally on change',
     )
+    parser.add_argument(
+      '--live',
+      action='store_true',
+      help='Start a live-reload HTTP server (implies --watch)',
+    )
     args = parser.parse_args()
+    if args.live:
+        args.watch = True
 
     # Diff-only mode: no build needed
     if args.diff and not args.cc and not args.force and not args.clean:
@@ -437,7 +457,8 @@ def main() -> None:
         watch_and_rebuild(subject_root, build_dir,
                           optimize=args.optimize_assets, cc=args.cc,
                           diff_paths=args.diff,
-                          diff_verbose=args.diff_verbose)
+                          diff_verbose=args.diff_verbose,
+                          live=args.live)
 
 
 if __name__ == '__main__':
