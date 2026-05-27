@@ -133,6 +133,22 @@ Keys in `outline.[md|yaml]` define your subject metadata and automatically popul
 - **Assessments:**  
   Produce a full metadata table using `assessment.a1` or `assessment.a2`, etc.
 
+### Wiki Links
+
+Use wiki-style `[[...]]` syntax to link between modules and assessments. Torrenzo auto-derives display labels:
+
+| Syntax                               | Renders as                                      |
+|--------------------------------------|-------------------------------------------------|
+| `[[mod_01_02_oranges]]`              | `[Module 1.2: Oranges](mod_01_02_oranges.html)` |
+| `[[mod_01_02_oranges\|Oranges]]`     | `[Oranges](mod_01_02_oranges.html)`             |
+| `[[mod_02_02_mangoes\|Mangoes]]`     | `[Mangoes](mod_02_02_mangoes.html)`             |
+| `[[assessment_01]]`                  | `[Assessment 1](assessment_01.html)`            |
+| `[[assessment_01\|Brief]]`           | `[Brief](assessment_01.html)`                   |
+
+Wiki links expand before Markdown rendering and before Common Cartridge export, so they work in the browser preview. However, *Assessment* link targets won't preview as those pages are built for the cartridge only.
+
+> 💡 Wiki links (`[[...]]`) are syntactic sugar, and regular Markdown links like `[Mangoes](../module_02/mod_02_02_mangoes.md)` work too -- the build rewrites `.md` to `.html` automatically. Use raw  `<a href="path.md">` if you must retain the `.md` extension.
+
 ### Components
 
 Torrenzo includes built-in components for common page elements. Use the `component` tag prefix:

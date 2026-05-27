@@ -24,7 +24,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 
-from .preprocess import convert_dashes
+from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -48,7 +48,10 @@ SCHEMA_LOCATION = (
 MOD_HTML_RE = re.compile(r'^mod_(\d+)_(\d+)_(.+)\.html$')
 ASSESS_PDF_RE = re.compile(r'^assessment_(\d+)\.pdf$')
 ASSET_REF_RE = re.compile(r'((?:src|href)=["\'])assets/([^"\']+)(["\'])')
-PAGE_HREF_RE = re.compile(r'(href=["\'])(mod_\d+_\d+_[^"\']+\.html)(["\'])')
+PAGE_HREF_RE = re.compile(
+    r'(href=["\'])(?:.*?/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
+ASSESS_HREF_RE = re.compile(
+    r'(href=["\'])(?:.*?/)?(assessment_\d+)\.(?:html|pdf)(["\'])')
 ITALIC_WEIGHT_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*%\*\s*$')
 ITALIC_RANGE_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*[-–]+\s*(\d+)\s*%\*\s*$')
 
@@ -133,7 +136,8 @@ def _wrap_wiki_html(body: str, title: str, identifier: str, *,
     )
 
 
-def _rewrite_html(html_text: str, page_id_map: dict[str, str]) -> str:
+def _rewrite_html(html_text: str, page_id_map: dict[str, str],
+                  assess_id_map: dict[str, str] | None = None) -> str:
     html_text = re.sub(r'<!-- built:.*?-->\n?', '', html_text)
 
     html_text = ASSET_REF_RE.sub(
@@ -148,6 +152,19 @@ def _rewrite_html(html_text: str, page_id_map: dict[str, str]) -> str:
         return m.group(0)
 
     html_text = PAGE_HREF_RE.sub(_replace_page_href, html_text)
+
+    if assess_id_map:
+        def _replace_assess_href(m: re.Match) -> str:
+            key = m.group(2)
+            # Normalize leading zero: assessment_01 -> assessment_1
+            normalized = re.sub(r'assessment_0+(\d+)', r'assessment_\1', key)
+            aid = assess_id_map.get(normalized) or assess_id_map.get(key)
+            if aid:
+                return (f'{m.group(1)}$CANVAS_OBJECT_REFERENCE$/'
+                        f'assignments/{aid}{m.group(3)}')
+            return m.group(0)
+        html_text = ASSESS_HREF_RE.sub(_replace_assess_href, html_text)
+
     return html_text
 
 
@@ -481,7 +498,9 @@ def _parse_brief_sections(brief_path: Path) -> dict[str, str]:
 
 
 def _assignment_description_html(ass: dict, brief_md: Path | None,
-                                 module_css: str = '') -> str:
+                                 module_css: str = '',
+                                 valid_targets: frozenset[str] | None = None,
+                                 ) -> str:
     """Build an HTML description page for a Canvas assignment."""
     body = (
         f'<p>\n'
@@ -498,6 +517,8 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
         for name, content in sections.items():
             if content:
+                content, _link_warnings = expand_wiki_links(content, valid_targets)
+                content = rewrite_md_hrefs(content)
                 content = convert_dashes(content)
                 html_content = md.render(content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
@@ -782,6 +803,10 @@ def export_cc(
                 'outline_info': info,
             })
 
+    assess_id_map: dict[str, str] = {}
+    for ass in assessment_items:
+        assess_id_map[f'assessment_{ass["num"]}'] = ass['assignment_id']
+
     assets: list[dict] = []
     assets_dir = modules_dir / 'assets' if modules_dir.exists() else None
     if assets_dir and assets_dir.exists():
@@ -809,6 +834,7 @@ def export_cc(
     has_course_settings = bool(assessment_items) or bool(module_pages)
     module_labels = _module_labels(subject_root)
     assignment_css = _module_css(subject_root)
+    valid_targets = collect_valid_outputs(subject_root)
 
     manifest_xml = _build_manifest(
         subject_code, subject_title,
@@ -828,7 +854,7 @@ def export_cc(
                 mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
             for page in sorted(module_pages[mod_num], key=lambda p: p['seq']):
                 body = page['path'].read_text(encoding='utf-8')
-                body = _rewrite_html(body, page_id_map)
+                body = _rewrite_html(body, page_id_map, assess_id_map)
                 if mod_num == 0:
                     title = page['title']
                 else:
@@ -844,7 +870,7 @@ def export_cc(
                      f'web_resources/{ass["pdf_filename"]}')
 
             aid = ass['assignment_id']
-            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css)
+            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets)
             zf.writestr(f'{aid}/{aid}.html', desc_html)
 
             settings = _assignment_settings_xml(

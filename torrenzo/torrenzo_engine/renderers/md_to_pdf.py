@@ -13,10 +13,10 @@ import yaml
 from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes
+from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs
 
 
-DATAVIEW_RE = re.compile(r'`?=?\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
+DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
   r'FLATTEN ([^\s]+) AS x\s+```',
@@ -347,8 +347,12 @@ def render(
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body = body.replace('[[cc-section]]', '')
     body, tag_warnings = apply_tags(body, tags)
+    body, link_warnings = expand_wiki_links(body, collect_valid_outputs(
+        input_path.parent.parent.parent))
+    body = rewrite_md_hrefs(body)
     body = convert_dashes(body)
     warnings.extend(tag_warnings)
+    warnings.extend(link_warnings)
 
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
 
