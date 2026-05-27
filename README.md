@@ -298,3 +298,9 @@ To generate a log, redirect output to a file using `> diff.log` (or preffered fi
 
 > 💡 Use `--diff-verbose` to see full content diffs for modified WikiPages.
 
+---
+
+## To-Do
+
+[ ] Add 'watch' feature (so that build runs with any file change, and browser preview updates)?
+
