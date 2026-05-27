@@ -142,8 +142,8 @@ class Pipeline:
                     success, msg, render_warnings = result
                 else:
                     success, msg = result
-                level = 'info' if success else 'error'
-                entries.append((level, f'{job.name}: {self._shorten(msg)}'))
+                if not success:
+                    entries.append(('error', f'{job.name}: {self._shorten(msg)}'))
                 for warning in render_warnings:
                     entries.append((
                       'warning',
@@ -184,12 +184,10 @@ class Pipeline:
               f'{skipped_count} file(s) up-to-date, skipped',
             ))
         if built_count:
-            formatted.append(fmt(
+            formatted.insert(0, fmt(
               'info',
               f'{built_count} file(s) newly built',
             ))
-            for f in built_files:
-                formatted.append(f'  {f}')
             prior_entries.append({
                 'built_at': now_iso(),
                 'files': built_files,
