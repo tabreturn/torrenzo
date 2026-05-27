@@ -14,7 +14,7 @@ from pybtex.database import parse_file
 from .bib_to_html import render_entry_to_html
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
-from ..preprocess import convert_dashes, unicode_to_entities, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs
+from ..preprocess import convert_dashes, unicode_to_entities, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
 from ...components import build_component_tags, render_page_spacer
 
 
@@ -94,6 +94,9 @@ def sanitize_html_attributes(html_text: str) -> str:
 
 
 _FONT_WEIGHT_RE = re.compile(r'font-weight\s*:\s*(bold|700|bolder)\s*;?\s*')
+
+
+
 
 
 def replace_inline_bold(html_text: str) -> str:
@@ -248,6 +251,7 @@ def render(
         )
     css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
+    html_body = apply_image_style_directives(html_body)
     if ordered_keys:
         references = render_references(ordered_keys, bib_entries, warnings)
         if references:

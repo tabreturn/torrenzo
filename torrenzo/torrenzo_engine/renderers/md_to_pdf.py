@@ -13,7 +13,7 @@ import yaml
 from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs
+from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
 
 
 DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
@@ -403,6 +403,7 @@ def render(
 
         # render markdown → HTML body
         html_body = md.render(body)
+        html_body = apply_image_style_directives(html_body)
 
         # inline logo SVG into header template
         logo_markup = ''

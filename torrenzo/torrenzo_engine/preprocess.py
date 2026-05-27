@@ -3,6 +3,8 @@
 import re
 from pathlib import Path
 
+from lxml import html as lxml_html
+
 _WIKI_LINK_RE = re.compile(r'\[\[([^\]]+?)(?:\|([^\]]+?))?\]\]')
 _FILE_ISH_RE = re.compile(r'(mod_\d+_\d+_\w+|assessment_\d+|\.\w+$|/)')
 _MOD_RE = re.compile(r'\bmod_(\d+)_(\d+)_(\w+)$')
@@ -118,6 +120,34 @@ def check_asset_refs(text: str, input_path: Path) -> list[str]:
         if not (assets_dir / name).exists():
             warnings.append(f'Missing asset: assets/{name}')
     return warnings
+
+
+def apply_image_style_directives(html_text: str) -> str:
+    """Expand Gemini-style image sizing in alt text.
+
+    ``![alt|width:300px;height:200px](img.png)`` becomes
+    ``<img src="img.png" alt="alt" style="width:300px;height:200px" />``.
+
+    If the alt contains only directives (no text before the pipe),
+    alt is left empty.
+    """
+    try:
+        document = lxml_html.fromstring(html_text)
+    except Exception:
+        return html_text
+    for img in document.iter('img'):
+        alt = img.get('alt', '')
+        if '|' not in alt:
+            continue
+        before, sep, after = alt.partition('|')
+        directives = after.strip()
+        if not directives:
+            continue
+        img.set('alt', before.strip())
+        existing = img.get('style', '')
+        img.set('style',
+                f'{existing}{"; " if existing else ""}{directives}')
+    return lxml_html.tostring(document, encoding='unicode', method='html')
 
 
 def convert_dashes(text: str) -> str:

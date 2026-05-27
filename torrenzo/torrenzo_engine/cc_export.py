@@ -24,7 +24,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 
-from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs
+from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -521,6 +521,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                 content = rewrite_md_hrefs(content)
                 content = convert_dashes(content)
                 html_content = md.render(content)
+                html_content = apply_image_style_directives(html_content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 
     css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''

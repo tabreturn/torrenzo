@@ -149,6 +149,16 @@ Wiki links expand before Markdown rendering and before Common Cartridge export, 
 
 > 💡 Wiki links (`[[...]]`) are syntactic sugar, and regular Markdown links like `[Mangoes](../module_02/mod_02_02_mangoes.md)` work too -- the build rewrites `.md` to `.html` automatically. Use raw  `<a href="path.md">` if you must retain the `.md` extension.
 
+### Image Sizing
+
+Images support optional Gemini-style CSS directives after a pipe (`|`), inlining styling on the resulting `<img>` element:
+
+```markdown
+![Some fruit|max-width:300px;border-radius:8px](assets/fruit.png)
+```
+
+Output: `<img src="assets/fruit.png" alt="Some fruit" style="max-width:300px;border-radius:8px">`
+
 ### Components
 
 Torrenzo includes built-in components for common page elements. Use the `component` tag prefix:
