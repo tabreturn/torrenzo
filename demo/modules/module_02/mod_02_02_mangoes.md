@@ -26,4 +26,6 @@ Select two different mango varieties if available, or a mango and another stone 
 - Aroma intensity at different distances from the pit
 - Sweetness, acidity, and any distinctive flavour notes
 
+Refer back to [[mod_01_02_oranges]] for the observation techniques covered in Module 1.
+
 <!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->

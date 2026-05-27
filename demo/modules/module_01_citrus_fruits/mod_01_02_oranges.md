@@ -18,6 +18,8 @@ In this module you will learn how to organise fruit observations into short cata
 
 You will also continue thinking about how images and written descriptions support one another. A photograph communicates visual qualities such as colour, shape, and texture, while written descriptions can capture sensory experiences -- such as aroma, flavour, or texture -- that images alone cannot fully convey.[@bogus]
 
-By the end of this module you should feel more confident organising your fruit observations into structured catalogue entries that combine descriptive writing and images. These skills will support your progress toward **Assessment 1**, where you will create a short fruit catalogue featuring three fruits of your choosing.
+By the end of this module you should feel more confident organising your fruit observations into structured catalogue entries that combine descriptive writing and images. These skills will support your progress toward [[assessment_01]], where you will create a short fruit catalogue featuring three fruits of your choosing.
+
+[[mod_02_02_mangoes]] explores related observation techniques across a different fruit family.
 
 <!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->

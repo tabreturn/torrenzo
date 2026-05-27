@@ -25,4 +25,6 @@ Consider including a berry entry in your catalogue. Pay special attention to:
 - The texture contrast between skin, flesh, and seeds
 - How berries change appearance over a short observation period
 
+> Cross-reference: [[../module_01_citrus_fruits/mod_01_02_oranges|citrus observation techniques]] and [[Mango|../module_02/mod_02_02_mangoes]].
+
 <!-- maintain references in modules/references.bib (BibTeX); the site build renders them in /build here. -->

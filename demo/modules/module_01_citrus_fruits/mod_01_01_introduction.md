@@ -21,7 +21,7 @@ Assessment 1 is due at the end of **Module 4**.
 
 Tasks to undertake in this module to prepare for Assessment 1 include:
 
-- Read the **Assessment 1 Brief** carefully.
+- Read the **[[assessment_01]]** brief carefully.
 - Review the fruit observations you began collecting in earlier modules.
 - Select at least **three fruits** that you might include in your catalogue.
 - Write short descriptive notes about each fruit's appearance, scent, flavour, and texture.
