@@ -17,6 +17,7 @@ from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, co
 
 
 DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
+BARE_TAG_RE = re.compile(r'(?<!=)\[\[([^\]]+)\]\]\.([^\s`]+)')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
   r'FLATTEN ([^\s]+) AS x\s+```',
@@ -323,7 +324,12 @@ def apply_tags(
             return replace_content(f'outline.{suffix}', match.group(0))
         return replace_content(f'outline.{prefix}', match.group(0))
 
+    def replace_bare_tag(match: re.Match[str]) -> str:
+        suffix = match.group(2)
+        return replace_content(f'outline.{suffix}', match.group(0))
+
     replaced = DATAVIEW_RE.sub(replace_dv_inline, text)
+    replaced = BARE_TAG_RE.sub(replace_bare_tag, replaced)
     replaced = DATAVIEW_BLOCK_RE.sub(
       lambda m: replace_dataview_block(m),
       replaced,
