@@ -20,6 +20,8 @@
 ## Tagging (current behavior)
 
 - Dataview-style inline tags only: `` `=[[outline]].path.to.value` ``.
+- Bare tag form also supported: `[[outline]].path.to.value` (no backticks/equals).
+- Components use the bare form: `[[component.module-navigation]]` (no backticks/equals).
 - SLO Dataview LIST block supported (LIST without id slo[x] ... FLATTEN ...).
 - Parent paths (e.g., `` `=[[outline]].assessment.a1` ``) auto-render as HTML tables; SLO code lists render `<ul>` of full descriptions (no bold codes).
 - Assessment metatable: `` `=[[outline]].assessment.<id>.metatable` `` outputs the formatted assessment table.

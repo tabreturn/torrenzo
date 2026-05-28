@@ -166,11 +166,11 @@ Output: `<img src="assets/fruit.png" alt="Some fruit" style="max-width:300px;bor
 
 ### Components
 
-Torrenzo includes built-in components for common page elements. Use the `component` tag prefix:
+Torrenzo includes built-in components for common page elements. Components use the bare `[[...]]` form (no backticks or equals sign):
 
-| Tag                                      | Description                                      |
-|------------------------------------------|--------------------------------------------------|
-| `` `=[[component.module-navigation]]` `` | Tabbed navigation linking to sibling sub-modules |
+| Tag                                | Description                                      |
+|------------------------------------|--------------------------------------------------|
+| `[[component.module-navigation]]`  | Tabbed navigation linking to sibling sub-modules |
 
 ---
 
