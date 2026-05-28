@@ -127,7 +127,7 @@ Each build output embeds timestamps on file outputs (code comments for plain-tex
 
 Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
-Alternatively, you can so just use the bare form without backticks or equals sign. So just `[[outline]].assessment.a1.weighting` or `[[outline]].slo.a`. Note, however, that the bare form won't render as a live preview in Obsidian.
+Alternatively, you can also just use the bare form without backticks or equals sign: `[[outline]].assessment.a1.weighting` or `[[outline]].slo.a`. Note, however, that the bare form won't render as a live preview in Obsidian.
 
 Keys in `outline.[md|yaml]` define your subject metadata and automatically populate across all content via tags/placeholders.
 

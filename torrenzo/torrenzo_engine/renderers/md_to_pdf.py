@@ -329,6 +329,8 @@ def apply_tags(
         suffix = match.group(2)
         if suffix:
             return replace_content(f'outline.{suffix}', match.group(0))
+        if '.' not in inner or '/' in inner or '|' in inner:
+            return match.group(0)
         return replace_content(f'outline.{inner}', match.group(0))
 
     replaced = DATAVIEW_RE.sub(replace_dv_inline, text)
