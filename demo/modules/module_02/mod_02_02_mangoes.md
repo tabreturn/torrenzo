@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 2.2: The Mango
 

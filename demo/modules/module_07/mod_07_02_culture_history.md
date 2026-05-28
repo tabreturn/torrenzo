@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 7.2: Symbolism, Trade, and Identity
 

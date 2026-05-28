@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 6.2: Drying, Freezing, and Sugar Preservation
 

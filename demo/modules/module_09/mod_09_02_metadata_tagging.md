@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 9.2: Metadata, Tagging, and Taxonomy
 

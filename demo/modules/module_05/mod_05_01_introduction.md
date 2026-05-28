@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 5.1: Introduction to Exotic Tropical Fruits
 

@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 5.2: Dragon Fruit, Rambutan, and Durian
 

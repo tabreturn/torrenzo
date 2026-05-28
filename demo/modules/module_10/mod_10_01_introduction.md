@@ -1,4 +1,4 @@
-`=[[component.module-navigation]]`
+[[component.module-navigation]]
 
 # Module 10.1: Introduction to Comparative Fruit Analysis
 
