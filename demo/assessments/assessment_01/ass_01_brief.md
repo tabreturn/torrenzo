@@ -26,6 +26,12 @@ This subject is a playful exploration of observation skills. Learning to notice 
 
 ---
 
+## Attachments [[cc-section]]
+
+For an exemplar submission, download [exemplar.zip](assets/exemplar.zip) below.
+
+---
+
 ## Submission Instructions [[cc-section]]
 
 Upload the ZIP to the LMS submission portal, and place a short README inside the archive that lists the files included, the sources of the images (if not original), and one sentence about what you learned from the exercise.
@@ -57,7 +63,6 @@ This exercise helped me practice observing small sensory details and describing 
 ```
 
 ---
-
 
 ## Academic Integrity Declaration [[cc-section]]
 
