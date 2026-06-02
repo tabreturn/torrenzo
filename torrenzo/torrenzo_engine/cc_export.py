@@ -522,6 +522,8 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                 content = convert_dashes(content)
                 html_content = md.render(content)
                 html_content = apply_image_style_directives(html_content)
+                html_content = ASSET_REF_RE.sub(
+                    r'\1$IMS-CC-FILEBASE$/assets/\2\3', html_content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 
     css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''
