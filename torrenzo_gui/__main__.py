@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+from __future__ import annotations
+
 """Torrenzo GUI -- point, click, build."""
 
 import sys

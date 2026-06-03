@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Minimal live-reload HTTP server using SSE.
 
 Serves files from a build directory and injects a tiny script into HTML
@@ -5,7 +7,6 @@ responses that listens on ``/_sse`` for reload events.  Call
 ``notify_reload()`` after a build completes to push a reload to every
 connected browser tab.
 """
-from __future__ import annotations
 
 import io
 import threading

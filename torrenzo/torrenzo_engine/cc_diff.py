@@ -1,10 +1,10 @@
+from __future__ import annotations
+
 """cc_diff -- compare two IMS Common Cartridge (.imscc) files.
 
 Extracts and diffs WikiPages, assessments, assets, and module structure.
 Designed to compare a local Torrenzo build against a live Canvas export.
 """
-
-from __future__ import annotations
 
 import difflib
 import hashlib

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 from __future__ import annotations
+
 """torrenzo.__main__
 Converts assessment briefs into PDFs and module activities into
 LMS-ready HTML snippets.

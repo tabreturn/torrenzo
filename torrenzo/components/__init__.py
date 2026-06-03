@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """torrenzo.components -- reusable HTML components injected via tags."""
 
 from pathlib import Path

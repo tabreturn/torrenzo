@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """preprocess -- shared Markdown text transformations applied before rendering."""
 
 import re
