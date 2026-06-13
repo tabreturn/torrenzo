@@ -62,12 +62,18 @@ def _add_pdf_outlines(
     """Add PDF outline/bookmarks from markdown headings."""
     from pypdf.generic import Fit
 
-    md_text = body
+    md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+    tokens = md.parse(body)
     headings: list[tuple[int, str]] = []
-    for m in re.finditer(r'^(#{1,6})\s+(.+)$', md_text, re.M):
-        level = len(m.group(1))
-        text = m.group(2).strip()
-        headings.append((level, text))
+    html_strip = re.compile(r'<[^>]+>')
+    for i, token in enumerate(tokens):
+        if token.type != 'heading_open':
+            continue
+        level = int(token.tag[1])
+        if i + 1 < len(tokens) and tokens[i + 1].type == 'inline':
+            html = md.renderInline(tokens[i + 1].content)
+            text = html_strip.sub('', html).strip()
+            headings.append((level, text))
 
     if not headings:
         return
