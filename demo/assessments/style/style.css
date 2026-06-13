@@ -262,13 +262,6 @@ a {
   text-decoration: none;
 }
 
-a[href^='http']::after {
-  color: var(--color-rose);
-  content: ' (' attr(href) ')';
-  font-size: 85%;
-}
-
-
 /* =========================================
    PAGE CONTROL
    ========================================= */
