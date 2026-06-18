@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import re
 import shutil
@@ -15,6 +16,10 @@ from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
 from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
+
+# Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
+# warning each time we reopen one for metadata stamping. Silence it.
+logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 
 DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
