@@ -2,7 +2,9 @@ from __future__ import annotations
 
 """torrenzo.components -- reusable HTML components injected via tags."""
 
+import html as html_mod
 from pathlib import Path
+from typing import Callable
 
 
 def _parse_module_filename(filepath: Path) -> tuple[int, str] | None:
@@ -53,6 +55,31 @@ def render_module_navigation(input_path: Path) -> str:
 
 def render_page_spacer() -> str:
     return '<p>&nbsp;</p>'
+
+
+def render_video(file_path: str) -> str:
+    safe = html_mod.escape(file_path.strip())
+    basename = html_mod.escape(Path(file_path.strip()).name)
+    return (
+        '<div style="position: relative; width: 100%; '
+        'padding-bottom: calc(56.25% + 48px); height: 0; overflow: hidden;">\n'
+        '  <iframe\n'
+        f'    title="Video player for {basename}"\n'
+        '    data-media-type="video"\n'
+        f'    src="{safe}"\n'
+        '    loading="lazy"\n'
+        '    allowfullscreen="allowfullscreen"\n'
+        '    allow="fullscreen"\n'
+        '    style="position: absolute; top: 0; left: 0; '
+        'width: 100%; height: 100%; border: 0;"\n'
+        '  ></iframe>\n'
+        '</div>'
+    )
+
+
+PARAMETERIZED_COMPONENTS: dict[str, Callable[[str], str]] = {
+    'video': render_video,
+}
 
 
 def build_component_tags(input_path: Path) -> dict[str, str]:

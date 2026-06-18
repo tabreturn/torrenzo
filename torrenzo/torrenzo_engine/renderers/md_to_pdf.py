@@ -16,6 +16,7 @@ from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
 from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
+from ...components import PARAMETERIZED_COMPONENTS
 
 # Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
 # warning each time we reopen one for metadata stamping. Silence it.
@@ -341,7 +342,15 @@ def apply_tags(
         suffix = match.group(2)
         if suffix:
             return replace_content(f'outline.{suffix}', match.group(0))
-        if '.' not in inner or '/' in inner or '|' in inner:
+        if '|' in inner:
+            name, _, arg = inner.partition('|')
+            if name.startswith('component.'):
+                comp_key = name[len('component.'):]
+                renderer = PARAMETERIZED_COMPONENTS.get(comp_key)
+                if renderer is not None:
+                    return renderer(arg)
+            return match.group(0)
+        if '.' not in inner or '/' in inner:
             return match.group(0)
         return replace_content(f'outline.{inner}', match.group(0))
 
