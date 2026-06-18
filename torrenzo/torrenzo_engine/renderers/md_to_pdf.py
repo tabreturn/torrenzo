@@ -14,7 +14,7 @@ import yaml
 from markdown_it import MarkdownIt
 
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
+from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
 
 
 DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
@@ -363,6 +363,8 @@ def render(
     warnings: list[str] = list(meta_warnings)
     if METADATA_TOKEN in body and metadata:
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
+    body, include_warnings = resolve_includes(
+        body, context.get('subject_root', input_path.parent.parent.parent))
     body = body.replace('[[cc-section]]', '')
     body, tag_warnings = apply_tags(body, tags)
     body, link_warnings = expand_wiki_links(body, collect_valid_outputs(
@@ -370,6 +372,7 @@ def render(
     body = rewrite_md_hrefs(body)
     body = convert_dashes(body)
     warnings.extend(tag_warnings)
+    warnings.extend(include_warnings)
     warnings.extend(link_warnings)
     warnings.extend(check_asset_refs(body, input_path))
 

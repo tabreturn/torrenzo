@@ -164,6 +164,16 @@ Images support optional Gemini-style CSS directives after a pipe (`|`), inlining
 
 Output: `<img src="assets/fruit.png" alt="Some fruit" style="max-width:300px;border-radius:8px">`
 
+### Includes
+
+Use `[[includes|filename]]` to inline reusable content from the `includes/` directory. The included file's content resolves before tag processing, so includes can themselves contain tags and wiki links.
+
+```markdown
+[[includes|referencing.md]]
+```
+
+Includes resolve from `{subject_root}/includes/`, available to both assessments and modules. Changes to files in `includes/` trigger automatic rebuilds.
+
 ### Components
 
 Torrenzo includes built-in components for common page elements. Components use the bare `[[...]]` form (no backticks or equals sign):
@@ -209,6 +219,8 @@ your-subject/
 │   │   ├── ass_<n>_brief.md
 │   │   └── assets/
 │   └── style/          # branding (logo.svg, style.css, config.js)
+├── includes/           # reusable content snippets (inlined via [[includes|...]])
+│   └── *.md
 ├── modules/            # module content → HTML
 │   ├── module_00/      # overview / introductory content (landing page)
 │   │   ├── mod_00_<seq>_<name>.[md|docx]

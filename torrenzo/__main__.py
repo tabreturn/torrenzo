@@ -162,12 +162,13 @@ def make_jobs(
     assess_css = subject_root / 'assessments' / 'style' / 'style.css'
     assess_js = subject_root / 'assessments' / 'style' / 'config.js'
     assess_logo = subject_root / 'assessments' / 'style' / 'logo.svg'
+    includes_dir = subject_root / 'includes'
 
     html_deps = [
-      p for p in [outline, module_css, module_bib] if p.exists()
+      p for p in [outline, module_css, module_bib, includes_dir] if p.exists()
     ]
     pdf_deps = [
-      p for p in [outline, assess_css, assess_js, assess_logo]
+      p for p in [outline, assess_css, assess_js, assess_logo, includes_dir]
       if p.exists()
     ]
 
@@ -179,6 +180,7 @@ def make_jobs(
         renderer='md_to_pdf',
         context={
           'tags': tags,
+          'subject_root': subject_root,
           'pdf_css': PDF_USER_CSS,
           'version_stamp': version_stamp,
           'header_html': (
@@ -195,7 +197,7 @@ def make_jobs(
         input_pattern=module_md_pattern,
         output_dir=Path('modules_html'),
         renderer='md_to_html',
-        context={'tags': tags, 'asset_dir': Path('modules_html/assets')},
+        context={'tags': tags, 'subject_root': subject_root, 'asset_dir': Path('modules_html/assets')},
         output_ext='.html',
         output_namer=lambda p: p.with_suffix('.html').name,
         deps=html_deps,

@@ -124,6 +124,35 @@ def check_asset_refs(text: str, input_path: Path) -> list[str]:
     return warnings
 
 
+_INCLUDE_RE = re.compile(r'\[\[includes\|([^\]]+)\]\]')
+
+
+def resolve_includes(text: str, subject_root: Path) -> tuple[str, list[str]]:
+    """Resolve [[includes|filename]] by reading and inlining file content.
+
+    Looks for files under ``{subject_root}/includes/``.  Runs before
+    tag application so included content can itself contain tags.
+    """
+    warnings: list[str] = []
+
+    def _replace(m: re.Match[str]) -> str:
+        filename = m.group(1).strip()
+        include_path = subject_root / 'includes' / filename
+        if not include_path.exists():
+            warnings.append(f"Include not found: includes/{filename}")
+            return m.group(0)
+        try:
+            return include_path.read_text(encoding='utf-8')
+        except Exception as exc:
+            warnings.append(
+                f"Failed to read include includes/{filename}: {exc}"
+            )
+            return m.group(0)
+
+    result = _INCLUDE_RE.sub(_replace, text)
+    return result, warnings
+
+
 def apply_image_style_directives(html_text: str) -> str:
     """Expand Gemini-style image sizing in alt text.
 

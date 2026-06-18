@@ -49,11 +49,7 @@ Upload to the LMS submission portal. Only one submission per pair is required; i
 
 Image sources must be attributed in the exhibition itself (captions or footer). Written sources should be cited in APA 7th edition within the reflection and exhibition text where appropriate. A minimum of six sources is expected across the pair's research.
 
----
-
-## Academic Integrity Declaration [[cc-section]]
-
-We declare that, except where we have referenced, the work we are submitting is our own. Both group members have contributed substantially to the research, writing, and design of this exhibition. We have kept records of our collaborative process and can share them if required.
+[[includes|referencing.md]]
 
 <div class="page-break"></div>
 

@@ -38,11 +38,7 @@ Submit a single PDF document containing your report, comparison table, and befor
 
 Use APA 7th edition referencing. A minimum of four sources is expected, drawn from the module readings and your own research. Include in-text citations and a reference list.
 
----
-
-## Academic Integrity Declaration [[cc-section]]
-
-I declare that, except where I have referenced, the work I am submitting is my own. I have read and understood the university's academic integrity policy and have kept records of my research process.
+[[includes|referencing.md]]
 
 <div class="page-break"></div>
 
