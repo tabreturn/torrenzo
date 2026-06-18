@@ -25,7 +25,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 
-from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes
+from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -561,6 +561,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                                  module_css: str = '',
                                  valid_targets: frozenset[str] | None = None,
                                  subject_root: Path | None = None,
+                                 cache_bust: str = '',
                                  ) -> str:
     """Build an HTML description page for a Canvas assignment."""
     ass_dir_name = ass.get('ass_dir_name') or f'assessment_{ass["num"]:02d}'
@@ -575,9 +576,15 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
         f'</p>\n'
     )
 
-    asset_repl = (
-        rf'\1$IMS-CC-FILEBASE$/assessments/{ass_dir_name}/assets/\2\3'
-    )
+    def _asset_repl(m: re.Match) -> str:
+        prefix = m.group(1)
+        filename = m.group(2)
+        quote = m.group(3)
+        if cache_bust:
+            filename = cache_bust_filename(filename, cache_bust)
+        return (f'{prefix}$IMS-CC-FILEBASE$/assessments/'
+                f'{ass_dir_name}/assets/{filename}{quote}')
+
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md, subject_root)
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
@@ -588,7 +595,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                 content = convert_dashes(content)
                 html_content = md.render(content)
                 html_content = apply_image_style_directives(html_content)
-                html_content = ASSET_REF_RE.sub(asset_repl, html_content)
+                html_content = ASSET_REF_RE.sub(_asset_repl, html_content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 
     css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''
@@ -631,6 +638,7 @@ def _build_manifest(
     lecturer_notes: list[dict] | None = None,
     module_labels: dict[int, str] | None = None,
     has_course_settings: bool = False,
+    cache_bust: str = '',
 ) -> str:
     ET.register_namespace('', CC_NS)
     ET.register_namespace('lom', LOM_RES_NS)
@@ -749,7 +757,13 @@ def _build_manifest(
         _el(res, f'{{{ns}}}file', href=cc_href)
 
         for extra in ass.get('extra_files', []):
-            ehref = f'{ass_base}/{extra["rel_path"]}'
+            rel = extra['rel_path']
+            if cache_bust:
+                parts = rel.rsplit('/', 1)
+                fname = parts[-1] if len(parts) > 1 else rel
+                busted = cache_bust_filename(fname, cache_bust)
+                rel = f'{parts[0]}/{busted}' if len(parts) > 1 else busted
+            ehref = f'{ass_base}/{rel}'
             rid = _id(f'resource/{ehref}')
             eres = _el(resources, f'{{{ns}}}resource', identifier=rid,
                        type='webcontent', href=ehref)
@@ -793,6 +807,7 @@ def export_cc(
     build_dir: Path,
     outline: dict[str, Any],
     version_stamp: str = '',
+    cache_bust: str = '',
 ) -> tuple[Path, list[str]]:
     subject = outline.get('subject', {})
     subject_code = str(subject.get('code', 'SUBJECT')).strip()
@@ -925,6 +940,7 @@ def export_cc(
         lecturer_notes=lecturer_notes,
         module_labels=module_labels,
         has_course_settings=has_course_settings,
+        cache_bust=cache_bust,
     )
 
     output_path = build_dir / f'{subject_code}.imscc'
@@ -953,11 +969,17 @@ def export_cc(
             zf.write(ass['pdf_path'],
                      f'{ass_base}/{ass["pdf_filename"]}')
             for extra in ass.get('extra_files', []):
+                rel = extra['rel_path']
+                if cache_bust:
+                    parts = rel.rsplit('/', 1)
+                    fname = parts[-1] if len(parts) > 1 else rel
+                    busted = cache_bust_filename(fname, cache_bust)
+                    rel = f'{parts[0]}/{busted}' if len(parts) > 1 else busted
                 zf.write(extra['abs_path'],
-                         f'{ass_base}/{extra["rel_path"]}')
+                         f'{ass_base}/{rel}')
 
             aid = ass['assignment_id']
-            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets, subject_root)
+            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets, subject_root, cache_bust=cache_bust)
             zf.writestr(f'{aid}/{aid}.html', desc_html)
 
             settings = _assignment_settings_xml(

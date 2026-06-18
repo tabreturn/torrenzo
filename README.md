@@ -117,7 +117,7 @@ python -m torrenzo /path/to/your-subject
 
 - Use the **Diff** button (GUI) or `--diff LOCAL.imscc LIVE.imscc` (CLI) to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import. This is useful when you want to apply targeted updates using the Canvas editor rather than importing an entire Common Cartridge.
 
-Each build output embeds timestamps on file outputs (code comments for plain-text formats; EXIF/etc. metadata for binary assets).
+- Use `--cache-bust` to append a cache-busting suffix to any `/assets` filenames and their HTML references. This works around an intermittent Canvas issue where previously uploaded images stop rendering after a course re-import (I'm not sure why). Provide a custom tag or omit it for an auto-generated daily stamp.
 
 > 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. This provides one way to identify which files need updating in your LMS across multiple builds.
 

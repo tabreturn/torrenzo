@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMainWindow,
     QPlainTextEdit,
     QPushButton,
@@ -123,11 +124,22 @@ class MainWindow(QMainWindow):
         self._opt_watch = QCheckBox('--watch')
         self._opt_watch.setToolTip('Watch source files and rebuild incrementally on change')
         self._opt_watch.toggled.connect(self._on_watch_toggled)
+        self._opt_cache_bust = QCheckBox('--cache-bust')
+        self._opt_cache_bust.setToolTip(
+            'Append a cache-busting suffix to asset filenames; '
+            'leave tag empty for auto-generated date stamp')
+        self._cache_bust_tag = QLineEdit()
+        self._cache_bust_tag.setPlaceholderText('tag (optional)')
+        self._cache_bust_tag.setMaximumWidth(100)
+        self._cache_bust_tag.setEnabled(False)
+        self._opt_cache_bust.toggled.connect(self._cache_bust_tag.setEnabled)
         opts_layout.addWidget(self._opt_cc)
         opts_layout.addWidget(self._opt_clean)
         opts_layout.addWidget(self._opt_force)
         opts_layout.addWidget(self._opt_optimize)
         opts_layout.addWidget(self._opt_watch)
+        opts_layout.addWidget(self._opt_cache_bust)
+        opts_layout.addWidget(self._cache_bust_tag)
         opts_layout.addStretch()
         layout.addWidget(opts_group)
 
@@ -234,6 +246,12 @@ class MainWindow(QMainWindow):
             args.append('--cc')
         if self._opt_watch.isChecked():
             args.append('--live')
+        if self._opt_cache_bust.isChecked():
+            tag = self._cache_bust_tag.text().strip()
+            if tag:
+                args.extend(['--cache-bust', tag])
+            else:
+                args.append('--cache-bust')
 
         self._process = QProcess()
         self._process.setWorkingDirectory(str(TORRENZO_DIR))

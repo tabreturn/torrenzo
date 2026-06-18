@@ -29,6 +29,7 @@ from .torrenzo_engine.build_stamp import now_iso
 from .torrenzo_engine.cc_diff import diff_cc
 from .torrenzo_engine.cc_export import export_cc
 from .torrenzo_engine.live_server import LiveServer
+from .torrenzo_engine.preprocess import cache_bust_filename
 from .torrenzo_engine.tags import build_tag_map, find_outline, load_outline
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -149,6 +150,7 @@ def make_jobs(
   subject_root: Path,
   built: str | None = None,
   version_stamp: str = '',
+  cache_bust: str = '',
 ) -> list[RenderJob]:
     briefs_pattern = 'assessments/*/ass_*_brief.md'
     module_md_pattern = 'modules/*/mod_*.md'
@@ -197,7 +199,7 @@ def make_jobs(
         input_pattern=module_md_pattern,
         output_dir=Path('modules_html'),
         renderer='md_to_html',
-        context={'tags': tags, 'subject_root': subject_root, 'asset_dir': Path('modules_html/assets')},
+        context={'tags': tags, 'subject_root': subject_root, 'asset_dir': Path('modules_html/assets'), 'cache_bust': cache_bust},
         output_ext='.html',
         output_namer=lambda p: p.with_suffix('.html').name,
         deps=html_deps,
@@ -219,7 +221,8 @@ def make_jobs(
         renderer='copy_asset',
         context={},
         output_ext='',
-        output_namer=lambda p: p.name,
+        output_namer=(lambda p: cache_bust_filename(p.name, cache_bust))
+                     if cache_bust else (lambda p: p.name),
       ),
       RenderJob(
         name='lecturer_notes',
@@ -242,6 +245,7 @@ def run_build(
   cc: bool = False,
   diff_paths: list[Path] | None = None,
   diff_verbose: bool = False,
+  cache_bust: str = '',
 ) -> None:
     """Execute a single (possibly incremental) build cycle."""
     built = now_iso()
@@ -259,7 +263,7 @@ def run_build(
     pipeline = Pipeline(subject_root, build_dir, registry)
     diagnostics = pipeline.execute(
       make_jobs(tags, subject_root=subject_root, built=built,
-                version_stamp=version_stamp),
+                version_stamp=version_stamp, cache_bust=cache_bust),
       force=force,
     )
     if optimize:
@@ -267,7 +271,8 @@ def run_build(
     if cc:
         outline = load_outline(subject_root)
         cc_path, cc_diagnostics = export_cc(subject_root, build_dir, outline,
-                                            version_stamp)
+                                            version_stamp,
+                                            cache_bust=cache_bust)
         diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
         if diff_paths:
             if len(diff_paths) != 2:
@@ -322,6 +327,7 @@ def watch_and_rebuild(
   diff_verbose: bool = False,
   poll_interval: float = 1.0,
   live: bool = False,
+  cache_bust: str = '',
 ) -> None:
     """Poll for source changes and rebuild incrementally."""
     server: LiveServer | None = None
@@ -357,7 +363,8 @@ def watch_and_rebuild(
                 run_build(subject_root, build_dir, force=False,
                           optimize=optimize, cc=cc,
                           diff_paths=diff_paths,
-                          diff_verbose=diff_verbose)
+                          diff_verbose=diff_verbose,
+                          cache_bust=cache_bust)
                 sys.stdout.flush()
                 if server:
                     server.notify_reload()
@@ -429,9 +436,24 @@ def main() -> None:
       action='store_true',
       help='Start a live-reload HTTP server (implies --watch)',
     )
+    parser.add_argument(
+      '--cache-bust',
+      nargs='?',
+      const='__auto__',
+      default='',
+      metavar='TAG',
+      help=(
+        'Append a cache-busting suffix to asset filenames and HTML '
+        'references. Provide a custom tag (e.g. "v2") or omit for '
+        'an auto-generated date stamp (vYYYYMMDD).'
+      ),
+    )
     args = parser.parse_args()
     if args.live:
         args.watch = True
+    cache_bust = args.cache_bust or ''
+    if cache_bust == '__auto__':
+        cache_bust = datetime.now().strftime('v%Y%m%d')
 
     # Diff-only mode: no build needed
     if args.diff and not args.cc and not args.force and not args.clean:
@@ -453,16 +475,21 @@ def main() -> None:
     force = args.force or args.clean
     prepare_build_dir(build_dir, clean=args.clean)
 
+    if cache_bust:
+        print(fmt('info', f'Cache-bust suffix: _{cache_bust}'))
+
     run_build(subject_root, build_dir, force=force,
               optimize=args.optimize_assets, cc=args.cc,
-              diff_paths=args.diff, diff_verbose=args.diff_verbose)
+              diff_paths=args.diff, diff_verbose=args.diff_verbose,
+              cache_bust=cache_bust)
 
     if args.watch:
         watch_and_rebuild(subject_root, build_dir,
                           optimize=args.optimize_assets, cc=args.cc,
                           diff_paths=args.diff,
                           diff_verbose=args.diff_verbose,
-                          live=args.live)
+                          live=args.live,
+                          cache_bust=cache_bust)
 
 
 if __name__ == '__main__':

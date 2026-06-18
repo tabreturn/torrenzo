@@ -244,6 +244,36 @@ def _convert_line_dashes(line: str) -> str:
     return protected
 
 
+_CACHE_BUST_RE = re.compile(
+    r'((?:src|href)=["\'](?:[^"\']*?)assets/)([^"\']+)\.(\w+)(["\'])')
+
+
+def cache_bust_filename(name: str, suffix: str) -> str:
+    """Insert ``_suffix`` before the file extension.
+
+    >>> cache_bust_filename('photo.png', 'v2')
+    'photo_v2.png'
+    """
+    if not suffix:
+        return name
+    stem, dot, ext = name.rpartition('.')
+    if dot:
+        return f'{stem}_{suffix}.{ext}'
+    return f'{name}_{suffix}'
+
+
+def cache_bust_asset_refs(html: str, suffix: str) -> str:
+    """Rewrite ``assets/foo.ext`` to ``assets/foo_suffix.ext`` inside
+    HTML ``src`` and ``href`` attributes."""
+    if not suffix:
+        return html
+
+    def _repl(m: re.Match[str]) -> str:
+        return f'{m.group(1)}{m.group(2)}_{suffix}.{m.group(3)}{m.group(4)}'
+
+    return _CACHE_BUST_RE.sub(_repl, html)
+
+
 _UNICODE_TO_ENTITY = {
     '\u2013': '&ndash;',
     '\u2014': '&mdash;',

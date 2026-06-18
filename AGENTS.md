@@ -51,6 +51,16 @@
   - **PNG**: `Comment` tEXt chunk written via `Pillow`; falls back to plain copy if Pillow unavailable
   - **Other assets**: plain `shutil.copy2`, no metadata added
 
+## Cache-Busting (`--cache-bust`)
+
+- `--cache-bust [TAG]` appends `_TAG` before the file extension of every asset copied to `build/` and rewrites corresponding `src`/`href` references in HTML output.
+- Omit `TAG` for an auto-generated daily stamp (`vYYYYMMDD`): `--cache-bust` → `_v20260619`.
+- Provide a custom tag: `--cache-bust cb` → `_cb`.
+- Affects **module assets** (`modules/*/assets/`), **HTML module pages**, and **CC cartridge** (both module and assessment assets).
+- Assessment PDFs are unaffected (they reference local files, not Canvas-served URLs).
+- Designed to work around Canvas caching issues where previously uploaded images stop rendering after re-import.
+- GUI exposes a `--cache-bust` checkbox with an optional tag text field.
+
 ## Testing & Validation
 
 - No automated suite; run `python -m torrenzo <subject>` to rebuild and inspect `build/` artifacts.
