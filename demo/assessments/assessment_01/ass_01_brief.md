@@ -38,35 +38,7 @@ Upload the ZIP to the LMS submission portal, and place a short README inside the
 
 ---
 
-## Referencing [[cc-section]]
-
-There is no formal referencing style required for this playful assessment. But please acknowledge any sourced images or borrowed descriptors directly in the README or as small captions in the catalogue.
-
-### README Sample
-
-```
-Files Included
-- catalogue.md -- Markdown catalogue containing three fruit entries
-- reflection.md -- short reflection about the exercise
-- assets/ -- folder containing the fruit images used in the catalogue
-  - mango.png
-  - dragonfruit.png
-  - rambutan.png
-
-Image Sources
-- mango.png photographed by the author
-- dragonfruit.png illustration adapted from a public domain image on Wikimedia Commons
-- rambutan.png from Unsplash (https://unsplash.com)
-
-What I Learned
-This exercise helped me practice observing small sensory details and describing them clearly while pairing text with simple images.
-```
-
----
-
-## Academic Integrity Declaration [[cc-section]]
-
-I declare that, except where I have referenced, the work I am submitting is my own. I have kept notes on the sources I used and can share them if required.
+[[includes|referencing.md]]
 
 <div class="page-break"></div> <!-- forced page break -->
 
