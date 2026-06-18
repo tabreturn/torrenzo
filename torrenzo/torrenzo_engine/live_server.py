@@ -68,7 +68,10 @@ def _make_handler(build_dir: Path):
 
     class Handler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
-            super().__init__(*args, directory=str(build_dir), **kwargs)
+            try:
+                super().__init__(*args, directory=str(build_dir), **kwargs)
+            except ConnectionResetError:
+                pass
 
         def end_headers(self):
             self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
