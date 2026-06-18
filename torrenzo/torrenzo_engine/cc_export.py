@@ -25,7 +25,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 
-from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives
+from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -457,14 +457,19 @@ CC_SECTION_TAG = '[[cc-section]]'
 _HEADING_RE = re.compile(r'^(#{1,6})\s')
 
 
-def _parse_brief_sections(brief_path: Path) -> dict[str, str]:
+def _parse_brief_sections(brief_path: Path,
+                          subject_root: Path | None = None) -> dict[str, str]:
     """Extract sections tagged with [[cc-section]] from the brief.
 
     Each heading (any level) that carries the tag is included with its
     full branch of the hierarchy — subsections, code blocks, and content
     are captured until a heading at the same or higher level appears.
-    The tag is stripped from the displayed name."""
+    The tag is stripped from the displayed name. Any `[[includes|...]]`
+    references are inlined first so cc-section markers inside included
+    files are also picked up."""
     text = brief_path.read_text(encoding='utf-8')
+    if subject_root is not None:
+        text, _ = resolve_includes(text, subject_root)
 
     sections: dict[str, str] = {}
     current_section: str | None = None
@@ -501,6 +506,7 @@ def _parse_brief_sections(brief_path: Path) -> dict[str, str]:
 def _assignment_description_html(ass: dict, brief_md: Path | None,
                                  module_css: str = '',
                                  valid_targets: frozenset[str] | None = None,
+                                 subject_root: Path | None = None,
                                  ) -> str:
     """Build an HTML description page for a Canvas assignment."""
     body = (
@@ -514,7 +520,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
     )
 
     if brief_md and brief_md.exists():
-        sections = _parse_brief_sections(brief_md)
+        sections = _parse_brief_sections(brief_md, subject_root)
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
         for name, content in sections.items():
             if content:
@@ -874,7 +880,7 @@ def export_cc(
                      f'web_resources/{ass["pdf_filename"]}')
 
             aid = ass['assignment_id']
-            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets)
+            desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets, subject_root)
             zf.writestr(f'{aid}/{aid}.html', desc_html)
 
             settings = _assignment_settings_xml(
