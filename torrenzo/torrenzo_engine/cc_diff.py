@@ -153,11 +153,11 @@ def _pdf_content_hash(path: Path) -> str:
 
 
 ASSESS_PDF_TS_RE = re.compile(
-    r'^(assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)$')
+    r'^(.*assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)$')
 ASSESS_PDF_TS_BODY_RE = re.compile(
     r'(assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)')
 
-ASSESS_PDF_RE = re.compile(r'^assessment_\d{2}')
+ASSESS_PDF_RE = re.compile(r'(?:^|/)assessment_\d{2}.*\.pdf$')
 
 
 def _normalize_asset_key(rel: str) -> str:
@@ -165,7 +165,7 @@ def _normalize_asset_key(rel: str) -> str:
 
 
 def _is_assessment_pdf(rel: str) -> bool:
-    return bool(ASSESS_PDF_RE.match(rel))
+    return bool(ASSESS_PDF_RE.search(rel))
 
 
 def _read_assets(tmp: Path) -> dict[str, tuple[str, str, int]]:

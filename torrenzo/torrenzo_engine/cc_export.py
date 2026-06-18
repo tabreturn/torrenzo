@@ -49,6 +49,9 @@ SCHEMA_LOCATION = (
 MOD_HTML_RE = re.compile(r'^mod_(\d+)_(\d+)_(.+)\.html$')
 ASSESS_PDF_RE = re.compile(r'^assessment_(\d+)\.pdf$')
 ASSET_REF_RE = re.compile(r'((?:src|href)=["\'])assets/([^"\']+)(["\'])')
+MD_LINK_RE = re.compile(
+    r'(?<!!)\[(?:[^\]\\]|\\.)*?\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)'
+)
 PAGE_HREF_RE = re.compile(
     r'(href=["\'])(?:.*?/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
 ASSESS_HREF_RE = re.compile(
@@ -267,6 +270,57 @@ def _find_brief_md(subject_root: Path, ass_num: int) -> Path | None:
     ):
         return candidate
     return None
+
+
+def _is_local_ref(url: str) -> bool:
+    """Return True if the URL is a relative path to a local file."""
+    if not url:
+        return False
+    if url.startswith(('http://', 'https://', 'mailto:', '#', '$',
+                       'data:', '//', '/')):
+        return False
+    return True
+
+
+def _collect_brief_files(brief_md: Path,
+                        subject_root: Path) -> list[dict]:
+    """Scan a brief markdown file for relative link/image references and
+    return the existing files within the brief's directory.
+
+    Resolves ``[[includes|...]]`` first so refs inside included content are
+    also picked up. Returns a list of ``{'rel_path', 'abs_path'}`` dicts
+    where ``rel_path`` is the path relative to the brief's parent directory
+    (preserving any sub-directory like ``assets/``)."""
+    if not brief_md or not brief_md.exists():
+        return []
+    try:
+        text = brief_md.read_text(encoding='utf-8')
+    except Exception:
+        return []
+    text, _ = resolve_includes(text, subject_root)
+    brief_dir = brief_md.parent.resolve()
+    seen: set[str] = set()
+    found: list[dict] = []
+    for m in MD_LINK_RE.finditer(text):
+        url = m.group(1).strip()
+        if not _is_local_ref(url):
+            continue
+        # strip any fragment/query
+        url = url.split('#', 1)[0].split('?', 1)[0]
+        if not url:
+            continue
+        rel = url[2:] if url.startswith('./') else url
+        if rel in seen:
+            continue
+        candidate = (brief_dir / rel).resolve()
+        try:
+            candidate.relative_to(brief_dir)
+        except ValueError:
+            continue
+        if candidate.is_file():
+            seen.add(rel)
+            found.append({'rel_path': rel, 'abs_path': candidate})
+    return found
 
 
 # ---------------------------------------------------------------------------
@@ -509,16 +563,21 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                                  subject_root: Path | None = None,
                                  ) -> str:
     """Build an HTML description page for a Canvas assignment."""
+    ass_dir_name = ass.get('ass_dir_name') or f'assessment_{ass["num"]:02d}'
+    pdf_base = f'$IMS-CC-FILEBASE$/assessments/{ass_dir_name}'
     body = (
         f'<p>\n'
         f'<a class="instructure_file_link instructure_scribd_file auto_open" '
-        f'href="$IMS-CC-FILEBASE$/{ass["pdf_filename"]}" '
+        f'href="{pdf_base}/{ass["pdf_filename"]}" '
         f'data-canvas-previewable="true">'
         f'Assessment Brief (PDF)'
         f'</a>\n'
         f'</p>\n'
     )
 
+    asset_repl = (
+        rf'\1$IMS-CC-FILEBASE$/assessments/{ass_dir_name}/assets/\2\3'
+    )
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md, subject_root)
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
@@ -529,8 +588,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
                 content = convert_dashes(content)
                 html_content = md.render(content)
                 html_content = apply_image_style_directives(html_content)
-                html_content = ASSET_REF_RE.sub(
-                    r'\1$IMS-CC-FILEBASE$/assets/\2\3', html_content)
+                html_content = ASSET_REF_RE.sub(asset_repl, html_content)
                 body += f'<h4>{name}</h4>\n{html_content}\n'
 
     css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''
@@ -683,11 +741,19 @@ def _build_manifest(
             _el(res, f'{{{ns}}}file', href=cc_href)
 
     for ass in assessment_items:
-        cc_href = f'web_resources/{ass["pdf_filename"]}'
+        ass_base = f'web_resources/assessments/{ass["ass_dir_name"]}'
+        cc_href = f'{ass_base}/{ass["pdf_filename"]}'
         res = _el(resources, f'{{{ns}}}resource',
                   identifier=ass['pdf_resource_id'],
                   type='webcontent', href=cc_href)
         _el(res, f'{{{ns}}}file', href=cc_href)
+
+        for extra in ass.get('extra_files', []):
+            ehref = f'{ass_base}/{extra["rel_path"]}'
+            rid = _id(f'resource/{ehref}')
+            eres = _el(resources, f'{{{ns}}}resource', identifier=rid,
+                       type='webcontent', href=ehref)
+            _el(eres, f'{{{ns}}}file', href=ehref)
 
         ass_dir = ass['assignment_id']
         html_href = f'{ass_dir}/{ass_dir}.html'
@@ -796,6 +862,11 @@ def export_cc(
                         f'{len(rubric["criteria"])} criteria'
                     )
 
+            ass_dir_name = (brief_md.parent.name if brief_md
+                            else f'assessment_{ass_num:02d}')
+            extra_files = (_collect_brief_files(brief_md, subject_root)
+                           if brief_md else [])
+
             assessment_items.append({
                 'pdf_filename': pdf_filename,
                 'pdf_path': f,
@@ -811,6 +882,8 @@ def export_cc(
                 'rubric': rubric,
                 'brief_md': brief_md,
                 'outline_info': info,
+                'ass_dir_name': ass_dir_name,
+                'extra_files': extra_files,
             })
 
     assess_id_map: dict[str, str] = {}
@@ -876,8 +949,12 @@ def export_cc(
                 zf.writestr(f'wiki_content/{page["filename"]}', wrapped)
 
         for ass in assessment_items:
+            ass_base = f'web_resources/assessments/{ass["ass_dir_name"]}'
             zf.write(ass['pdf_path'],
-                     f'web_resources/{ass["pdf_filename"]}')
+                     f'{ass_base}/{ass["pdf_filename"]}')
+            for extra in ass.get('extra_files', []):
+                zf.write(extra['abs_path'],
+                         f'{ass_base}/{extra["rel_path"]}')
 
             aid = ass['assignment_id']
             desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets, subject_root)
