@@ -308,3 +308,31 @@ def unicode_to_entities(html: str) -> str:
     for char, entity in _UNICODE_TO_ENTITY.items():
         html = html.replace(char, entity)
     return html
+
+
+_HEADING_RE_STRIP = re.compile(r'^(#{1,6})\s')
+
+
+def strip_tagged_sections(text: str, tag: str) -> str:
+    """Remove entire sections whose heading contains *tag*.
+
+    Everything from the tagged heading up to (but not including) the
+    next heading at the same or higher level is removed.  The tag
+    string (e.g. ``[[cc-section]]``) is matched literally.
+    """
+    out: list[str] = []
+    skip_level: int | None = None
+    for line in text.splitlines(True):
+        stripped = line.strip()
+        hm = _HEADING_RE_STRIP.match(stripped)
+        if hm:
+            level = len(hm.group(1))
+            if skip_level is not None and level <= skip_level:
+                skip_level = None
+            if tag in stripped:
+                skip_level = level
+                continue
+        if skip_level is not None:
+            continue
+        out.append(line)
+    return ''.join(out)

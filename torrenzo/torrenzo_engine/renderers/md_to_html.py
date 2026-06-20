@@ -231,6 +231,8 @@ def render(
 
     raw, include_warnings = resolve_includes(
         raw, context.get('subject_root', input_path.parent.parent.parent))
+    raw = raw.replace('[[cc-section|hide-in-pdf]]', '')
+    raw = raw.replace('[[cc-section]]', '')
     raw, tag_warnings = apply_tags(raw, tags)
     raw, link_warnings = expand_wiki_links(raw, collect_valid_outputs(
         input_path.parent.parent.parent))

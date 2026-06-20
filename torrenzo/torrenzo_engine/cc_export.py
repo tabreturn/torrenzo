@@ -508,6 +508,7 @@ def _course_settings_xml(subject_code: str, subject_title: str) -> str:
 
 
 CC_SECTION_TAG = '[[cc-section]]'
+CC_SECTION_TAG_HIDE = '[[cc-section|hide-in-pdf]]'
 
 _HEADING_RE = re.compile(r'^(#{1,6})\s')
 
@@ -547,8 +548,8 @@ def _parse_brief_sections(brief_path: Path,
                 current_section = None
                 current_lines = []
             if current_section is None:
-                name = stripped[hm.end():].replace(CC_SECTION_TAG, '').strip()
-                if CC_SECTION_TAG in stripped and name:
+                name = stripped[hm.end():].replace(CC_SECTION_TAG_HIDE, '').replace(CC_SECTION_TAG, '').strip()
+                if (CC_SECTION_TAG in stripped or CC_SECTION_TAG_HIDE in stripped) and name:
                     current_section = name
                     current_level = level
         elif current_section:

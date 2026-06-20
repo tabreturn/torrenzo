@@ -380,6 +380,8 @@ def render(
         body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body, include_warnings = resolve_includes(
         body, context.get('subject_root', input_path.parent.parent.parent))
+    from ..preprocess import strip_tagged_sections
+    body = strip_tagged_sections(body, '[[cc-section|hide-in-pdf]]')
     body = body.replace('[[cc-section]]', '')
     body, tag_warnings = apply_tags(body, tags)
     body, link_warnings = expand_wiki_links(body, collect_valid_outputs(

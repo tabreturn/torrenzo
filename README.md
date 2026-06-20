@@ -317,7 +317,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
 
-Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included. Links to files in the assessment's `assets/` directory (e.g. `[exemplar.zip](assets/exemplar.zip)`) will work as downloadable links in the Canvas HTML.
+Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included. Links to files in the assessment's `assets/` directory (e.g. `[exemplar.zip](assets/exemplar.zip)`) will work as downloadable links in the Canvas HTML. Use `[[cc-section|hide-in-pdf]]` to **hide** the section in the generated PDF while keeping it visible in HTML.
 
 > 💡 Observation note: When importing cartridges into Canvas, module content is overwritten *unless* it has been modified in the Canvas editor. However, assets may be duplicated during the process. Recommended approach: before bulk importing, delete all items in **Files** (in Canvas), except for the `course_image` folder.
 
