@@ -11,6 +11,7 @@ from lxml import html as lxml_html
 from pybtex.database import parse_file
 
 from .bib_to_html import render_entry_to_html
+from . import highlight as _hl
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
 from ..preprocess import convert_dashes, unicode_to_entities, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, cache_bust_asset_refs
@@ -225,6 +226,7 @@ def render(
     tags = context.get('tags', {})
     tags = {**tags, **build_component_tags(input_path)}
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+    _hl.install(md)
     raw = input_path.read_text(encoding='utf-8')
 
     raw, include_warnings = resolve_includes(

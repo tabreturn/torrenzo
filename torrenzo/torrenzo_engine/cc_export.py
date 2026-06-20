@@ -25,6 +25,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 
+from .renderers import highlight as _hl
 from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename
 
 
@@ -588,6 +589,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md, subject_root)
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+        _hl.install(md)
         for name, content in sections.items():
             if content:
                 content, _link_warnings = expand_wiki_links(content, valid_targets)

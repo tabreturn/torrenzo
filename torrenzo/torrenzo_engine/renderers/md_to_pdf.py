@@ -14,6 +14,7 @@ from typing import Any, Dict, Tuple
 import yaml
 from markdown_it import MarkdownIt
 
+from . import highlight as _hl
 from ..build_stamp import now_iso
 from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
 from ...components import PARAMETERIZED_COMPONENTS
@@ -391,6 +392,7 @@ def render(
     warnings.extend(check_asset_refs(body, input_path))
 
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
+    _hl.install(md)
 
     workdir = input_path.parent
     style_src = input_path.parent.parent / 'style'
