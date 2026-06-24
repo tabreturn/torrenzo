@@ -946,7 +946,8 @@ def export_cc(
         cache_bust=cache_bust,
     )
 
-    output_path = build_dir / f'{subject_code}.imscc'
+    cb_suffix = f'_{cache_bust}' if cache_bust else ''
+    output_path = build_dir / f'{subject_code}{cb_suffix}.imscc'
 
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         zf.writestr('imsmanifest.xml', manifest_xml)

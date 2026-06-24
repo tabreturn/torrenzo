@@ -453,7 +453,7 @@ def main() -> None:
         args.watch = True
     cache_bust = args.cache_bust or ''
     if cache_bust == '__auto__':
-        cache_bust = datetime.now().strftime('v%Y%m%d')
+        cache_bust = datetime.now().strftime('v%Y%m%d_%H%M%S')
 
     # Diff-only mode: no build needed
     if args.diff and not args.cc and not args.force and not args.clean:
