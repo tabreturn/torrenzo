@@ -62,7 +62,7 @@ def render_video(file_path: str) -> str:
     basename = html_mod.escape(Path(file_path.strip()).name)
     return (
         '<div style="position: relative; width: 100%; '
-        'padding-bottom: calc(52.7% + 48px); height: 0; overflow: hidden;">\n'
+        'padding-bottom: calc(56.3% + 48px); height: 0; overflow: hidden;">\n'
         '  <iframe\n'
         f'    title="Video player for {basename}"\n'
         '    data-media-type="video"\n'
