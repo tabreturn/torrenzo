@@ -48,7 +48,19 @@ def _fence_renderer(
         if lexer is not None:
             highlighted = _highlight(token.content, lexer, _FORMATTER)
             highlighted = highlighted.rstrip('\n')
-            highlighted = highlighted.replace('\n', '<br>')
+
+            # Canvas's HTML sanitiser strips inline `white-space:pre`,
+            # collapsing runs of spaces inside <div>. Convert each line's
+            # *leading* spaces to &nbsp; so indentation survives. Mid-line
+            # whitespace is untouched, so copy-pasted code remains runnable.
+            def _nbsp_leading(line: str) -> str:
+                stripped = line.lstrip(' ')
+                return '&nbsp;' * (len(line) - len(stripped)) + stripped
+
+            highlighted = '<br>'.join(
+                _nbsp_leading(line) for line in highlighted.split('\n')
+            )
+
             return (
                 f'<div class="pre"><code class="language-{_html.escape(lang)}">'
                 f'{highlighted}</code></div>\n'
