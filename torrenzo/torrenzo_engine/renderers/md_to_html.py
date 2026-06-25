@@ -215,7 +215,7 @@ def render_references(
         items.append(f'<li id="ref-{key}">{html_block}</li>')
     if not items:
         return ''
-    return '\n'.join(['<h2>References</h2>', '<ul>', *items, '</ul>'])
+    return '\n'.join(['<h2>References</h2>', '<ol>', *items, '</ol>'])
 
 
 def render(
