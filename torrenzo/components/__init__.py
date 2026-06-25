@@ -57,6 +57,14 @@ def render_page_spacer() -> str:
     return '<p>&nbsp;</p>'
 
 
+def render_under_construction() -> str:
+    return (
+        '<div data-tag="component-under-construction">'
+        '🚧 This page is under construction.'
+        '</div>'
+    )
+
+
 def render_video(file_path: str) -> str:
     safe = html_mod.escape(file_path.strip())
     basename = html_mod.escape(Path(file_path.strip()).name)
@@ -89,4 +97,5 @@ def build_component_tags(input_path: Path) -> dict[str, str]:
         tags['outline.component.module-navigation'] = nav
     spacer = render_page_spacer()
     tags['outline.component.page-spacer'] = spacer
+    tags['outline.component.under-construction'] = render_under_construction()
     return tags

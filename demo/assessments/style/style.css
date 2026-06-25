@@ -274,3 +274,14 @@ table {
   break-inside: avoid;
 }
 
+[data-tag="component-under-construction"] {
+  background: #FFC;
+  border-bottom: 3px solid #FC0;
+  color: #960;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0.6em 0 1.2em;
+  padding: 10px 16px;
+  text-align: center;
+}
+

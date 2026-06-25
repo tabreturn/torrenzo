@@ -17,7 +17,7 @@ from markdown_it import MarkdownIt
 from . import highlight as _hl
 from ..build_stamp import now_iso
 from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
-from ...components import PARAMETERIZED_COMPONENTS
+from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 
 # Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
 # warning each time we reopen one for metadata stamping. Silence it.
@@ -370,6 +370,7 @@ def render(
   context: Dict[str, Any],
 ) -> Tuple[bool, str, list[str]]:
     tags = context.get('tags', {})
+    tags = {**tags, **build_component_tags(input_path)}
 
     raw_content = input_path.read_text(encoding='utf-8')
     metadata, body, meta_warnings = extract_metadata_from_front_matter(

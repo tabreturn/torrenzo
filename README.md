@@ -178,9 +178,14 @@ Includes resolve from `{subject_root}/includes/`, available to both assessments 
 
 Torrenzo includes built-in components for common page elements. Components use the bare `[[...]]` form (no backticks or equals sign):
 
-| Tag                                | Description                                      |
-|------------------------------------|--------------------------------------------------|
-| `[[component.module-navigation]]`  | Tabbed navigation linking to sibling sub-modules |
+| Tag                                  | Description                                                 |
+|--------------------------------------|-------------------------------------------------------------|
+| `[[component.module-navigation]]`    | Tabbed navigation linking to sibling sub-modules            |
+| `[[component.page-spacer]]`          | Vertical gap (`<p>&nbsp;</p>`) for breathing room           |
+| `[[component.under-construction]]`   | Amber "under construction" banner for draft pages           |
+| `[[component.video\|path/to/file]]`  | Responsive 16:9 video player (parameterised; pass file path)|
+
+Each component renders to a `<div data-tag="component-{name}">...</div>` (or equivalent). Use the subject's `modules/style/style.css` (or `assessments/style/style.css` for PDF) to style these. Both HTML and PDF pipelines substitute all of the above tags.
 
 ---
 
