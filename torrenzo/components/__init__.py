@@ -57,10 +57,12 @@ def render_page_spacer() -> str:
     return '<p>&nbsp;</p>'
 
 
-def render_under_construction() -> str:
+def render_under_construction(message: str = '') -> str:
+    text = message.strip() if message.strip() else 'Under construction'
+    safe = html_mod.escape(text)
     return (
         '<div data-tag="component-under-construction">'
-        '🚧 This page is under construction.'
+        f'🚧 {safe}'
         '</div>'
     )
 
@@ -86,6 +88,7 @@ def render_video(file_path: str) -> str:
 
 
 PARAMETERIZED_COMPONENTS: dict[str, Callable[[str], str]] = {
+    'under-construction': render_under_construction,
     'video': render_video,
 }
 
