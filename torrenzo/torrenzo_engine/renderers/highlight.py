@@ -8,6 +8,7 @@ keep the default ``<pre><code>`` rendering.
 from __future__ import annotations
 
 import html as _html
+import re as _re
 
 from markdown_it.utils import OptionsDict, EnvType
 from markdown_it.token import Token
@@ -50,16 +51,29 @@ def _fence_renderer(
             highlighted = highlighted.rstrip('\n')
 
             # Canvas's HTML sanitiser strips inline `white-space:pre`,
-            # collapsing runs of spaces inside <div>. Convert each line's
-            # *leading* spaces to &nbsp; so indentation survives. Mid-line
-            # whitespace is untouched, so copy-pasted code remains runnable.
-            def _nbsp_leading(line: str) -> str:
-                stripped = line.lstrip(' ')
-                return '&nbsp;' * (len(line) - len(stripped)) + stripped
+            # collapsing runs of spaces inside <div>. Convert any run of
+            # 2+ consecutive spaces (outside HTML tags) to &nbsp; so both
+            # leading indentation and mid-line alignment (e.g. PEP-8's
+            # double space before an inline `#` comment) survive. Single
+            # spaces are left as-is so copy-pasted code remains runnable.
+            _tag_re = _re.compile(r'<[^>]*>')
+            _space_run_re = _re.compile(r'  +')
 
-            highlighted = '<br>'.join(
-                _nbsp_leading(line) for line in highlighted.split('\n')
-            )
+            def _nbspify_text(text: str) -> str:
+                return _space_run_re.sub(
+                    lambda m: '&nbsp;' * len(m.group()), text
+                )
+
+            parts: list[str] = []
+            last = 0
+            for m in _tag_re.finditer(highlighted):
+                parts.append(_nbspify_text(highlighted[last:m.start()]))
+                parts.append(m.group())
+                last = m.end()
+            parts.append(_nbspify_text(highlighted[last:]))
+            highlighted = ''.join(parts)
+
+            highlighted = highlighted.replace('\n', '<br>')
 
             return (
                 f'<div class="pre"><code class="language-{_html.escape(lang)}">'
