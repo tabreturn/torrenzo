@@ -58,7 +58,7 @@ def render_page_spacer() -> str:
 
 
 def render_page_break() -> str:
-    return '<div data-tag="component-page-break" style="page-break-before: always; break-before: page;"></div>'
+    return '<div data-tag="component-page-break" style="page-break-after: always; break-after: page;"></div>'
 
 
 def render_under_construction(message: str = '') -> str:
