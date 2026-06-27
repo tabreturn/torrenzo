@@ -57,6 +57,10 @@ def render_page_spacer() -> str:
     return '<p>&nbsp;</p>'
 
 
+def render_page_break() -> str:
+    return '<div data-tag="component-page-break" style="page-break-before: always; break-before: page;"></div>'
+
+
 def render_under_construction(message: str = '') -> str:
     text = message.strip() if message.strip() else 'Under construction'
     safe = html_mod.escape(text)
@@ -100,5 +104,6 @@ def build_component_tags(input_path: Path) -> dict[str, str]:
         tags['outline.component.module-navigation'] = nav
     spacer = render_page_spacer()
     tags['outline.component.page-spacer'] = spacer
+    tags['outline.component.page-break'] = render_page_break()
     tags['outline.component.under-construction'] = render_under_construction()
     return tags

@@ -185,6 +185,7 @@ Torrenzo includes built-in components for common page elements. Components use t
 | Tag                                            | Description                                                  |
 |------------------------------------------------|--------------------------------------------------------------|
 | `[[component.module-navigation]]`              | Tabbed navigation linking to sibling sub-modules             |
+| `[[component.page-break]]`                     | Force a page break at this point in PDF files                |
 | `[[component.page-spacer]]`                    | Vertical gap (`<p>&nbsp;</p>`) for breathing room            |
 | `[[component.under-construction]]`             | Amber banner; default text: "🚧 Under construction"           |
 | `[[component.under-construction\|Custom msg]]` | Amber banner with custom message: "🚧 Custom msg"             |
