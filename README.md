@@ -117,9 +117,9 @@ python -m torrenzo /path/to/your-subject
 
 - Use the **Diff** button (GUI) or `--diff LOCAL.imscc LIVE.imscc` (CLI) to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import. This is useful when you want to apply targeted updates using the Canvas editor rather than importing an entire Common Cartridge.
 
-- Use `--cache-bust` to append a cache-busting suffix to any `/assets` filenames and their HTML references. This works around an intermittent Canvas issue where previously uploaded images stop rendering after a course re-import (I'm not sure why). Provide a custom tag or omit it for an auto-generated daily stamp.
+- Use `--cache-bust` to append a cache-busting suffix to any `/assets` filenames and their HTML references. This works around an intermittent Canvas issue where previously uploaded images stop rendering after a course re-import (I'm not sure why). Provide a custom tag or omit it for an auto-generated timestamp.
 
-> 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. This provides one way to identify which files need updating in your LMS across multiple builds.
+> 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. This provides one way to identify which files need updating in your LMS across multiple builds (if you're not using a common catridge and need to be selective).
 
 ---
 
@@ -164,6 +164,10 @@ Images support optional Gemini-style CSS directives after a pipe (`|`), inlining
 
 Output: `<img src="assets/fruit.png" alt="Some fruit" style="max-width:300px;border-radius:8px">`
 
+### Assessment Brief Sections (for Common Cartidge Users)
+
+Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included. Links to files in the assessment's `assets/` directory (e.g. `[exemplar.zip](assets/exemplar.zip)`) will work as downloadable links in the Canvas HTML. Use `[[cc-section|hide-in-pdf]]` to **hide** the section in the generated PDF while keeping it visible in HTML.
+
 ### Includes
 
 Use `[[includes|filename]]` to inline reusable content from the `includes/` directory. The included file's content resolves before tag processing, so includes can themselves contain tags and wiki links.
@@ -184,9 +188,11 @@ Torrenzo includes built-in components for common page elements. Components use t
 | `[[component.page-spacer]]`                    | Vertical gap (`<p>&nbsp;</p>`) for breathing room            |
 | `[[component.under-construction]]`             | Amber banner; default text: "🚧 Under construction"           |
 | `[[component.under-construction\|Custom msg]]` | Amber banner with custom message: "🚧 Custom msg"             |
-| `[[component.video\|path/to/file]]`            | Responsive 16:9 video player (parameterised; pass file path) |
+| `[[component.video\|path/to/file]]`            | Responsive 16:9 video player                                 |
 
 Each component renders to a `<div data-tag="component-{name}">...</div>` (or equivalent). Use the subject's `modules/style/style.css` (or `assessments/style/style.css` for PDF) to style these. Both HTML and PDF pipelines substitute all of the above tags.
+
+> 💡 The `[[component.video]]` component is a bit of an exception, as it includes a fair amount of inline CSS. It also won't render videos in PDFs (for obvious reasons).
 
 ---
 
@@ -322,8 +328,6 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
     - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the ***last table*** in the brief markdown).
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
-
-Additionally, any heading in the brief tagged with `[[cc-section]]` (at any level) is rendered below the inline PDF, with its full branch of sub-sections and content included. Links to files in the assessment's `assets/` directory (e.g. `[exemplar.zip](assets/exemplar.zip)`) will work as downloadable links in the Canvas HTML. Use `[[cc-section|hide-in-pdf]]` to **hide** the section in the generated PDF while keeping it visible in HTML.
 
 > 💡 Observation note: When importing cartridges into Canvas, module content is overwritten *unless* it has been modified in the Canvas editor. However, assets may be duplicated during the process. Recommended approach: before bulk importing, delete all items in **Files** (in Canvas), except for the `course_image` folder.
 
