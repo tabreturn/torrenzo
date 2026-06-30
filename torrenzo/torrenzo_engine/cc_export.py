@@ -26,7 +26,9 @@ from typing import Any
 from markdown_it import MarkdownIt
 
 from .renderers import highlight as _hl
+from .renderers.md_to_pdf import apply_tags
 from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename
+from ..components import build_component_tags
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -589,10 +591,12 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
 
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md, subject_root)
+        component_tags = build_component_tags(brief_md)
         md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
         _hl.install(md)
         for name, content in sections.items():
             if content:
+                content, _tag_warnings = apply_tags(content, component_tags)
                 content, _link_warnings = expand_wiki_links(content, valid_targets)
                 content = rewrite_md_hrefs(content)
                 content = convert_dashes(content)
