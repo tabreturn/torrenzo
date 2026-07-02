@@ -115,16 +115,6 @@ Torrenzo includes a desktop application for point-and-click builds.
 - **Watch mode** checkbox monitors source files and rebuilds automatically on change
 - **Diff** button compares the local cartridge against a live Canvas export
 
-The Diff feature allows you to compare your active project against an exported Canvas file. This is especially helpful when you need to be selective about updating content, as importing a massive cartridge for every minor tweak can be inefficient, messy, or even restricted by institutional permissions. Diff groups results into three categories:
-
-| Category                  | Marker | Description                                                                 |
-|---------------------------|--------|-----------------------------------------------------------------------------|
-| **CHANGES**               | `*`    | Content, points, or checksum differences                                    |
-| **LIVE-ONLY**             | `−`    | Items not in local build (prefixed `(wikipage)`, `(assessment)`, `(asset)`) |
-| **REBUILT, SAME CONTENT** | `→`    | PDFs re-rendered but identical after stripping timestamps                   |
-
-Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) appear under LIVE-ONLY with a `•` bullet. You can jump to [more technical info on Diff's workings](#more-on-diffs-workings)
-
 Launch the GUI using one of the following methods:
 
 - Prebuilt binary from the Releases page: https://github.com/tabreturn/torrenzo/releases
@@ -387,6 +377,16 @@ To generate a log, redirect output to a file using `> diff.log` (or preffered fi
 
 ### More on Diff's workings
 
+The Diff feature allows you to compare your active project against an exported Canvas file. This is especially helpful when you need to be selective about updating content, as importing a massive cartridge for every minor tweak can be inefficient, messy, or even restricted by institutional permissions. Diff groups results into three categories:
+
+| Category                  | Marker | Description                                                                 |
+|---------------------------|--------|-----------------------------------------------------------------------------|
+| **CHANGES**               | `*`    | Content, points, or checksum differences                                    |
+| **LIVE-ONLY**             | `−`    | Items not in local build (prefixed `(wikipage)`, `(assessment)`, `(asset)`) |
+| **REBUILT, SAME CONTENT** | `→`    | PDFs re-rendered but identical after stripping timestamps                   |
+
+Additional live-only Canvas artifacts (LTI links, QTI quizzes, course image) appear under LIVE-ONLY with a `•` bullet. You can jump to [more technical info on Diff's workings](#more-on-diffs-workings)
+
 - WikiPages compared by normalized body content 
   (Normalizes away all: HTML entities, inline styles, GUIDs, attribute ordering, and Canvas-specific formatting)
 - Assessment PDFs compared by text-content checksum with build timestamps/versions stripped
@@ -394,3 +394,4 @@ To generate a log, redirect output to a file using `> diff.log` (or preffered fi
 - File rename quirks (from Canvas import-export roundtrips) handled automatically
 
 > 💡 Use `--diff-verbose` to see full content diffs for modified WikiPages.
+
