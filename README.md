@@ -4,6 +4,43 @@
 
 ---
 
+```mermaid
+flowchart LR
+    subgraph src["Your subject content"]
+        direction TB
+        META["Subject metadata<br/>(learning outcomes, assessment details)"]
+        MOD["Module pages<br/>Markdown / Word + images & assets"]
+        ASS["Assessment briefs<br/>Markdown + assets"]
+        NOTES["Lecturer notes"]
+    end
+
+    T["Torrenzo"]
+    subgraph out["Build output"]
+        direction TB
+        HTML["HTML module pages"]
+        PDF["PDF assessment briefs"]
+        LNOTES["Lecturer notes"]
+    end
+    IMSCC["Common Cartridge<br/>(.imscc)"]
+    LMS[("Canvas / LMS")]
+
+    META --> T
+    MOD --> T
+    ASS --> T
+    NOTES --> T
+    T --> HTML
+    T --> PDF
+    T --> LNOTES
+    HTML ==> IMSCC
+    PDF ==> IMSCC
+    LNOTES ==> IMSCC
+    IMSCC ==>|import| LMS
+    HTML -.->|or paste| LMS
+    PDF -.->|or upload| LMS
+```
+
+---
+
 ![banner](README_banner_1.png)  
 ![banner](README_banner_2.png)  
 *Images: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word, with potential to support other formats in future.*
