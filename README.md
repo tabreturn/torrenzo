@@ -10,7 +10,10 @@
 
 ![banner](README_diagram.svg)  
 
-<!--
+<details>
+<summary>Mermaid source for the diagram above</summary>
+
+```mermaid
 flowchart LR
     subgraph src["Your subject content"]
         direction TB
@@ -41,7 +44,9 @@ flowchart LR
     IMSCC ==>|import| LMS
     HTML -.->|or paste| LMS
     PDF -.->|or upload| LMS
--->
+```
+
+</details>
 
 ---
 
