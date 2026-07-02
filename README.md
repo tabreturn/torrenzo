@@ -4,8 +4,9 @@
 
 ---
 
-![banner](README_banner.png)  
-*Image: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word, with potential to support other formats in future.*
+![banner](README_banner_1.png)  
+![banner](README_banner_2.png)  
+*Images: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word, with potential to support other formats in future.*
 
 ---
 
