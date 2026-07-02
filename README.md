@@ -19,7 +19,6 @@ flowchart LR
         ASS["Assessment briefs<br/>Markdown + assets"]
         NOTES["Lecturer notes"]
     end
-
     T["Torrenzo"]
     subgraph out["Build output"]
         direction TB
@@ -29,7 +28,6 @@ flowchart LR
     end
     IMSCC["Common Cartridge<br/>(.imscc)"]
     LMS[("Canvas / LMS")]
-
     META --> T
     MOD --> T
     ASS --> T
