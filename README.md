@@ -11,9 +11,9 @@
 ![banner](README_diagram.svg)  
 
 <details>
-<summary>Mermaid source for the diagram above</summary>
+<summary>Mermaid diagram of Torrenzo workflow</summary>
 
-```mermaid
+```text
 flowchart LR
     subgraph src["Your subject content"]
         direction TB
