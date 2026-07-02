@@ -11,7 +11,7 @@
 ![banner](README_diagram.svg)  
 
 <details>
-<summary>*Diagram: Torrenzo workflow (Mermaid)*</summary>
+<summary><em>Diagram: Torrenzo workflow (Mermaid)</em></summary>
 
 ```text
 flowchart LR
