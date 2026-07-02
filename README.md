@@ -158,11 +158,7 @@ python -m torrenzo /path/to/your-subject
 
 ## Configuration & Tags
 
-> ### 📋 [Cheatsheet](CHEATSHEET.md)
->
-> A quick-reference summary of every available tag and its rendered output.
-
----
+📎 **For a quick-reference summary of all available tags and their rendered output, see the [Cheatsheet](CHEATSHEET.md).**
 
 Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
