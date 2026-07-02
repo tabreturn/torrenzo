@@ -8,10 +8,12 @@
 
 ---
 
-```mermaid
-flowchart TD
+![banner](README_diagram.svg)  
+
+<!--
+flowchart LR
     subgraph src["Your subject content"]
-        direction LR
+        direction TB
         META["Subject metadata<br/>(learning outcomes, assessment details)"]
         MOD["Module pages<br/>Markdown / Word + images & assets"]
         ASS["Assessment briefs<br/>Markdown + assets"]
@@ -19,28 +21,34 @@ flowchart TD
     end
 
     T["Torrenzo"]
-
     subgraph out["Build output"]
-        direction LR
+        direction TB
         HTML["HTML module pages"]
         PDF["PDF assessment briefs"]
         LNOTES["Lecturer notes"]
     end
-
-    IMSCC["Common Cartridge (.imscc)"]
+    IMSCC["Common Cartridge<br/>(.imscc)"]
     LMS[("Canvas / LMS")]
 
-    src --> T
-    T --> out
-    out ==> IMSCC
+    META --> T
+    MOD --> T
+    ASS --> T
+    NOTES --> T
+    T --> HTML
+    T --> PDF
+    T --> LNOTES
+    HTML ==> IMSCC
+    PDF ==> IMSCC
+    LNOTES ==> IMSCC
     IMSCC ==>|import| LMS
-    out -.->|or paste / upload| LMS
-```
+    HTML -.->|or paste| LMS
+    PDF -.->|or upload| LMS
+-->
 
 ---
 
-![banner](README_banner_1.png)  
-![banner](README_banner_2.png)  
+![banner](README_obsidian_tan.png)  
+![banner](README_obsidian_white.png)  
 *Images: Editing a Torrenzo project using Obsidian for Markdown support. You can use any editor you prefer, including MS Word, with potential to support other formats in future.*
 
 ---
