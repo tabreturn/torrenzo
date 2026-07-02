@@ -158,6 +158,8 @@ python -m torrenzo /path/to/your-subject
 
 ## Configuration & Tags
 
+> See the [Cheatsheet](CHEATSHEET.md) for a quick-reference summary of all available tags and their rendered output.
+
 Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
 Alternatively, you can also just use the bare form without backticks or equals sign: `[[outline]].assessment.a1.weighting` or `[[outline]].slo.a`. Note, however, that the bare form won't render as a live preview in Obsidian.
