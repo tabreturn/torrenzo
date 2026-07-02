@@ -18,8 +18,8 @@ flowchart LR
     subgraph src["Your subject content"]
         direction TB
         META["Subject metadata<br/>(learning outcomes, assessment details)"]
-        MOD["Module pages<br/>Markdown / Word + images & assets"]
-        ASS["Assessment briefs<br/>Markdown + assets"]
+        MOD["Module pages<br/>(Markdown / Word + images & assets)"]
+        ASS["Assessment briefs<br/>(Markdown + assets)"]
         NOTES["Lecturer notes"]
     end
     T["Torrenzo"]
