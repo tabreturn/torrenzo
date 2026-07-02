@@ -158,7 +158,9 @@ python -m torrenzo /path/to/your-subject
 
 ## Configuration & Tags
 
-> 💡 **For a quick-reference summary of all available tags and their rendered output, see the [Cheatsheet](CHEATSHEET.md).**
+---
+
+> 📖 **For a quick-reference summary of all available tags and their rendered output, see the [Cheatsheet](CHEATSHEET.md).**
 
 ---
 
