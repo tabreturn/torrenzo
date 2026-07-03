@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(log_label)
         self._log = QPlainTextEdit()
         self._log.setReadOnly(True)
-        self._log.setFont(QFont('monospace', 12))
+        self._log.setFont(QFont('monospace', 11))
         self._log.setStyleSheet('QPlainTextEdit { background-color: #1e1e1e; color: #d4d4d4; }')
         layout.addWidget(self._log, stretch=1)
 
