@@ -165,6 +165,7 @@ class MainWindow(QMainWindow):
         self._log.setReadOnly(True)
         self._log.setFont(QFont('monospace', 11))
         self._log.setStyleSheet('QPlainTextEdit { background-color: #1e1e1e; color: #d4d4d4; }')
+        self._log.setLineWrapMode(QPlainTextEdit.NoWrap)
         layout.addWidget(self._log, stretch=1)
 
         # --- Status bar ---
