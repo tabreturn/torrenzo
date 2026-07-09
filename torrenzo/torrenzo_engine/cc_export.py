@@ -251,6 +251,13 @@ def _parse_rubric(brief_path: Path, total_marks: float) -> dict | None:
                 'points': pts,
             })
 
+        # canvas rejects rubric imports when a criterion's lowest rating
+        # carries non-zero points; the floor rating must be 0.
+        if crit_ratings:
+            floor_idx = min(range(len(crit_ratings)),
+                            key=lambda k: crit_ratings[k]['points'])
+            crit_ratings[floor_idx]['points'] = 0.0
+
         criteria.append({
             'description': crit_name,
             'points': crit_points,
