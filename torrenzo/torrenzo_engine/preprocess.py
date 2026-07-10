@@ -7,6 +7,8 @@ from pathlib import Path
 
 from lxml import html as lxml_html
 
+from ..components import VIDEO_EXTS
+
 _WIKI_LINK_RE = re.compile(r'\[\[([^\]]+?)(?:\|([^\]]+?))?\]\]')
 _FILE_ISH_RE = re.compile(r'(mod_\d+_\d+_\w+|assessment_\d+|\.\w+$|/)')
 _MOD_RE = re.compile(r'\bmod_(\d+)_(\d+)_(\w+)$')
@@ -24,6 +26,27 @@ def _display_name(target: str) -> str:
     if am:
         return f'Assessment {int(am.group(1))}'
     return target
+
+
+_MD_IMAGE_RE = re.compile(r'!\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+"[^"]*")?\s*\)')
+
+
+def rewrite_video_images(text: str) -> str:
+    """Rewrite markdown image syntax for video files into video component tags.
+
+    ``![alt](clip.mp4)`` becomes ``[[component.video|clip.mp4]]`` so the
+    video is embedded as a player rather than a broken ``<img>``.  Only
+    sources whose extension matches a known video format are rewritten;
+    regular images are left untouched.
+    """
+    def _replace(m: re.Match[str]) -> str:
+        src = m.group(2)
+        clean = src.split('?', 1)[0].split('#', 1)[0]
+        if not clean.lower().endswith(VIDEO_EXTS):
+            return m.group(0)
+        return f'[[component.video|{src}]]'
+
+    return _MD_IMAGE_RE.sub(_replace, text)
 
 
 _MD_LINK_HREF = re.compile(r'\]\(([^)]+)\.md\)')

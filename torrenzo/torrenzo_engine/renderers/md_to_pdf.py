@@ -16,7 +16,7 @@ from markdown_it import MarkdownIt
 
 from . import highlight as _hl
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives
+from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, rewrite_video_images
 from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 
 # Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
@@ -384,6 +384,7 @@ def render(
     from ..preprocess import strip_tagged_sections
     body = strip_tagged_sections(body, '[[cc-section|hide-in-pdf]]')
     body = body.replace('[[cc-section]]', '')
+    body = rewrite_video_images(body)
     body, tag_warnings = apply_tags(body, tags)
     body, link_warnings = expand_wiki_links(body, collect_valid_outputs(
         input_path.parent.parent.parent))

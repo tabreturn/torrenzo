@@ -14,7 +14,7 @@ from .bib_to_html import render_entry_to_html
 from . import highlight as _hl
 from .md_to_pdf import apply_tags
 from ..build_stamp import html_comment, now_iso
-from ..preprocess import convert_dashes, unicode_to_entities, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, cache_bust_asset_refs
+from ..preprocess import convert_dashes, unicode_to_entities, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, cache_bust_asset_refs, rewrite_video_images
 from ...components import build_component_tags, render_page_spacer
 
 
@@ -233,6 +233,7 @@ def render(
         raw, context.get('subject_root', input_path.parent.parent.parent))
     raw = raw.replace('[[cc-section|hide-in-pdf]]', '')
     raw = raw.replace('[[cc-section]]', '')
+    raw = rewrite_video_images(raw)
     raw, tag_warnings = apply_tags(raw, tags)
     raw, link_warnings = expand_wiki_links(raw, collect_valid_outputs(
         input_path.parent.parent.parent))

@@ -27,7 +27,7 @@ from markdown_it import MarkdownIt
 
 from .renderers import highlight as _hl
 from .renderers.md_to_pdf import apply_tags
-from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename
+from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename, rewrite_video_images
 from ..components import build_component_tags
 
 
@@ -603,6 +603,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
         _hl.install(md)
         for name, content in sections.items():
             if content:
+                content = rewrite_video_images(content)
                 content, _tag_warnings = apply_tags(content, component_tags)
                 content, _link_warnings = expand_wiki_links(content, valid_targets)
                 content = rewrite_md_hrefs(content)

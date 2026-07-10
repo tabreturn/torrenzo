@@ -228,11 +228,8 @@ Torrenzo includes built-in components for common page elements. Components use t
 | `[[component.page-spacer]]`                    | Vertical gap (`<p>&nbsp;</p>`) for breathing room            |
 | `[[component.under-construction]]`             | Amber banner; default text: "🚧 Under construction"           |
 | `[[component.under-construction\|Custom msg]]` | Amber banner with custom message: "🚧 Custom msg"             |
-| `[[component.video\|path/to/file]]`            | Responsive 16:9 video player                                 |
 
 Each component renders to a `<div data-tag="component-{name}">...</div>` (or equivalent). Use the subject's `modules/style/style.css` (or `assessments/style/style.css` for PDF) to style these. Both HTML and PDF pipelines substitute all of the above tags.
-
-> 💡 The `[[component.video]]` component is a bit of an exception, as it includes a fair amount of inline CSS. It also won't render videos in PDFs (for obvious reasons).
 
 ---
 
