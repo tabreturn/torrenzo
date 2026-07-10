@@ -166,6 +166,8 @@ python -m torrenzo /path/to/your-subject
 
 Use `outline.[md|yaml]` as the single source of metadata, formatted in YAML. Use [Dataview-style](https://blacksmithgu.github.io/obsidian-dataview) tags in content, for example `` `=[[outline]].assessment.a1.weighting` `` or `` `=[[outline]].slo.a` ``
 
+> 💡 Always edit your `outline.md` file using Obsidian's *Source mode* (or a plain-text editor). Additionally, Obsidian Dataview requires that you wrap the YAML contents with `---` fences (one at the very top of the file, one at the bottom).
+
 Alternatively, you can also just use the bare form without backticks or equals sign: `[[outline]].assessment.a1.weighting` or `[[outline]].slo.a`. Note, however, that the bare form won't render as a live preview in Obsidian.
 
 Keys in `outline.[md|yaml]` define your subject metadata and automatically populate across all content via tags/placeholders.
