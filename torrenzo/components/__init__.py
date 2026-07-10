@@ -76,7 +76,7 @@ def render_under_construction(message: str = '') -> str:
     )
 
 
-def render_embed_video(file_path: str) -> str:
+def render_video(file_path: str) -> str:
     safe = html_mod.escape(file_path.strip())
     basename = html_mod.escape(Path(file_path.strip()).name)
     return (
@@ -94,34 +94,6 @@ def render_embed_video(file_path: str) -> str:
         '  ></iframe>\n'
         '</div>'
     )
-
-
-def render_local_video(file_path: str) -> str:
-    safe = html_mod.escape(file_path.strip())
-    basename = html_mod.escape(Path(file_path.strip()).name)
-    return (
-        '<div style="position: relative; width: 100%; '
-        'padding-bottom: 56.25%; height: 0; overflow: hidden;">\n'
-        '  <video\n'
-        f'    title="Video player for {basename}"\n'
-        '    data-media-type="video"\n'
-        f'    src="{safe}"\n'
-        '    controls="controls"\n'
-        '    playsinline="playsinline"\n'
-        '    preload="metadata"\n'
-        '    style="position: absolute; top: 0; left: 0; '
-        'width: 100%; height: 100%; border: 0;"\n'
-        '  ></video>\n'
-        '</div>'
-    )
-
-
-def render_video(file_path: str) -> str:
-    src = file_path.strip()
-    clean = src.split('?', 1)[0].split('#', 1)[0]
-    if clean.lower().endswith(VIDEO_EXTS):
-        return render_local_video(src)
-    return render_embed_video(src)
 
 
 PARAMETERIZED_COMPONENTS: dict[str, Callable[[str], str]] = {

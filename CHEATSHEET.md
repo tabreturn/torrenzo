@@ -23,7 +23,7 @@
 - **`[[component.under-construction]]`** <span style="color:#888">🚧 banner.</span>
 - **`[[component.under-construction|Custom msg]]`** <span style="color:#888">🚧 banner with custom message.</span>
 - **`[[component.video|path/to/file]]`** <span style="color:#888">responsive 16:9 video player (for embeddable player URLs).</span>
-- **`![caption](clip.mp4)`** <span style="color:#888">self-hosted video via image syntax (`.mp4`, `.webm`, etc.) &rarr; responsive `<video>` player.</span>
+- **`![caption](clip.mp4)`** <span style="color:#888">prefferred video syntax (to above component), supported in Obsidian.</span>
 
 ## CC Export Sections
 
