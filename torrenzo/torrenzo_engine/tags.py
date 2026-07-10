@@ -162,7 +162,6 @@ def build_tag_map(root: Path) -> dict[str, str]:
         for key, val in subject_obj.items():
             if isinstance(val, str):
                 tags[f'outline.subject.{key}'] = val
-                tags[f'outline.{key}'] = val
 
     slos_obj = data.get('slo') or data.get('slos') or {}
     if isinstance(slos_obj, dict):
