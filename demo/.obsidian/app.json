@@ -1,6 +1,3 @@
 {
-  "userIgnoreFilters": [
-    "__pycache__/",
-    "build/"
-  ]
+  "showUnsupportedFiles": true
 }

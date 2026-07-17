@@ -1,0 +1,7 @@
+/*
+!/.gitignore
+!/app.json
+!/community-plugins.json
+!/plugins/
+!/plugins/**
+
