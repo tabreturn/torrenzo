@@ -15,6 +15,14 @@
 - **`[[target]]`** <span style="color:#888">link with auto-derived label (e.g. `[[assessment_01]]`).</span>
 - **`[[target|label]]`** <span style="color:#888">link with custom label (e.g. `[[mod_02_02_mangoes|See mangoes]]`).</span>
 
+## Module Values
+
+- **`[[module|n]]`** <span style="color:#888">module number, e.g. `7` (from the parent directory `module_07`).</span>
+- **`[[module|.n]]`** <span style="color:#888">sub-number, e.g. `2` (the `02` in `mod_07_02`).</span>
+- **`[[module|n.n]]`** <span style="color:#888">composite identifier, e.g. `7.2` (`n` + `.n`); use in headings and cross-references.</span>
+- **`[[module|name]]`** <span style="color:#888">module title derived from the directory slug, e.g. `Citrus Fruits`.</span>
+- **`[[module|sub-name]]`** <span style="color:#888">fixed sequence label: `Introduction` (seq 1), `Oranges` (2), or `Lemons` (3).</span>
+
 ## Page Layout & Components
 
 - **`[[component.module-navigation]]`** <span style="color:#888">tabbed nav links to sibling sub-modules.</span>
@@ -36,3 +44,4 @@
 - **`--`** / **`---`** <span style="color:#888">en-dash / em-dash.</span>
 - **`<<metadata_table>>`** (PDF only) <span style="color:#888">metadata table from front matter.</span>
 - **`[@key]`** / **`[@k1; @k2]`** <span style="color:#888">inline citation with numbered references list.</span>
+

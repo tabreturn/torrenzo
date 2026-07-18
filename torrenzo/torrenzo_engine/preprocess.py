@@ -7,11 +7,12 @@ from pathlib import Path
 
 from lxml import html as lxml_html
 
-from ..components import VIDEO_EXTS
+from ..components import VIDEO_EXTS, _titlecase_slug
 
 _WIKI_LINK_RE = re.compile(r'\[\[([^\]]+?)(?:\|([^\]]+?))?\]\]')
 _FILE_ISH_RE = re.compile(r'(mod_\d+_\d+_\w+|assessment_\d+|\.\w+$|/)')
 _MOD_RE = re.compile(r'\bmod_(\d+)_(\d+)_(\w+)$')
+_MODULE_TAG_RE = re.compile(r'^module\|')
 
 
 def _display_name(target: str) -> str:
@@ -20,7 +21,7 @@ def _display_name(target: str) -> str:
     if m:
         mod_num = str(int(m.group(1)))
         seq = int(m.group(2))
-        name = m.group(3).replace('_', ' ').title()
+        name = _titlecase_slug(m.group(3))
         return f'Module {mod_num}.{seq}: {name}'
     am = re.match(r'^assessment_0*(\d+)$', target)
     if am:
@@ -80,6 +81,8 @@ def expand_wiki_links(
     def _replacer(m: re.Match[str]) -> str:
         left = m.group(1).strip()
         right = m.group(2).strip() if m.group(2) else None
+        if _MODULE_TAG_RE.match(left):
+            return m.group(0)
         if right is not None:
             left_is_file = bool(_FILE_ISH_RE.search(left))
             right_is_file = bool(_FILE_ISH_RE.search(right))

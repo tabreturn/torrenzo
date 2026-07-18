@@ -16,7 +16,7 @@ from markdown_it import MarkdownIt
 
 from . import highlight as _hl
 from ..build_stamp import now_iso
-from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, rewrite_video_images
+from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, rewrite_video_images, _FILE_ISH_RE
 from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 
 # Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
@@ -24,8 +24,8 @@ from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 
-DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`]+))?`?')
-BARE_TAG_RE = re.compile(r'(?<!=)\[\[([^\]]+)\]\](?:\.([^\s`]+))?')
+DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`\[\]]+))?`?')
+BARE_TAG_RE = re.compile(r'(?<!=)\[\[([^\]]+)\]\](?:\.([^\s`\[\]]+))?')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
   r'FLATTEN ([^\s]+) AS x\s+```',
@@ -350,7 +350,12 @@ def apply_tags(
                 renderer = PARAMETERIZED_COMPONENTS.get(comp_key)
                 if renderer is not None:
                     return renderer(arg)
-            return match.group(0)
+            snippet = tags.get(inner)
+            if snippet is not None:
+                return snippet
+            if _FILE_ISH_RE.search(inner):
+                return match.group(0)
+            return replace_content(inner, match.group(0))
         if '.' not in inner or '/' in inner:
             return match.group(0)
         return replace_content(f'outline.{inner}', match.group(0))

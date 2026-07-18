@@ -314,7 +314,7 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 
 Use `modules/module_00/` for subject overview and introductory content (e.g., welcome page, student expectations, key documents). This typically serves as the landing page(s) content.
 
-> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. **Module folders** accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1".
+> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. **Module folders** accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1". Uppercase letters are preserved (e.g. `the_ABC_method` -> `The ABC Method`), and hyphens and commas carry through verbatim.
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
