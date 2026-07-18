@@ -21,7 +21,7 @@
 - **`[[module|.n]]`** <span style="color:#888">sub-number, e.g. `2` (the `02` in `mod_07_02`).</span>
 - **`[[module|n.n]]`** <span style="color:#888">composite identifier, e.g. `7.2` (`n` + `.n`); use in headings and cross-references.</span>
 - **`[[module|name]]`** <span style="color:#888">module title derived from the directory slug, e.g. `Citrus Fruits`.</span>
-- **`[[module|sub-name]]`** <span style="color:#888">fixed sequence label: `Introduction` (seq 1), `Oranges` (2), or `Lemons` (3).</span>
+- **`[[module|sub-name]]`** <span style="color:#888">fixed sequence label: `Introduction`, `Oranges`, or `Lemons.</span>
 
 ## Page Layout & Components
 
@@ -33,7 +33,7 @@
 - **`[[component.video|path/to/file]]`** <span style="color:#888">responsive 16:9 video player (for embeddable player URLs).</span>
 - **`![caption](clip.mp4)`** <span style="color:#888">prefferred video syntax (to above component), supported in Obsidian.</span>
 
-## CC Export Sections
+## CC Export Sections (Assessments)
 
 - **`[[cc-section]]`** (on heading) <span style="color:#888">section shown below PDF in CC export.</span>
 - **`[[cc-section|hide-in-pdf]]`** <span style="color:#888">section hidden from PDF, kept in HTML/CC.</span>
