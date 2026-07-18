@@ -32,7 +32,6 @@ DATAVIEW_BLOCK_RE = re.compile(
   re.I | re.S,
 )
 FRONT_MATTER_RE = re.compile(r'\A---\n(.*?)\n---\n', re.S)
-METADATA_TOKEN = '<<metadata_table>>'
 
 
 def _stamp_pdf_metadata(pdf_path: Path, source: Path, title: str, body: str, ts: str) -> None:
@@ -257,25 +256,6 @@ def extract_metadata_from_front_matter(
     return metadata, body, warnings
 
 
-def build_metadata_table(metadata: dict[str, Any]) -> str:
-    if not metadata:
-        return ''
-    lines: list[str] = [
-      '<table>',
-      '<thead><tr><th>Field</th><th>Details</th></tr></thead>',
-      '<tbody>',
-    ]
-    for key, value in metadata.items():
-        field = key.replace('_', ' ').title()
-        if isinstance(value, list):
-            detail = '<br>'.join(str(item) for item in value)
-        else:
-            detail = str(value)
-        lines.append(f'<tr><td>{field}</td><td>{detail}</td></tr>')
-    lines.append('</tbody></table>')
-    return '\n'.join(lines)
-
-
 def apply_tags(
   text: str,
   tags: dict[str, str],
@@ -378,12 +358,10 @@ def render(
     tags = {**tags, **build_component_tags(input_path)}
 
     raw_content = input_path.read_text(encoding='utf-8')
-    metadata, body, meta_warnings = extract_metadata_from_front_matter(
+    _, body, meta_warnings = extract_metadata_from_front_matter(
       raw_content
     )
     warnings: list[str] = list(meta_warnings)
-    if METADATA_TOKEN in body and metadata:
-        body = body.replace(METADATA_TOKEN, build_metadata_table(metadata))
     body, include_warnings = resolve_includes(
         body, context.get('subject_root', input_path.parent.parent.parent))
     from ..preprocess import strip_tagged_sections

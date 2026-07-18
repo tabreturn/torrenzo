@@ -42,6 +42,5 @@
 
 - **`![alt|css:directives](img.png)`** <span style="color:#888">image with custom CSS styling.</span>
 - **`--`** / **`---`** <span style="color:#888">en-dash / em-dash.</span>
-- **`<<metadata_table>>`** (PDF only) <span style="color:#888">metadata table from front matter.</span>
 - **`[@key]`** / **`[@k1; @k2]`** <span style="color:#888">inline citation with numbered references list.</span>
 
