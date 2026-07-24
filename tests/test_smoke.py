@@ -82,7 +82,7 @@ class TestTags:
         assert 'outline.subject.code' in tags
         assert tags['outline.subject.code'] == 'FRU101'
         assert 'slo' in tags
-        assert 'assessment|a1|meta_table' in tags
+        assert 'assessment|a1|submission' in tags
 
     def test_load_outline(self):
         from torrenzo.torrenzo_engine.tags import load_outline

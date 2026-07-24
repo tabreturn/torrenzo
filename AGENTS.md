@@ -24,7 +24,6 @@
 - Components use the bare form: `[[component.module-navigation]]` (no backticks/equals).
 - SLO Dataview LIST block supported (LIST without id slo[x] ... FLATTEN ...).
 - Parent paths (e.g., `` `=[[outline]].assessment.a1` ``) auto-render as HTML tables; SLO code lists render `<ul>` of full descriptions (no bold codes).
-- Assessment metatable: `` `=[[outline]].assessment.<id>.metatable` `` outputs the formatted assessment table.
 
 ## Directory Layout & Naming
 

@@ -4,7 +4,6 @@
 - **`[[outline]].path`** <span style="color:#888">bare form; same result but won't live-preview in Obsidian. Parent paths (e.g. `[[outline]].assessment.a1`) render as a metadata table.</span>
 - **`outline.assessment.<id>`** (parent) <span style="color:#888">metadata table of all fields.</span>
 - **`outline.assessment.<id>.<field>`** (`.title`, `.weighting`, `.total_marks`, `.submission`, `.assessment`) <span style="color:#888">plain string.</span>
-- **`outline.assessment.<id>.metatable`** <span style="color:#888">formatted metadata table.</span>
 - **`outline.slo`** (no code) <span style="color:#888">full list of all outcomes.</span>
 - **`outline.slo.<code>`** <span style="color:#888">single outcome with code and description.</span>
 - **`outline.subject.code`** / **`outline.subject.title`** <span style="color:#888">plain string.</span>

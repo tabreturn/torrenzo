@@ -75,7 +75,6 @@ def build_assessment_metadata_tags(
     for assessment_id, fields in items:
         if not assessment_id or not isinstance(fields, dict):
             continue
-        table_rows: list[tuple[str, str]] = []
         for key, value in fields.items():
             if str(key).startswith('_'):
                 continue
@@ -107,23 +106,6 @@ def build_assessment_metadata_tags(
             else:
                 detail = format_metadata_value(value)
             tags[f'assessment|{assessment_id}|{normalized_key}'] = detail
-            table_rows.append((
-              normalized_key.replace('_', ' ').title(), detail
-            ))
-        if table_rows:
-            lines: list[str] = [
-              '<table>',
-              '<thead><tr><th>Field</th><th>Details</th></tr></thead>',
-              '<tbody>',
-            ]
-            for label, detail in table_rows:
-                lines.append(f'<tr><td>{label}</td><td>{detail}</td></tr>')
-            lines.append('</tbody></table>')
-            table_markup = '\n'.join(lines)
-            tags[f'assessment|{assessment_id}|meta_table'] = table_markup
-            tags[
-              f"assessment|{fields.get('_key', assessment_id)}|meta_table"
-            ] = table_markup
     return tags
 
 
@@ -234,23 +216,6 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 tags[f'^ass-{aid}-title'] = title
                 tags[f'outline.assessment.{aid}.title'] = title
                 tags[f'outline.assessment.{key}.title'] = title
-            meta_key = f'assessment|{aid}|meta_table'
-            alt_meta_key = f'assessment|{key}|meta_table'
-            if meta_key in tags:
-                table = tags[meta_key]
-            elif alt_meta_key in tags:
-                table = tags[alt_meta_key]
-            else:
-                table = ''
-            if table:
-                tags[f'assess-{aid}-meta'] = table
-                tags[f'ass-{aid}-meta'] = table
-                tags[f'^assess-{aid}-meta'] = table
-                tags[f'^ass-{aid}-meta'] = table
-                tags[f'^assess-{aid}-meta-table'] = table
-                tags[f'^ass-{aid}-meta-table'] = table
-                tags[f'outline.assessment.{aid}.metatable'] = table
-                tags[f'outline.assessment.{key}.metatable'] = table
 
     def _is_slo_path(path: str) -> bool:
         return (
