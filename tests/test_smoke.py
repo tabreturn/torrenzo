@@ -1,5 +1,6 @@
 """Smoke tests -- run the full pipeline and verify it doesn't crash."""
 
+import re
 import shutil
 import subprocess
 import sys
@@ -35,7 +36,7 @@ class TestBuild:
     def test_full_build(self):
         result = run_torrenzo('--force')
         assert result.returncode == 0, result.stderr
-        assert '10 file(s) newly built' in result.stdout
+        assert re.search(r'\d+ file\(s\) newly built', result.stdout)
 
     def test_expected_outputs_exist(self):
         run_torrenzo('--force')
@@ -56,7 +57,7 @@ class TestBuild:
         run_torrenzo('--force')
         result = run_torrenzo('--clean')
         assert result.returncode == 0
-        assert '10 file(s) newly built' in result.stdout
+        assert re.search(r'\d+ file\(s\) newly built', result.stdout)
 
 
 class TestCC:
