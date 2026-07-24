@@ -1,7 +1,7 @@
 ## Pull Values From the Outline
 
-- **`` `=[[outline]].path` ``** <span style="color:#888">backtick form; renders the value at that outline path (e.g. `` `=[[outline]].subject.code` ``). Live-previews in Obsidian.</span>
-- **`[[outline]].path`** <span style="color:#888">bare form; same result but won't live-preview in Obsidian. Parent paths (e.g. `[[outline]].assessment.a1`) render as a metadata table.</span>
+- **`` `=[[outline]].<path>` ``** <span style="color:#888">backtick form; renders the value at that outline path (e.g. `` `=[[outline]].subject.code` ``). Live-previews in Obsidian.</span>
+- **`[[outline]].<path>`** <span style="color:#888">bare form; same result but won't live-preview in Obsidian. Parent paths (e.g. `[[outline]].assessment.a1`) render as a metadata table.</span>
 - **`outline.assessment.<id>`** (parent) <span style="color:#888">metadata table of all fields.</span>
 - **`outline.assessment.<id>.<field>`** (`.title`, `.weighting`, `.total_marks`, `.submission`, `.assessment`) <span style="color:#888">plain string.</span>
 - **`outline.slo`** (no code) <span style="color:#888">full list of all outcomes.</span>
@@ -20,7 +20,7 @@
 - **`[[module|.n]]`** <span style="color:#888">sub-number, e.g. `2` (the `02` in `mod_07_02`).</span>
 - **`[[module|n.n]]`** <span style="color:#888">composite identifier, e.g. `7.2` (`n` + `.n`); use in headings and cross-references.</span>
 - **`[[module|name]]`** <span style="color:#888">module title derived from the directory slug, e.g. `Citrus Fruits`.</span>
-- **`[[module|sub-name]]`** <span style="color:#888">fixed sequence label: `Introduction`, `Oranges`, or `Lemons.</span>
+- **`[[module|sub-name]]`** <span style="color:#888">fixed sequence label: `Introduction`, `Oranges`, or `Lemons`.</span>
 
 ## Page Layout & Components
 
@@ -30,7 +30,7 @@
 - **`[[component.under-construction]]`** <span style="color:#888">🚧 banner.</span>
 - **`[[component.under-construction|Custom msg]]`** <span style="color:#888">🚧 banner with custom message.</span>
 - **`[[component.video|path/to/file]]`** <span style="color:#888">responsive 16:9 video player (for embeddable player URLs).</span>
-- **`![caption](clip.mp4)`** <span style="color:#888">prefferred video syntax (to above component), supported in Obsidian.</span>
+- **`![caption](clip.mp4)`** <span style="color:#888">preferred video syntax (to above component), supported in Obsidian.</span>
 
 ## CC Export Sections (Assessments)
 
