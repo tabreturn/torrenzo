@@ -133,12 +133,40 @@ def check_asset_refs(text: str, input_path: Path) -> list[str]:
 
     Scans the markdown source for ``assets/<name>`` references and
     warns if the named file does not exist in the module's assets
-    directory (``input_path.parent / 'assets'``).
+    directory (``input_path.parent / 'assets'``).  References inside
+    fenced code blocks or inline code spans are ignored, since those
+    are illustrative source snippets rather than real asset links.
     """
     warnings: list[str] = []
     seen: set[str] = set()
     assets_dir = input_path.parent / 'assets'
-    for m in _ASSET_REF_RE.finditer(text):
+
+    # Strip fenced code blocks (``` or ~~~) and inline code spans so
+    # ``assets/script.js`` mentioned inside a code example is not
+    # mistaken for a real asset reference.
+    lines: list[str] = []
+    in_fence = False
+    fence_char = ''
+    fence_len = 0
+    for line in text.split('\n'):
+        if in_fence:
+            stripped = line.strip()
+            if (stripped
+                    and all(c == fence_char for c in stripped)
+                    and len(stripped) >= fence_len):
+                in_fence = False
+            continue
+        fence_match = re.match(r'^\s{0,3}(`{3,}|~{3,})', line)
+        if fence_match:
+            fence_char = fence_match.group(1)[0]
+            fence_len = len(fence_match.group(1))
+            in_fence = True
+            continue
+        lines.append(line)
+    stripped_text = '\n'.join(lines)
+    stripped_text = re.sub(r'`[^`\n]*`', '', stripped_text)
+
+    for m in _ASSET_REF_RE.finditer(stripped_text):
         name = m.group(1)
         if name in seen:
             continue
