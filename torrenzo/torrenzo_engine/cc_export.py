@@ -28,7 +28,7 @@ from markdown_it import MarkdownIt
 from .renderers import highlight as _hl
 from .renderers.md_to_pdf import apply_tags
 from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename, rewrite_video_images
-from ..components import build_component_tags
+from ..components import build_component_tags, _titlecase_slug
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -68,7 +68,7 @@ def _id(name: str) -> str:
 
 
 def _title_from_slug(slug: str) -> str:
-    return slug.replace('_', ' ').title()
+    return _titlecase_slug(slug)
 
 
 MOD_FOLDER_RE = re.compile(r'^module_(\d+)(?:_(.+))?$')
@@ -114,7 +114,7 @@ def _module_labels(subject_root: Path) -> dict[int, str]:
         if mod_num == 0:
             labels[mod_num] = 'Welcome'
         elif name:
-            labels[mod_num] = f'Module {mod_num} \u2013 {name.replace("_", " ").title()}'
+            labels[mod_num] = f'Module {mod_num} \u2013 {_titlecase_slug(name)}'
     return labels
 
 
