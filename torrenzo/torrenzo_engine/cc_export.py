@@ -425,9 +425,11 @@ def _module_meta_xml(
         _el(mod, 'locked', 'false')
         items = _el(mod, 'items')
 
+        item_identifiers: list[str] = []
         for pi, page in enumerate(pages):
-            item = _el(items, 'item',
-                       identifier=_id(f'item/{page["filename"]}'))
+            item_id = _id(f'item/{page["filename"]}')
+            item_identifiers.append(item_id)
+            item = _el(items, 'item', identifier=item_id)
             _el(item, 'content_type', 'WikiPage')
             _el(item, 'workflow_state', 'active')
             if mod_num == 0:
@@ -438,6 +440,13 @@ def _module_meta_xml(
             _el(item, 'position', str(pi + 1))
             _el(item, 'new_tab', 'false')
             _el(item, 'indent', '0')
+
+        # "must complete all items": one completionRequirement per item.
+        # real modules only; Assessments and Lecturer Notes omit it.
+        reqs = _el(mod, 'completionRequirements')
+        for item_id in item_identifiers:
+            req = _el(reqs, 'completionRequirement', type='must_view')
+            _el(req, 'identifierref', item_id)
 
     if assessment_items:
         position += 1
