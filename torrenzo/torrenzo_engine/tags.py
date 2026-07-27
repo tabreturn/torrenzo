@@ -89,7 +89,7 @@ def build_assessment_metadata_tags(
                         if code_str in slos_by_id:
                             desc = html.escape(
                               str(slos_by_id[code_str]
-                              .get('description', '')).strip()
+                                .get('description', '')).strip()
                             )
                             if desc:
                                 outcomes.append(f'<li>{desc}</li>')
@@ -101,7 +101,7 @@ def build_assessment_metadata_tags(
                             outcomes.append(
                               f'<li>{html.escape(code_str)}</li>'
                             )
-                detail = f"<ul>{''.join(outcomes)}</ul>" if outcomes else ''
+                detail = f'<ul>{''.join(outcomes)}</ul>' if outcomes else ''
                 normalized_key = 'slo'
             else:
                 detail = format_metadata_value(value)
@@ -237,7 +237,7 @@ def build_tag_map(root: Path) -> dict[str, str]:
                   str(lookup[code].get('description', '')).strip()
                 )
                 snippets.append(f'<li>{desc}</li>' if desc
-                                else f'<li>{html.escape(code)}</li>')
+                  else f'<li>{html.escape(code)}</li>')
             else:
                 snippets.append(f'<li>{html.escape(code)}</li>')
         return snippets
@@ -260,7 +260,7 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 if is_scalar_list:
                     if lookup and _is_slo_path(child_prefix):
                         snips = _slo_snippets(v, lookup)
-                        detail = f"<ul>{''.join(snips)}</ul>" if snips else ''
+                        detail = f'<ul>{''.join(snips)}</ul>' if snips else ''
                     else:
                         detail = '<br>'.join(
                           html.escape(str(i).strip()) for i in v
@@ -295,7 +295,7 @@ def build_tag_map(root: Path) -> dict[str, str]:
             if all(isinstance(i, (str, int, float)) for i in value):
                 if lookup and _is_slo_path(prefix):
                     snips = _slo_snippets(value, lookup)
-                    return f"<ul>{''.join(snips)}</ul>" if snips else ''
+                    return f'<ul>{''.join(snips)}</ul>' if snips else ''
                 return '<br>'.join(
                   html.escape(str(i).strip()) for i in value
                 )
@@ -317,7 +317,7 @@ def build_tag_map(root: Path) -> dict[str, str]:
                 if lookup and _is_slo_path(prefix):
                     snips = _slo_snippets(obj, lookup)
                     tags[prefix] = (
-                      f"<ul>{''.join(snips)}</ul>" if snips else ''
+                      f'<ul>{''.join(snips)}</ul>' if snips else ''
                     )
                 else:
                     tags[prefix] = ', '.join(str(item) for item in obj)

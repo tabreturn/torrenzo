@@ -19,7 +19,7 @@ from ..build_stamp import now_iso
 from ..preprocess import convert_dashes, expand_wiki_links, resolve_includes, rewrite_md_hrefs, collect_valid_outputs, check_asset_refs, apply_image_style_directives, rewrite_video_images, _FILE_ISH_RE
 from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 
-# Chrome/Puppeteer PDFs under-report trailer /Size; pypdf logs a harmless
+# chrome/puppeteer pdfs under-report trailer /Size; pypdf logs a harmless
 # warning each time we reopen one for metadata stamping. Silence it.
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 
@@ -49,7 +49,7 @@ def _stamp_pdf_metadata(pdf_path: Path, source: Path, title: str, body: str, ts:
         writer.page_mode = '/UseOutlines'
         writer.page_layout = '/SinglePage'
         writer.open_destination = writer.pages[0] if writer.pages else None
-        # add PDF outlines from markdown headings (body has tags resolved)
+        # add pdf outlines from markdown headings
         _add_pdf_outlines(writer, reader, body)
         fd, tmp = tempfile.mkstemp(suffix='.pdf', dir=pdf_path.parent)
         os.close(fd)
@@ -156,7 +156,7 @@ def _parse_config_js(config_path: Path, version_override: str = '') -> Dict[str,
         templates.append(m.group(1))
         return f'"__TPL_{len(templates) - 1}__"'
     text = re.sub(r'`([^`]*)`', _capture, text)
-    # remove JS comments
+    # remove js comments
     text = re.sub(r'/\*.*?\*/', '', text, flags=re.DOTALL)
     text = re.sub(r'//[^\n]*', '', text)
     # quote unquoted keys (word before colon that's not already quoted)
@@ -167,7 +167,7 @@ def _parse_config_js(config_path: Path, version_override: str = '') -> Dict[str,
     )
     # remove trailing commas
     text = re.sub(r',(\s*[}\]])', r'\1', text)
-    # convert single-quoted values to double-quoted (JSON)
+    # convert single-quoted values to double-quoted (json)
     text = re.sub(r":\s*'([^']*)'", r': "\1"', text)
     try:
         parsed = json.loads(text)
@@ -185,8 +185,8 @@ def _parse_config_js(config_path: Path, version_override: str = '') -> Dict[str,
     # extract versionDate = new Date().toISOString().slice(0, 10);
     raw = config_path.read_text(encoding='utf-8')
     ver_match = re.search(
-      r"const\s+versionDate\s*=\s*new\s+Date\(\)"
-      r"\.toISOString\(\)\.slice\(\s*0\s*,\s*10\s*\)",
+      r'const\s+versionDate\s*=\s*new\s+Date\(\)'
+      r'\.toISOString\(\)\.slice\(\s*0\s*,\s*10\s*\)',
       raw,
     )
     version_date = ''
@@ -216,7 +216,7 @@ async def _render_pdf_async(
       headless=True,
       executablePath=chrome_path,
       args=['--no-sandbox', '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage'],
+        '--disable-dev-shm-usage'],
     )
     try:
         page = await browser.newPage()
@@ -363,14 +363,14 @@ def render(
     )
     warnings: list[str] = list(meta_warnings)
     body, include_warnings = resolve_includes(
-        body, context.get('subject_root', input_path.parent.parent.parent))
+      body, context.get('subject_root', input_path.parent.parent.parent))
     from ..preprocess import strip_tagged_sections
     body = strip_tagged_sections(body, '[[cc-section|hide-in-pdf]]')
     body = body.replace('[[cc-section]]', '')
     body = rewrite_video_images(body)
     body, tag_warnings = apply_tags(body, tags)
     body, link_warnings = expand_wiki_links(body, collect_valid_outputs(
-        input_path.parent.parent.parent))
+      input_path.parent.parent.parent))
     body = rewrite_md_hrefs(body)
     body = convert_dashes(body)
     warnings.extend(tag_warnings)
@@ -410,7 +410,7 @@ def render(
 
         # parse config for pdf_options and chrome path
         config = _parse_config_js(
-            config_src, version_override=context.get('version_stamp', '')
+          config_src, version_override=context.get('version_stamp', '')
         ) if has_config else {}
         chrome_path = config.get(
           'launch_options', {},
@@ -425,18 +425,17 @@ def render(
               warnings,
             )
 
-        # render markdown → HTML body
+        # render markdown → html body
         html_body = md.render(body)
         html_body = apply_image_style_directives(html_body)
 
-        # inline logo SVG into header template
+        # inline logo svg into header template
         logo_markup = ''
         if logo_path.exists():
             logo_markup = logo_path.read_text(encoding='utf-8').strip()
 
-        # build full HTML document with inlined CSS
-        # (inlining ensures font url() paths resolve relative
-        #  to the HTML file, matching md-to-pdf behavior)
+        # inlining css ensures font url() paths resolve relative to the
+        # html file, matching md-to-pdf behavior
         css_content = ''
         if has_style and style_css_src.exists():
             css_content = style_css_src.read_text(encoding='utf-8')
@@ -475,7 +474,7 @@ def render(
           '</body></html>'
         )
 
-        # write temp HTML in workdir (so relative CSS/font paths resolve)
+        # write temp html in workdir (so relative css/font paths resolve)
         fd, tmp_path = tempfile.mkstemp(
           suffix='.html', dir=str(workdir),
         )

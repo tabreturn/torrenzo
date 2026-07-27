@@ -121,10 +121,10 @@ class Pipeline:
                 output_path = output_dir / output_name
                 if output_path in seen_outputs:
                     entries.append((
-                        'warning',
-                        f'{job.name}: collision -- {self._shorten(str(input_path))} '
-                        f'and {self._shorten(str(seen_outputs[output_path]))} '
-                        f'both target {self._shorten(str(output_path))}',
+                      'warning',
+                      f'{job.name}: collision -- {self._shorten(str(input_path))} '
+                      f'and {self._shorten(str(seen_outputs[output_path]))} '
+                      f'both target {self._shorten(str(output_path))}',
                     ))
                 else:
                     seen_outputs[output_path] = input_path
@@ -164,8 +164,8 @@ class Pipeline:
 
         for f in self.build_dir.rglob('*'):
             if f.is_file() and f.suffix.lower() in (
-                '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp',
-                '.bmp', '.tiff', '.ico', '.imscc',
+              '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp',
+              '.bmp', '.tiff', '.ico', '.imscc',
             ):
                 expected_outputs.add(f)
 
@@ -189,12 +189,12 @@ class Pipeline:
               f'{built_count} file(s) newly built',
             ))
             prior_entries.append({
-                'built_at': now_iso(),
-                'files': built_files,
+              'built_at': now_iso(),
+              'files': built_files,
             })
             log_path.write_text(
-                json.dumps(prior_entries, indent=2) + '\n',
-                encoding='utf-8',
+              json.dumps(prior_entries, indent=2) + '\n',
+              encoding='utf-8',
             )
             formatted.append(fmt(
               'info',

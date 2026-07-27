@@ -20,26 +20,26 @@ CANVAS_NS = 'http://canvas.instructure.com/xsd/cccv1p0'
 
 
 # ---------------------------------------------------------------------------
-# Filename normalisation
+# filename normalisation
 # ---------------------------------------------------------------------------
 
 def _normalize_filename(fn: str) -> str:
     """Normalize dashes, underscores, and Canvas module-N renames."""
     CANVAS_RENAME = {
-        'module-1-introduction-2.html': 'mod_01_01_introduction.html',
-        'module-1-activities-2.html': 'mod_01_04_activities.html',
+      'module-1-introduction-2.html': 'mod_01_01_introduction.html',
+      'module-1-activities-2.html': 'mod_01_04_activities.html',
     }
     fn = CANVAS_RENAME.get(fn, fn)
     return re.sub(r'[-_]', '_', fn)
 
 
 MOD_HTML_FILENAME_RE = re.compile(
-    r'^mod[-_]\d+[-_]\d+[-_].+\.html$'
-    r'|^module[-_]\d+[-_].+[-_]\d+\.html$')
+  r'^mod[-_]\d+[-_]\d+[-_].+\.html$'
+  r'|^module[-_]\d+[-_].+[-_]\d+\.html$')
 
 
 # ---------------------------------------------------------------------------
-# Extraction
+# extraction
 # ---------------------------------------------------------------------------
 
 def _extract_zip(path: Path) -> Path:
@@ -56,13 +56,13 @@ def _parse_manifest(tmp: Path) -> dict[str, Any]:
     tree = ET.parse(str(manifest_path))
     root = tree.getroot()
     ns = {
-        'cc': CC_NS,
-        'lomimscc': 'http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest',
+      'cc': CC_NS,
+      'lomimscc': 'http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest',
     }
 
     title_el = root.find(
-        './/cc:metadata/lomimscc:lom/lomimscc:general/'
-        'lomimscc:title/lomimscc:string', ns)
+      './/cc:metadata/lomimscc:lom/lomimscc:general/'
+      'lomimscc:title/lomimscc:string', ns)
     title = title_el.text.strip() if title_el is not None else ''
 
     modules: list[dict] = []
@@ -70,11 +70,11 @@ def _parse_manifest(tmp: Path) -> dict[str, Any]:
     if org is not None:
         for item in org.iterfind('cc:item', ns):
             mod_title = (item.findtext('cc:title', default='', namespaces=ns)
-                         .strip())
+              .strip())
             pages: list[dict] = []
             for sub in item.iterfind('cc:item', ns):
                 ptitle = (sub.findtext('cc:title', default='', namespaces=ns)
-                          .strip())
+                  .strip())
                 ref = sub.get('identifierref', '')
                 pages.append({'title': ptitle, 'identifierref': ref})
             modules.append({'title': mod_title, 'pages': pages})
@@ -117,18 +117,18 @@ def _read_assessments(tmp: Path) -> list[dict]:
         ns = {'c': CANVAS_NS}
         title = root.findtext('c:title', default='', namespaces=ns).strip()
         points = float(root.findtext('c:points_possible', default='0',
-                                     namespaces=ns))
+          namespaces=ns))
         rubric_ref = root.findtext('c:rubric_identifierref', default='',
-                                   namespaces=ns)
+          namespaces=ns)
         body = ''
         if html_files:
             body = _normalize_html_body(html_files[0].read_text(
-                encoding='utf-8', errors='replace'))
+              encoding='utf-8', errors='replace'))
         result.append({
-            'title': title,
-            'points': points,
-            'rubric_ref': rubric_ref,
-            'body': body,
+          'title': title,
+          'points': points,
+          'rubric_ref': rubric_ref,
+          'body': body,
         })
     return result
 
@@ -153,9 +153,9 @@ def _pdf_content_hash(path: Path) -> str:
 
 
 ASSESS_PDF_TS_RE = re.compile(
-    r'^(.*assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)$')
+  r'^(.*assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)$')
 ASSESS_PDF_TS_BODY_RE = re.compile(
-    r'(assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)')
+  r'(assessment_\d{2})-\d{8}-\d{6}(?:-\d+)?(\.pdf)')
 
 ASSESS_PDF_RE = re.compile(r'(?:^|/)assessment_\d{2}.*\.pdf$')
 
@@ -195,14 +195,14 @@ def _read_course_settings(tmp: Path) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# Normalisation
+# normalisation
 # ---------------------------------------------------------------------------
 
 GUID_RE = re.compile(r'g[0-9a-f]{32}')
 API_URL_RE = re.compile(
-    r'\s*data-api-endpoint=["\'][^"\']*["\']\s*')
+  r'\s*data-api-endpoint=["\'][^"\']*["\']\s*')
 API_RETURN_RE = re.compile(
-    r'\s*data-api-returntype=["\'][^"\']*["\']\s*')
+  r'\s*data-api-returntype=["\'][^"\']*["\']\s*')
 LOADING_ATTR_RE = re.compile(r'\s*loading=["\'][^"\']*["\']\s*')
 
 
@@ -222,7 +222,7 @@ def _normalize_html_body(html: str) -> str:
     body = API_RETURN_RE.sub(' ', body)
     body = LOADING_ATTR_RE.sub(' ', body)
     body = re.sub(r'\s+align=["\'][^"\']*["\']', '', body)
-    # HTML entities → unicode
+    # html entities → unicode
     body = body.replace('&ndash;', '\u2013')
     body = body.replace('&mdash;', '\u2014')
     body = body.replace('&times;', '\u00d7')
@@ -230,18 +230,18 @@ def _normalize_html_body(html: str) -> str:
     body = body.replace('&hellip;', '\u2026')
     body = body.replace('&deg;', '\u00b0')
     body = body.replace('&nbsp;', ' ')
-    # Canvas strips HTML comments on import; normalize both sides
+    # canvas strips html comments on import; normalize both sides
     body = re.sub(r'<!--.*?-->', '', body, flags=re.S)
-    # Canvas adds trailing empty paragraphs
+    # canvas adds trailing empty paragraphs
     body = body.replace('<p></p>', '')
-    # Normalize component-navigation divs to a placeholder
+    # normalize component-navigation divs to a placeholder
     NAV_RE = re.compile(
-        r'<div[^>]*data-tag="component-module-navigation"[^>]*>.*?</div>',
-        re.S)
+      r'<div[^>]*data-tag="component-module-navigation"[^>]*>.*?</div>',
+      re.S)
     body = NAV_RE.sub(
-        '<div data-tag="component-module-navigation" '
-        'style="display:flex;flex-wrap:wrap;gap:0;justify-content:center">'
-        'Navigation</div>', body)
+      '<div data-tag="component-module-navigation" '
+      'style="display:flex;flex-wrap:wrap;gap:0;justify-content:center">'
+      'Navigation</div>', body)
 
     def _norm_style(m: re.Match) -> str:
         val = m.group(1)
@@ -259,7 +259,7 @@ def _normalize_html_body(html: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Diff engine
+# diff engine
 # ---------------------------------------------------------------------------
 
 def _diff_text(a_label: str, b_label: str, a_text: str, b_text: str) -> str:
@@ -267,9 +267,9 @@ def _diff_text(a_label: str, b_label: str, a_text: str, b_text: str) -> str:
         return ''
     lines: list[str] = []
     diff = difflib.unified_diff(
-        a_text.splitlines(keepends=True),
-        b_text.splitlines(keepends=True),
-        fromfile=f'[{a_label}]', tofile=f'[{b_label}]',
+      a_text.splitlines(keepends=True),
+      b_text.splitlines(keepends=True),
+      fromfile=f'[{a_label}]', tofile=f'[{b_label}]',
     )
     for line in diff:
         lines.append(line.rstrip('\n'))
@@ -295,7 +295,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
     lines: list[str] = []
     sepline = '─' * 79
 
-    # Header
+    # header
     local_title = local_manifest.get('title', local_path.name)
     live_title = live_manifest.get('title', live_path.name)
     lines.append(f'{sepline}')
@@ -305,10 +305,8 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
     lines.append('')
 
     # =================================================================
-    # Gather
+    # gather
     # =================================================================
-
-    # -- WikiPages --
     wiki_added = sorted(set(local_pages) - set(live_pages))
     wiki_removed = sorted(set(live_pages) - set(local_pages))
     wiki_modified: list[str] = []
@@ -316,7 +314,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
         if _diff_text(fn, fn, local_pages[fn], live_pages[fn]):
             wiki_modified.append(fn)
 
-    # -- Assessments --
+    # -- assessments --
     assess_only_local: list[str] = []
     assess_only_live: list[str] = []
     assess_changed: list[tuple[str, str]] = []
@@ -329,9 +327,9 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
             assess_only_live.append(title)
         elif la['points'] != li['points']:
             assess_changed.append(
-                (title, f'points {li["points"]} → {la["points"]}'))
+              (title, f'points {li["points"]} → {la["points"]}'))
 
-    # -- Assets --
+    # -- assets --
     lkeys = set(local_assets)
     rkeys = set(live_assets)
     asset_only_local: list[tuple[str, int]] = []
@@ -350,11 +348,11 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
         rn, rs, rz = live_assets[k]
         if ls != rs:
             checksum_changed.append(
-                f'* {ln}  ({_fmt_size(rz)} → {_fmt_size(lz)})')
+              f'* {ln}  ({_fmt_size(rz)} → {_fmt_size(lz)})')
         elif _is_assessment_pdf(ln) and ln != rn:
             rebuilt_same.append(f'{rn} → {ln}  (rebuilt, same content)')
 
-    # -- Live-only Canvas artifacts --
+    # -- live-only canvas artifacts --
     extra_dirs: list[str] = []
     for name in ['lti_resource_links', 'non_cc_assessments']:
         if (live_tmp / name).exists():
@@ -365,7 +363,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
         extra_dirs.append('course_image')
 
     # =================================================================
-    # CHANGES
+    # changes
     # =================================================================
     cl: list[str] = []
     for fn in wiki_modified:
@@ -375,7 +373,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
     cl.extend(checksum_changed)
 
     # =================================================================
-    # LIVE-ONLY
+    # live-only
     # =================================================================
     ll: list[str] = []
     for fn in wiki_removed:
@@ -388,12 +386,12 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
         ll.append(f'• {d}')
 
     # =================================================================
-    # REBUILT, SAME CONTENT
+    # rebuilt, same content
     # =================================================================
     rl = list(rebuilt_same)
 
     # =================================================================
-    # Output
+    # output
     # =================================================================
     def _section(heading: str, items: list[str]) -> None:
         if not items:
@@ -412,7 +410,7 @@ def diff_cc(local_path: Path, live_path: Path, *, verbose: bool = False) -> str:
         lines.append('NO DIFFERENCES')
         lines.append('')
 
-    # --- Cleanup ---
+    # --- cleanup ---
     import shutil
     shutil.rmtree(local_tmp, ignore_errors=True)
     shutil.rmtree(live_tmp, ignore_errors=True)

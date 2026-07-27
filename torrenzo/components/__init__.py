@@ -9,7 +9,7 @@ from typing import Callable
 
 
 VIDEO_EXTS: tuple[str, ...] = (
-    '.mp4', '.webm', '.ogg', '.ogv', '.mov', '.m4v', '.mkv',
+  '.mp4', '.webm', '.ogg', '.ogv', '.mov', '.m4v', '.mkv',
 )
 
 
@@ -86,11 +86,11 @@ def parse_module_path(filepath: Path) -> dict[str, str] | None:
     name = _titlecase_slug(name_slug)
     sub_name = _titlecase_slug('_'.join(parts[3:]))
     return {
-        'n': module_num,
-        '.n': sub_num,
-        'n.n': f'{module_num}.{sub_num}',
-        'name': name,
-        'sub-name': sub_name,
+      'n': module_num,
+      '.n': sub_num,
+      'n.n': f'{module_num}.{sub_num}',
+      'name': name,
+      'sub-name': sub_name,
     }
 
 
@@ -118,9 +118,9 @@ def render_module_navigation(input_path: Path) -> str:
         links.append(f'<a href="{href}"{cls}>{name}</a>')
 
     return (
-        '<div data-tag="component-module-navigation">\n'
-        + '\n'.join(links)
-        + '\n</div>'
+      '<div data-tag="component-module-navigation">\n'
+      + '\n'.join(links)
+      + '\n</div>'
     )
 
 
@@ -136,9 +136,9 @@ def render_under_construction(message: str = '') -> str:
     text = message.strip() if message.strip() else 'Under construction'
     safe = html_mod.escape(text)
     return (
-        '<div data-tag="component-under-construction">'
-        f'🚧 {safe}'
-        '</div>'
+      '<div data-tag="component-under-construction">'
+      f'🚧 {safe}'
+      '</div>'
     )
 
 
@@ -146,25 +146,25 @@ def render_video(file_path: str) -> str:
     safe = html_mod.escape(file_path.strip())
     basename = html_mod.escape(Path(file_path.strip()).name)
     return (
-        '<div style="position: relative; width: 100%; '
-        'padding-bottom: calc(56.3% + 48px); height: 0; overflow: hidden;">\n'
-        '  <iframe\n'
-        f'    title="Video player for {basename}"\n'
-        '    data-media-type="video"\n'
-        f'    src="{safe}"\n'
-        '    loading="lazy"\n'
-        '    allowfullscreen="allowfullscreen"\n'
-        '    allow="fullscreen"\n'
-        '    style="position: absolute; top: 0; left: 0; '
-        'width: 100%; height: 100%; border: 0;"\n'
-        '  ></iframe>\n'
-        '</div>'
+      '<div style="position: relative; width: 100%; '
+      'padding-bottom: calc(56.3% + 48px); height: 0; overflow: hidden;">\n'
+      '  <iframe\n'
+      f'    title="Video player for {basename}"\n'
+      '    data-media-type="video"\n'
+      f'    src="{safe}"\n'
+      '    loading="lazy"\n'
+      '    allowfullscreen="allowfullscreen"\n'
+      '    allow="fullscreen"\n'
+      '    style="position: absolute; top: 0; left: 0; '
+      'width: 100%; height: 100%; border: 0;"\n'
+      '  ></iframe>\n'
+      '</div>'
     )
 
 
 PARAMETERIZED_COMPONENTS: dict[str, Callable[[str], str]] = {
-    'under-construction': render_under_construction,
-    'video': render_video,
+  'under-construction': render_under_construction,
+  'video': render_video,
 }
 
 

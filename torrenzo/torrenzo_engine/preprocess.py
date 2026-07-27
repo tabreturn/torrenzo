@@ -63,8 +63,8 @@ def rewrite_md_hrefs(text: str) -> str:
 
 
 def expand_wiki_links(
-    text: str,
-    valid_targets: frozenset[str] | None = None,
+  text: str,
+  valid_targets: frozenset[str] | None = None,
 ) -> tuple[str, list[str]]:
     """Convert [[target]] and [[label|target]] to Markdown links.
 
@@ -141,9 +141,9 @@ def check_asset_refs(text: str, input_path: Path) -> list[str]:
     seen: set[str] = set()
     assets_dir = input_path.parent / 'assets'
 
-    # Strip fenced code blocks (``` or ~~~) and inline code spans so
-    # ``assets/script.js`` mentioned inside a code example is not
-    # mistaken for a real asset reference.
+    # strip fenced code blocks and inline code spans so an
+    # ``assets/script.js`` inside a code example is not mistaken for a
+    # real asset reference
     lines: list[str] = []
     in_fence = False
     fence_char = ''
@@ -152,8 +152,8 @@ def check_asset_refs(text: str, input_path: Path) -> list[str]:
         if in_fence:
             stripped = line.strip()
             if (stripped
-                    and all(c == fence_char for c in stripped)
-                    and len(stripped) >= fence_len):
+              and all(c == fence_char for c in stripped)
+              and len(stripped) >= fence_len):
                 in_fence = False
             continue
         fence_match = re.match(r'^\s{0,3}(`{3,}|~{3,})', line)
@@ -193,13 +193,13 @@ def resolve_includes(text: str, subject_root: Path) -> tuple[str, list[str]]:
         filename = m.group(1).strip()
         include_path = subject_root / 'includes' / filename
         if not include_path.exists():
-            warnings.append(f"Include not found: includes/{filename}")
+            warnings.append(f'Include not found: includes/{filename}')
             return m.group(0)
         try:
             return include_path.read_text(encoding='utf-8')
         except Exception as exc:
             warnings.append(
-                f"Failed to read include includes/{filename}: {exc}"
+              f'Failed to read include includes/{filename}: {exc}'
             )
             return m.group(0)
 
@@ -231,7 +231,7 @@ def apply_image_style_directives(html_text: str) -> str:
         img.set('alt', before.strip())
         existing = img.get('style', '')
         img.set('style',
-                f'{existing}{"; " if existing else ""}{directives}')
+          f'{existing}{"; " if existing else ""}{directives}')
     return lxml_html.tostring(document, encoding='unicode', method='html')
 
 
@@ -251,8 +251,8 @@ def convert_dashes(text: str) -> str:
         if in_fence:
             stripped = line.strip()
             if (stripped
-                    and all(c == fence_char for c in stripped)
-                    and len(stripped) >= fence_len):
+              and all(c == fence_char for c in stripped)
+              and len(stripped) >= fence_len):
                 in_fence = False
             result.append(line)
             continue
@@ -299,7 +299,7 @@ def _convert_line_dashes(line: str) -> str:
 
 
 _CACHE_BUST_RE = re.compile(
-    r'((?:src|href)=["\'](?:[^"\']*?)assets/)([^"\']+)\.(\w+)(["\'])')
+  r'((?:src|href)=["\'](?:[^"\']*?)assets/)([^"\']+)\.(\w+)(["\'])')
 
 
 def cache_bust_filename(name: str, suffix: str) -> str:
@@ -329,31 +329,31 @@ def cache_bust_asset_refs(html: str, suffix: str) -> str:
 
 
 _UNICODE_TO_ENTITY = {
-    '\u2013': '&ndash;',
-    '\u2014': '&mdash;',
-    '\u00d7': '&times;',
-    '\u2018': '&lsquo;',
-    '\u2019': '&rsquo;',
-    '\u201c': '&ldquo;',
-    '\u201d': '&rdquo;',
-    '\u2026': '&hellip;',
-    '\u00a9': '&copy;',
-    '\u00ae': '&reg;',
-    '\u2122': '&trade;',
-    '\u00b0': '&deg;',
-    '\u00b1': '&plusmn;',
-    '\u2264': '&le;',
-    '\u2265': '&ge;',
-    '\u00bd': '&frac12;',
-    '\u2153': '&#8531;',
-    '\u00bc': '&frac14;',
-    '\u00be': '&frac34;',
-    '\u2190': '&larr;',
-    '\u2192': '&rarr;',
-    '\u2191': '&uarr;',
-    '\u2193': '&darr;',
-    '\u00b7': '&middot;',
-    '\u2022': '&bull;',
+  '\u2013': '&ndash;',
+  '\u2014': '&mdash;',
+  '\u00d7': '&times;',
+  '\u2018': '&lsquo;',
+  '\u2019': '&rsquo;',
+  '\u201c': '&ldquo;',
+  '\u201d': '&rdquo;',
+  '\u2026': '&hellip;',
+  '\u00a9': '&copy;',
+  '\u00ae': '&reg;',
+  '\u2122': '&trade;',
+  '\u00b0': '&deg;',
+  '\u00b1': '&plusmn;',
+  '\u2264': '&le;',
+  '\u2265': '&ge;',
+  '\u00bd': '&frac12;',
+  '\u2153': '&#8531;',
+  '\u00bc': '&frac14;',
+  '\u00be': '&frac34;',
+  '\u2190': '&larr;',
+  '\u2192': '&rarr;',
+  '\u2191': '&uarr;',
+  '\u2193': '&darr;',
+  '\u00b7': '&middot;',
+  '\u2022': '&bull;',
 }
 
 

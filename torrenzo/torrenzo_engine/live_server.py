@@ -151,7 +151,7 @@ class LiveServer:
 
     def start(self) -> None:
         self._thread = threading.Thread(
-            target=self._httpd.serve_forever, daemon=True)
+          target=self._httpd.serve_forever, daemon=True)
         self._thread.start()
 
     def stop(self) -> None:

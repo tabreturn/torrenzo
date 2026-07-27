@@ -222,7 +222,7 @@ def make_jobs(
         context={},
         output_ext='',
         output_namer=(lambda p: cache_bust_filename(p.name, cache_bust))
-                     if cache_bust else (lambda p: p.name),
+        if cache_bust else (lambda p: p.name),
       ),
       RenderJob(
         name='lecturer_notes',
@@ -263,7 +263,7 @@ def run_build(
     pipeline = Pipeline(subject_root, build_dir, registry)
     diagnostics = pipeline.execute(
       make_jobs(tags, subject_root=subject_root, built=built,
-                version_stamp=version_stamp, cache_bust=cache_bust),
+        version_stamp=version_stamp, cache_bust=cache_bust),
       force=force,
     )
     if optimize:
@@ -271,13 +271,13 @@ def run_build(
     if cc:
         outline = load_outline(subject_root)
         cc_path, cc_diagnostics = export_cc(subject_root, build_dir, outline,
-                                            version_stamp,
-                                            cache_bust=cache_bust)
+          version_stamp,
+          cache_bust=cache_bust)
         diagnostics.extend(fmt('info', m) for m in cc_diagnostics)
         if diff_paths:
             if len(diff_paths) != 2:
                 diagnostics.append(fmt('error',
-                    '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
+                  '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
             else:
                 lc, rv = diff_paths[0].resolve(), diff_paths[1].resolve()
                 if not lc.exists():
@@ -304,7 +304,7 @@ def _snapshot_mtimes(subject_root: Path) -> dict[Path, float]:
             if p.is_relative_to(build_dir):
                 continue
         except AttributeError:
-            # Python < 3.9 fallback
+            # python < 3.9 fallback
             try:
                 p.relative_to(build_dir)
                 continue
@@ -337,7 +337,7 @@ def watch_and_rebuild(
         print(fmt('info', f'Live server at {server.url}'), flush=True)
 
     print(fmt('info', f'Watching {subject_root} for changes (Ctrl+C to stop)'),
-          flush=True)
+      flush=True)
     prev = _snapshot_mtimes(subject_root)
     try:
         while True:
@@ -359,12 +359,12 @@ def watch_and_rebuild(
                     summary += f' (+{len(names) - 5} more)'
                 print(flush=True)
                 print(fmt('info',
-                    f'Change detected: {summary}'), flush=True)
+                  f'Change detected: {summary}'), flush=True)
                 run_build(subject_root, build_dir, force=False,
-                          optimize=optimize, cc=cc,
-                          diff_paths=diff_paths,
-                          diff_verbose=diff_verbose,
-                          cache_bust=cache_bust)
+                  optimize=optimize, cc=cc,
+                  diff_paths=diff_paths,
+                  diff_verbose=diff_verbose,
+                  cache_bust=cache_bust)
                 sys.stdout.flush()
                 if server:
                     server.notify_reload()
@@ -455,7 +455,7 @@ def main() -> None:
     if cache_bust == '__auto__':
         cache_bust = datetime.now().strftime('v%Y%m%d_%H%M%S')
 
-    # Diff-only mode: no build needed
+    # diff-only mode: no build needed
     if args.diff and not args.cc and not args.force and not args.clean:
         if len(args.diff) != 2:
             print(fmt('error', '--diff requires two paths: LOCAL.imscc LIVE.imscc'))
@@ -479,17 +479,17 @@ def main() -> None:
         print(fmt('info', f'Cache-bust suffix: _{cache_bust}'))
 
     run_build(subject_root, build_dir, force=force,
-              optimize=args.optimize_assets, cc=args.cc,
-              diff_paths=args.diff, diff_verbose=args.diff_verbose,
-              cache_bust=cache_bust)
+      optimize=args.optimize_assets, cc=args.cc,
+      diff_paths=args.diff, diff_verbose=args.diff_verbose,
+      cache_bust=cache_bust)
 
     if args.watch:
         watch_and_rebuild(subject_root, build_dir,
-                          optimize=args.optimize_assets, cc=args.cc,
-                          diff_paths=args.diff,
-                          diff_verbose=args.diff_verbose,
-                          live=args.live,
-                          cache_bust=cache_bust)
+          optimize=args.optimize_assets, cc=args.cc,
+          diff_paths=args.diff,
+          diff_verbose=args.diff_verbose,
+          live=args.live,
+          cache_bust=cache_bust)
 
 
 if __name__ == '__main__':

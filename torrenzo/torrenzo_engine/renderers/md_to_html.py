@@ -230,13 +230,13 @@ def render(
     raw = input_path.read_text(encoding='utf-8')
 
     raw, include_warnings = resolve_includes(
-        raw, context.get('subject_root', input_path.parent.parent.parent))
+      raw, context.get('subject_root', input_path.parent.parent.parent))
     raw = raw.replace('[[cc-section|hide-in-pdf]]', '')
     raw = raw.replace('[[cc-section]]', '')
     raw = rewrite_video_images(raw)
     raw, tag_warnings = apply_tags(raw, tags)
     raw, link_warnings = expand_wiki_links(raw, collect_valid_outputs(
-        input_path.parent.parent.parent))
+      input_path.parent.parent.parent))
     raw = rewrite_md_hrefs(raw)
     raw = convert_dashes(raw)
 
@@ -294,6 +294,6 @@ def render(
     )
 
     if missing_keys:
-        warnings.append(f"Missing citations: {', '.join(missing_keys)}")
+        warnings.append(f'Missing citations: {', '.join(missing_keys)}')
 
     return True, f'{input_path} -> {output_path}', warnings

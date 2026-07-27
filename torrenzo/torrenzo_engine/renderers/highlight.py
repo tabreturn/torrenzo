@@ -23,11 +23,11 @@ _FORMATTER = HtmlFormatter(noclasses=True, nowrap=True)
 
 
 def _fence_renderer(
-    self,
-    tokens: list[Token],
-    idx: int,
-    options: OptionsDict,
-    env: EnvType,
+  self,
+  tokens: list[Token],
+  idx: int,
+  options: OptionsDict,
+  env: EnvType,
 ) -> str:
     """Custom ``fence`` render rule.
 
@@ -37,8 +37,8 @@ def _fence_renderer(
     * Everything else → standard ``<pre><code>…</code></pre>``.
     """
     token = tokens[idx]
-    info = token.info.strip() if token.info else ""
-    lang = info.split(maxsplit=1)[0] if info else ""
+    info = token.info.strip() if token.info else ''
+    lang = info.split(maxsplit=1)[0] if info else ''
 
     if lang:
         try:
@@ -50,10 +50,10 @@ def _fence_renderer(
             highlighted = _highlight(token.content, lexer, _FORMATTER)
             highlighted = highlighted.rstrip('\n')
 
-            # Canvas's HTML sanitiser strips inline `white-space:pre`,
+            # canvas's html sanitiser strips inline `white-space:pre`,
             # collapsing runs of spaces inside <div>. Convert any run of
-            # 2+ consecutive spaces (outside HTML tags) to &nbsp; so both
-            # leading indentation and mid-line alignment (e.g. PEP-8's
+            # 2+ consecutive spaces (outside html tags) to &nbsp; so both
+            # leading indentation and mid-line alignment (e.g. pep-8's
             # double space before an inline `#` comment) survive. Single
             # spaces are left as-is so copy-pasted code remains runnable.
             _tag_re = _re.compile(r'<[^>]*>')
@@ -61,7 +61,7 @@ def _fence_renderer(
 
             def _nbspify_text(text: str) -> str:
                 return _space_run_re.sub(
-                    lambda m: '&nbsp;' * len(m.group()), text
+                  lambda m: '&nbsp;' * len(m.group()), text
                 )
 
             parts: list[str] = []
@@ -76,8 +76,8 @@ def _fence_renderer(
             highlighted = highlighted.replace('\n', '<br>')
 
             return (
-                f'<div class="pre"><code class="language-{_html.escape(lang)}">'
-                f'{highlighted}</code></div>\n'
+              f'<div class="pre"><code class="language-{_html.escape(lang)}">'
+              f'{highlighted}</code></div>\n'
             )
 
     escaped = _html.escape(token.content)
@@ -86,4 +86,4 @@ def _fence_renderer(
 
 def install(md) -> None:
     """Patch *md* to use Pygments highlighting with ``<div class="pre">``."""
-    md.add_render_rule("fence", _fence_renderer)
+    md.add_render_rule('fence', _fence_renderer)

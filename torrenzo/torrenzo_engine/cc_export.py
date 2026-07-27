@@ -41,24 +41,24 @@ CANVAS_XSD = 'https://canvas.instructure.com/xsd/cccv1p0.xsd'
 LOR_TYPE = 'associatedcontent/imscc_xmlv1p1/learning-application-resource'
 
 SCHEMA_LOCATION = (
-    f'{CC_NS} '
-    'http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imscp_v1p2_v1p0.xsd '
-    f'{LOM_RES_NS} '
-    'http://www.imsglobal.org/profile/cc/ccv1p1/LOM/ccv1p1_lomresource_v1p0.xsd '
-    f'{LOM_MAN_NS} '
-    'http://www.imsglobal.org/profile/cc/ccv1p1/LOM/ccv1p1_lommanifest_v1p0.xsd'
+  f'{CC_NS} '
+  'http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imscp_v1p2_v1p0.xsd '
+  f'{LOM_RES_NS} '
+  'http://www.imsglobal.org/profile/cc/ccv1p1/LOM/ccv1p1_lomresource_v1p0.xsd '
+  f'{LOM_MAN_NS} '
+  'http://www.imsglobal.org/profile/cc/ccv1p1/LOM/ccv1p1_lommanifest_v1p0.xsd'
 )
 
 MOD_HTML_RE = re.compile(r'^mod_(\d+)_(\d+)_(.+)\.html$')
 ASSESS_PDF_RE = re.compile(r'^assessment_(\d+)\.pdf$')
 ASSET_REF_RE = re.compile(r'((?:src|href)=["\'])assets/([^"\']+)(["\'])')
 MD_LINK_RE = re.compile(
-    r'(?<!!)\[(?:[^\]\\]|\\.)*?\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)'
+  r'(?<!!)\[(?:[^\]\\]|\\.)*?\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)'
 )
 PAGE_HREF_RE = re.compile(
-    r'(href=["\'])(?:.*?/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
+  r'(href=["\'])(?:.*?/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
 ASSESS_HREF_RE = re.compile(
-    r'(href=["\'])(?:.*?/)?(assessment_\d+)\.(?:html|pdf)(["\'])')
+  r'(href=["\'])(?:.*?/)?(assessment_\d+)\.(?:html|pdf)(["\'])')
 ITALIC_WEIGHT_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*%\*\s*$')
 ITALIC_RANGE_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*[-–]+\s*(\d+)\s*%\*\s*$')
 
@@ -81,7 +81,6 @@ def _module_css(subject_root: Path) -> str:
     if not css_path.exists():
         return ''
     css_text = css_path.read_text(encoding='utf-8')
-    # extract :root variables
     root_blocks = re.findall(r':root\s*{([^}]*)}', css_text, re.S)
     mapping: dict[str, str] = {}
     for block in root_blocks:
@@ -92,7 +91,6 @@ def _module_css(subject_root: Path) -> str:
             name = m.group(1).strip()
             return mapping.get(name, m.group(2) or m.group(0))
         css_text = CSS_VAR_RE.sub(_replace, css_text)
-    # remove :root blocks and bare custom-property declarations
     css_text = re.sub(r':root\s*{[^}]*}', '', css_text, flags=re.S)
     css_text = re.sub(r'\s*--[A-Za-z0-9_-]+\s*:\s*[^;]+;\s*', '', css_text)
     return css_text.strip()
@@ -119,7 +117,7 @@ def _module_labels(subject_root: Path) -> dict[int, str]:
 
 
 def _el(parent: ET.Element, tag: str, text: str | None = None,
-        **attrib: str) -> ET.Element:
+  **attrib: str) -> ET.Element:
     e = ET.SubElement(parent, tag, **attrib)
     if text is not None:
         e.text = text
@@ -127,28 +125,28 @@ def _el(parent: ET.Element, tag: str, text: str | None = None,
 
 
 def _wrap_wiki_html(body: str, title: str, identifier: str, *,
-                    front_page: bool = False) -> str:
+  front_page: bool = False) -> str:
     fp = '<meta name="front_page" content="true"/>\n' if front_page else ''
     return (
-        '<html>\n<head>\n'
-        '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
-        f'<title>{title}</title>\n'
-        f'<meta name="identifier" content="{identifier}"/>\n'
-        '<meta name="editing_roles" content="teachers"/>\n'
-        '<meta name="workflow_state" content="active"/>\n'
-        f'{fp}'
-        '</head>\n<body>\n'
-        f'{body}\n'
-        '</body>\n</html>\n'
+      '<html>\n<head>\n'
+      '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
+      f'<title>{title}</title>\n'
+      f'<meta name="identifier" content="{identifier}"/>\n'
+      '<meta name="editing_roles" content="teachers"/>\n'
+      '<meta name="workflow_state" content="active"/>\n'
+      f'{fp}'
+      '</head>\n<body>\n'
+      f'{body}\n'
+      '</body>\n</html>\n'
     )
 
 
 def _rewrite_html(html_text: str, page_id_map: dict[str, str],
-                  assess_id_map: dict[str, str] | None = None) -> str:
+  assess_id_map: dict[str, str] | None = None) -> str:
     html_text = re.sub(r'<!-- built:.*?-->\n?', '', html_text)
 
     html_text = ASSET_REF_RE.sub(
-        r'\1$IMS-CC-FILEBASE$/assets/\2\3', html_text,
+      r'\1$IMS-CC-FILEBASE$/assets/\2\3', html_text,
     )
 
     def _replace_page_href(m: re.Match) -> str:
@@ -163,12 +161,12 @@ def _rewrite_html(html_text: str, page_id_map: dict[str, str],
     if assess_id_map:
         def _replace_assess_href(m: re.Match) -> str:
             key = m.group(2)
-            # Normalize leading zero: assessment_01 -> assessment_1
+            # normalize leading zero: assessment_01 -> assessment_1
             normalized = re.sub(r'assessment_0+(\d+)', r'assessment_\1', key)
             aid = assess_id_map.get(normalized) or assess_id_map.get(key)
             if aid:
                 return (f'{m.group(1)}$CANVAS_OBJECT_REFERENCE$/'
-                        f'assignments/{aid}{m.group(3)}')
+                  f'assignments/{aid}{m.group(3)}')
             return m.group(0)
         html_text = ASSESS_HREF_RE.sub(_replace_assess_href, html_text)
 
@@ -176,7 +174,7 @@ def _rewrite_html(html_text: str, page_id_map: dict[str, str],
 
 
 # ---------------------------------------------------------------------------
-# Rubric parsing from brief markdown
+# rubric parsing from brief markdown
 # ---------------------------------------------------------------------------
 
 def _parse_rubric(brief_path: Path, total_marks: float) -> dict | None:
@@ -246,22 +244,22 @@ def _parse_rubric(brief_path: Path, total_marks: float) -> dict | None:
         for j, (scale, desc) in enumerate(zip(ratings_scale, descs)):
             pts = round(crit_points * scale['high_pct'] / 100, 2)
             crit_ratings.append({
-                'description': scale['name'],
-                'long_description': desc,
-                'points': pts,
+              'description': scale['name'],
+              'long_description': desc,
+              'points': pts,
             })
 
         # canvas rejects rubric imports when a criterion's lowest rating
         # carries non-zero points; the floor rating must be 0.
         if crit_ratings:
             floor_idx = min(range(len(crit_ratings)),
-                            key=lambda k: crit_ratings[k]['points'])
+              key=lambda k: crit_ratings[k]['points'])
             crit_ratings[floor_idx]['points'] = 0.0
 
         criteria.append({
-            'description': crit_name,
-            'points': crit_points,
-            'ratings': crit_ratings,
+          'description': crit_name,
+          'points': crit_points,
+          'ratings': crit_ratings,
         })
 
     if not criteria:
@@ -276,7 +274,7 @@ def _find_brief_md(subject_root: Path, ass_num: int) -> Path | None:
     if p.exists():
         return p
     for candidate in subject_root.glob(
-        f'assessments/assessment_{ass_num}*/ass_*_brief.md'
+      f'assessments/assessment_{ass_num}*/ass_*_brief.md'
     ):
         return candidate
     return None
@@ -287,13 +285,13 @@ def _is_local_ref(url: str) -> bool:
     if not url:
         return False
     if url.startswith(('http://', 'https://', 'mailto:', '#', '$',
-                       'data:', '//', '/')):
+      'data:', '//', '/')):
         return False
     return True
 
 
 def _collect_brief_files(brief_md: Path,
-                        subject_root: Path) -> list[dict]:
+  subject_root: Path) -> list[dict]:
     """Scan a brief markdown file for relative link/image references and
     return the existing files within the brief's directory.
 
@@ -315,7 +313,6 @@ def _collect_brief_files(brief_md: Path,
         url = m.group(1).strip()
         if not _is_local_ref(url):
             continue
-        # strip any fragment/query
         url = url.split('#', 1)[0].split('?', 1)[0]
         if not url:
             continue
@@ -334,16 +331,16 @@ def _collect_brief_files(brief_md: Path,
 
 
 # ---------------------------------------------------------------------------
-# Canvas-specific XML generators
+# canvas-specific xml generators
 # ---------------------------------------------------------------------------
 
 def _assignment_settings_xml(
-    identifier: str,
-    title: str,
-    points: float,
-    group_id: str,
-    rubric_id: str | None,
-    submission: str,
+  identifier: str,
+  title: str,
+  points: float,
+  group_id: str,
+  rubric_id: str | None,
+  submission: str,
 ) -> str:
     root = ET.Element('assignment')
     root.set('identifier', identifier)
@@ -375,7 +372,7 @@ def _rubrics_xml(assessments: list[dict]) -> str:
         rubric = _el(root, 'rubric', identifier=ass['rubric_id'])
         _el(rubric, 'title', f'{ass["title"]} Rubric')
         _el(rubric, 'points_possible',
-            str(rubric_data['points_possible']))
+          str(rubric_data['points_possible']))
         _el(rubric, 'read_only', 'false')
         _el(rubric, 'reusable', 'false')
         _el(rubric, 'free_form_criterion_comments', 'false')
@@ -401,10 +398,10 @@ def _rubrics_xml(assessments: list[dict]) -> str:
 
 
 def _module_meta_xml(
-    module_pages: dict[int, list[dict]],
-    assessment_items: list[dict],
-    lecturer_notes: list[dict] | None = None,
-    module_labels: dict[int, str] | None = None,
+  module_pages: dict[int, list[dict]],
+  assessment_items: list[dict],
+  lecturer_notes: list[dict] | None = None,
+  module_labels: dict[int, str] | None = None,
 ) -> str:
     root = ET.Element('modules')
     root.set('xmlns', CANVAS_NS)
@@ -415,7 +412,7 @@ def _module_meta_xml(
     for mod_num in sorted(module_pages):
         pages = sorted(module_pages[mod_num], key=lambda p: p['seq'])
         mod_label = (module_labels or {}).get(
-            mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
+          mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
         position += 1
         mod = _el(root, 'module', identifier=_id(f'module/{mod_num}'))
         _el(mod, 'title', mod_label)
@@ -460,7 +457,7 @@ def _module_meta_xml(
 
         for pi, ass in enumerate(assessment_items):
             item = _el(items, 'item',
-                       identifier=_id(f'item/sub/{ass["pdf_filename"]}'))
+              identifier=_id(f'item/sub/{ass["pdf_filename"]}'))
             _el(item, 'content_type', 'Assignment')
             _el(item, 'workflow_state', 'active')
             _el(item, 'title', ass['title'])
@@ -481,7 +478,7 @@ def _module_meta_xml(
 
         for pi, note in enumerate(lecturer_notes):
             item = _el(items, 'item',
-                       identifier=_id(f'item/lecturer/{note["filename"]}'))
+              identifier=_id(f'item/lecturer/{note["filename"]}'))
             _el(item, 'content_type', 'Attachment')
             _el(item, 'workflow_state', 'unpublished')
             _el(item, 'title', note['filename'])
@@ -532,7 +529,7 @@ _HEADING_RE = re.compile(r'^(#{1,6})\s')
 
 
 def _parse_brief_sections(brief_path: Path,
-                          subject_root: Path | None = None) -> dict[str, str]:
+  subject_root: Path | None = None) -> dict[str, str]:
     """Extract sections tagged with [[cc-section]] from the brief.
 
     Each heading (any level) that carries the tag is included with its
@@ -552,8 +549,8 @@ def _parse_brief_sections(brief_path: Path,
 
     def _clean(lines: list[str]) -> str:
         kept = [l for l in lines
-                if l.strip() not in ('---', '<div class="page-break">')
-                and not l.strip().startswith('<div class="page-break">')]
+          if l.strip() not in ('---', '<div class="page-break">')
+          and not l.strip().startswith('<div class="page-break">')]
         return '\n'.join(kept).strip()
 
     for line in text.splitlines():
@@ -578,22 +575,22 @@ def _parse_brief_sections(brief_path: Path,
 
 
 def _assignment_description_html(ass: dict, brief_md: Path | None,
-                                 module_css: str = '',
-                                 valid_targets: frozenset[str] | None = None,
-                                 subject_root: Path | None = None,
-                                 cache_bust: str = '',
-                                 ) -> str:
+  module_css: str = '',
+  valid_targets: frozenset[str] | None = None,
+  subject_root: Path | None = None,
+  cache_bust: str = '',
+) -> str:
     """Build an HTML description page for a Canvas assignment."""
     ass_dir_name = ass.get('ass_dir_name') or f'assessment_{ass["num"]:02d}'
     pdf_base = f'$IMS-CC-FILEBASE$/assessments/{ass_dir_name}'
     body = (
-        f'<p>\n'
-        f'<a class="instructure_file_link instructure_scribd_file auto_open" '
-        f'href="{pdf_base}/{ass["pdf_filename"]}" '
-        f'data-canvas-previewable="true">'
-        f'Assessment Brief (PDF)'
-        f'</a>\n'
-        f'</p>\n'
+      f'<p>\n'
+      f'<a class="instructure_file_link instructure_scribd_file auto_open" '
+      f'href="{pdf_base}/{ass["pdf_filename"]}" '
+      f'data-canvas-previewable="true">'
+      f'Assessment Brief (PDF)'
+      f'</a>\n'
+      f'</p>\n'
     )
 
     def _asset_repl(m: re.Match) -> str:
@@ -603,7 +600,7 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
         if cache_bust:
             filename = cache_bust_filename(filename, cache_bust)
         return (f'{prefix}$IMS-CC-FILEBASE$/assessments/'
-                f'{ass_dir_name}/assets/{filename}{quote}')
+          f'{ass_dir_name}/assets/{filename}{quote}')
 
     if brief_md and brief_md.exists():
         sections = _parse_brief_sections(brief_md, subject_root)
@@ -624,16 +621,16 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
 
     css_block = f'<style>\n{module_css}\n</style>\n' if module_css else ''
     doc = (
-        '<html>\n<head>\n'
-        '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
-        f'<title>{ass["title"]}</title>\n'
-        f'<meta name="identifier" content="{ass["assignment_id"]}"/>\n'
-        '<meta name="editing_roles" content="teachers"/>\n'
-        '<meta name="workflow_state" content="active"/>\n'
-        f'{css_block}'
-        '</head>\n<body>\n'
-        f'{body}\n'
-        '</body>\n</html>\n'
+      '<html>\n<head>\n'
+      '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>\n'
+      f'<title>{ass["title"]}</title>\n'
+      f'<meta name="identifier" content="{ass["assignment_id"]}"/>\n'
+      '<meta name="editing_roles" content="teachers"/>\n'
+      '<meta name="workflow_state" content="active"/>\n'
+      f'{css_block}'
+      '</head>\n<body>\n'
+      f'{body}\n'
+      '</body>\n</html>\n'
     )
 
     if module_css:
@@ -643,26 +640,26 @@ def _assignment_description_html(ass: dict, brief_md: Path | None,
             cssutils.log.setLevel(logging.CRITICAL)
             from premailer import transform
             doc = transform(doc, remove_classes=False,
-                            keep_style_tags=False)
+              keep_style_tags=False)
         except Exception:
             pass
     return doc
 
 
 # ---------------------------------------------------------------------------
-# Manifest builder
+# manifest builder
 # ---------------------------------------------------------------------------
 
 def _build_manifest(
-    subject_code: str,
-    subject_title: str,
-    module_pages: dict[int, list[dict]],
-    assessment_items: list[dict],
-    assets: list[dict],
-    lecturer_notes: list[dict] | None = None,
-    module_labels: dict[int, str] | None = None,
-    has_course_settings: bool = False,
-    cache_bust: str = '',
+  subject_code: str,
+  subject_title: str,
+  module_pages: dict[int, list[dict]],
+  assessment_items: list[dict],
+  assets: list[dict],
+  lecturer_notes: list[dict] | None = None,
+  module_labels: dict[int, str] | None = None,
+  has_course_settings: bool = False,
+  cache_bust: str = '',
 ) -> str:
     ET.register_namespace('', CC_NS)
     ET.register_namespace('lom', LOM_RES_NS)
@@ -696,53 +693,53 @@ def _build_manifest(
     _el(cr, f'{{{lm}}}value', 'yes')
     desc = _el(rights, f'{{{lm}}}description')
     _el(desc, f'{{{lm}}}string',
-        'Private (Copyrighted) - http://en.wikipedia.org/wiki/Copyright')
+      'Private (Copyrighted) - http://en.wikipedia.org/wiki/Copyright')
 
     # -- organizations --
     organizations = _el(manifest, f'{{{ns}}}organizations')
     org = _el(organizations, f'{{{ns}}}organization',
-              identifier='org_1', structure='rooted-hierarchy')
+      identifier='org_1', structure='rooted-hierarchy')
     root_item = _el(org, f'{{{ns}}}item', identifier='LearningModules')
 
     for mod_num in sorted(module_pages):
         pages = sorted(module_pages[mod_num], key=lambda p: p['seq'])
         mod_label = (module_labels or {}).get(
-            mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
+          mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
 
         mod_item = _el(root_item, f'{{{ns}}}item',
-                       identifier=_id(f'module/{mod_num}'))
+          identifier=_id(f'module/{mod_num}'))
         _el(mod_item, f'{{{ns}}}title', mod_label)
 
         for page in pages:
             page_item = _el(
-                mod_item, f'{{{ns}}}item',
-                identifier=_id(f'item/{page["filename"]}'),
-                identifierref=page['resource_id'],
+              mod_item, f'{{{ns}}}item',
+              identifier=_id(f'item/{page["filename"]}'),
+              identifierref=page['resource_id'],
             )
             if mod_num == 0:
                 _el(page_item, f'{{{ns}}}title', page['title'])
             else:
                 _el(page_item, f'{{{ns}}}title',
-                    f'Module {mod_num}.{page["seq"]}: {page["title"]}')
+                  f'Module {mod_num}.{page["seq"]}: {page["title"]}')
 
     if assessment_items:
         sec = _el(root_item, f'{{{ns}}}item',
-                  identifier=_id('section/assessments'))
+          identifier=_id('section/assessments'))
         _el(sec, f'{{{ns}}}title', 'Assessments')
         for ass in assessment_items:
             ai = _el(sec, f'{{{ns}}}item',
-                     identifier=_id(f'item/sub/{ass["pdf_filename"]}'),
-                     identifierref=ass['assignment_id'])
+              identifier=_id(f'item/sub/{ass["pdf_filename"]}'),
+              identifierref=ass['assignment_id'])
             _el(ai, f'{{{ns}}}title', ass['title'])
 
     if lecturer_notes:
         sec = _el(root_item, f'{{{ns}}}item',
-                  identifier=_id('section/lecturer_notes'))
+          identifier=_id('section/lecturer_notes'))
         _el(sec, f'{{{ns}}}title', 'Lecturer Notes')
         for note in lecturer_notes:
             ni = _el(sec, f'{{{ns}}}item',
-                     identifier=_id(f'item/lecturer/{note["filename"]}'),
-                     identifierref=note['resource_id'])
+              identifier=_id(f'item/lecturer/{note["filename"]}'),
+              identifierref=note['resource_id'])
             _el(ni, f'{{{ns}}}title', note['filename'])
 
     # -- resources --
@@ -750,34 +747,34 @@ def _build_manifest(
 
     if has_course_settings:
         cs_res = _el(resources, f'{{{ns}}}resource',
-                     identifier=_id('course_settings'),
-                     type=LOR_TYPE,
-                     href='course_settings/canvas_export.txt')
+          identifier=_id('course_settings'),
+          type=LOR_TYPE,
+          href='course_settings/canvas_export.txt')
         _el(cs_res, f'{{{ns}}}file',
-            href='course_settings/canvas_export.txt')
+          href='course_settings/canvas_export.txt')
         _el(cs_res, f'{{{ns}}}file',
-            href='course_settings/assignment_groups.xml')
+          href='course_settings/assignment_groups.xml')
         _el(cs_res, f'{{{ns}}}file',
-            href='course_settings/rubrics.xml')
+          href='course_settings/rubrics.xml')
         _el(cs_res, f'{{{ns}}}file',
-            href='course_settings/module_meta.xml')
+          href='course_settings/module_meta.xml')
         _el(cs_res, f'{{{ns}}}file',
-            href='course_settings/course_settings.xml')
+          href='course_settings/course_settings.xml')
 
     for mod_num in sorted(module_pages):
         for page in module_pages[mod_num]:
             cc_href = f'wiki_content/{page["filename"]}'
             res = _el(resources, f'{{{ns}}}resource',
-                      identifier=page['resource_id'],
-                      type='webcontent', href=cc_href)
+              identifier=page['resource_id'],
+              type='webcontent', href=cc_href)
             _el(res, f'{{{ns}}}file', href=cc_href)
 
     for ass in assessment_items:
         ass_base = f'web_resources/assessments/{ass["ass_dir_name"]}'
         cc_href = f'{ass_base}/{ass["pdf_filename"]}'
         res = _el(resources, f'{{{ns}}}resource',
-                  identifier=ass['pdf_resource_id'],
-                  type='webcontent', href=cc_href)
+          identifier=ass['pdf_resource_id'],
+          type='webcontent', href=cc_href)
         _el(res, f'{{{ns}}}file', href=cc_href)
 
         for extra in ass.get('extra_files', []):
@@ -790,31 +787,31 @@ def _build_manifest(
             ehref = f'{ass_base}/{rel}'
             rid = _id(f'resource/{ehref}')
             eres = _el(resources, f'{{{ns}}}resource', identifier=rid,
-                       type='webcontent', href=ehref)
+              type='webcontent', href=ehref)
             _el(eres, f'{{{ns}}}file', href=ehref)
 
         ass_dir = ass['assignment_id']
         html_href = f'{ass_dir}/{ass_dir}.html'
         settings_href = f'{ass_dir}/assignment_settings.xml'
         res2 = _el(resources, f'{{{ns}}}resource',
-                   identifier=ass['assignment_id'],
-                   type=LOR_TYPE, href=html_href)
+          identifier=ass['assignment_id'],
+          type=LOR_TYPE, href=html_href)
         _el(res2, f'{{{ns}}}file', href=html_href)
         _el(res2, f'{{{ns}}}file', href=settings_href)
 
     for asset in assets:
         cc_href = f'web_resources/assets/{asset["filename"]}'
         res = _el(resources, f'{{{ns}}}resource',
-                  identifier=asset['resource_id'],
-                  type='webcontent', href=cc_href)
+          identifier=asset['resource_id'],
+          type='webcontent', href=cc_href)
         _el(res, f'{{{ns}}}file', href=cc_href)
 
     if lecturer_notes:
         for note in lecturer_notes:
             cc_href = f'web_resources/lecturer_notes/{note["filename"]}'
             res = _el(resources, f'{{{ns}}}resource',
-                      identifier=note['resource_id'],
-                      type='webcontent', href=cc_href)
+              identifier=note['resource_id'],
+              type='webcontent', href=cc_href)
             _el(res, f'{{{ns}}}file', href=cc_href)
 
     ET.indent(manifest)
@@ -823,15 +820,15 @@ def _build_manifest(
 
 
 # ---------------------------------------------------------------------------
-# Main export entry point
+# main export entry point
 # ---------------------------------------------------------------------------
 
 def export_cc(
-    subject_root: Path,
-    build_dir: Path,
-    outline: dict[str, Any],
-    version_stamp: str = '',
-    cache_bust: str = '',
+  subject_root: Path,
+  build_dir: Path,
+  outline: dict[str, Any],
+  version_stamp: str = '',
+  cache_bust: str = '',
 ) -> tuple[Path, list[str]]:
     subject = outline.get('subject', {})
     subject_code = str(subject.get('code', 'SUBJECT')).strip()
@@ -854,12 +851,12 @@ def export_cc(
             resource_id = _id(f'resource/{f.name}')
             page_id_map[f.name] = resource_id
             module_pages.setdefault(mod_num, []).append({
-                'filename': f.name,
-                'path': f,
-                'seq': seq,
-                'slug': slug,
-                'title': _title_from_slug(slug),
-                'resource_id': resource_id,
+              'filename': f.name,
+              'path': f,
+              'seq': seq,
+              'slug': slug,
+              'title': _title_from_slug(slug),
+              'resource_id': resource_id,
             })
 
     assessment_items: list[dict] = []
@@ -874,7 +871,7 @@ def export_cc(
             ass_num = int(m.group(1))
             ass_key = f'a{ass_num}'
             info = (assess_data.get(ass_key, {})
-                    if isinstance(assess_data, dict) else {})
+              if isinstance(assess_data, dict) else {})
             if not isinstance(info, dict):
                 info = {}
             name = info.get('assessment', f'Assessment {ass_num}')
@@ -897,32 +894,32 @@ def export_cc(
                 rubric = _parse_rubric(brief_md, total_marks)
                 if rubric:
                     diagnostics.append(
-                        f'Rubric parsed from {brief_md.name}: '
-                        f'{len(rubric["criteria"])} criteria'
+                      f'Rubric parsed from {brief_md.name}: '
+                      f'{len(rubric["criteria"])} criteria'
                     )
 
             ass_dir_name = (brief_md.parent.name if brief_md
-                            else f'assessment_{ass_num:02d}')
+              else f'assessment_{ass_num:02d}')
             extra_files = (_collect_brief_files(brief_md, subject_root)
-                           if brief_md else [])
+              if brief_md else [])
 
             assessment_items.append({
-                'pdf_filename': pdf_filename,
-                'pdf_path': f,
-                'num': ass_num,
-                'title': f'Assessment {ass_num}: {name}',
-                'pdf_resource_id': pdf_resource_id,
-                'assignment_id': assignment_id,
-                'rubric_id': rubric_id if rubric else None,
-                'group_id': group_id,
-                'weight': weight,
-                'total_marks': total_marks,
-                'submission': submission,
-                'rubric': rubric,
-                'brief_md': brief_md,
-                'outline_info': info,
-                'ass_dir_name': ass_dir_name,
-                'extra_files': extra_files,
+              'pdf_filename': pdf_filename,
+              'pdf_path': f,
+              'num': ass_num,
+              'title': f'Assessment {ass_num}: {name}',
+              'pdf_resource_id': pdf_resource_id,
+              'assignment_id': assignment_id,
+              'rubric_id': rubric_id if rubric else None,
+              'group_id': group_id,
+              'weight': weight,
+              'total_marks': total_marks,
+              'submission': submission,
+              'rubric': rubric,
+              'brief_md': brief_md,
+              'outline_info': info,
+              'ass_dir_name': ass_dir_name,
+              'extra_files': extra_files,
             })
 
     assess_id_map: dict[str, str] = {}
@@ -936,9 +933,9 @@ def export_cc(
             if f.is_file():
                 resource_id = _id(f'resource/assets/{f.name}')
                 assets.append({
-                    'filename': f.name,
-                    'path': f,
-                    'resource_id': resource_id,
+                  'filename': f.name,
+                  'path': f,
+                  'resource_id': resource_id,
                 })
 
     lecturer_notes: list[dict] = []
@@ -948,9 +945,9 @@ def export_cc(
             if f.is_file():
                 resource_id = _id(f'resource/lecturer_notes/{f.name}')
                 lecturer_notes.append({
-                    'filename': f.name,
-                    'path': f,
-                    'resource_id': resource_id,
+                  'filename': f.name,
+                  'path': f,
+                  'resource_id': resource_id,
                 })
 
     has_course_settings = bool(assessment_items) or bool(module_pages)
@@ -959,12 +956,12 @@ def export_cc(
     valid_targets = collect_valid_outputs(subject_root)
 
     manifest_xml = _build_manifest(
-        subject_code, subject_title,
-        module_pages, assessment_items, assets,
-        lecturer_notes=lecturer_notes,
-        module_labels=module_labels,
-        has_course_settings=has_course_settings,
-        cache_bust=cache_bust,
+      subject_code, subject_title,
+      module_pages, assessment_items, assets,
+      lecturer_notes=lecturer_notes,
+      module_labels=module_labels,
+      has_course_settings=has_course_settings,
+      cache_bust=cache_bust,
     )
 
     cb_suffix = f'_{cache_bust}' if cache_bust else ''
@@ -975,7 +972,7 @@ def export_cc(
 
         for mod_num in sorted(module_pages):
             mod_label = module_labels.get(
-                mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
+              mod_num, 'Welcome' if mod_num == 0 else f'Module {mod_num}')
             for page in sorted(module_pages[mod_num], key=lambda p: p['seq']):
                 body = page['path'].read_text(encoding='utf-8')
                 body = _rewrite_html(body, page_id_map, assess_id_map)
@@ -986,13 +983,13 @@ def export_cc(
                 front_page_seq = min(p['seq'] for p in module_pages.get(0, [])) if 0 in module_pages else None
                 is_front = mod_num == 0 and page['seq'] == front_page_seq
                 wrapped = _wrap_wiki_html(body, title, page['resource_id'],
-                                          front_page=is_front)
+                  front_page=is_front)
                 zf.writestr(f'wiki_content/{page["filename"]}', wrapped)
 
         for ass in assessment_items:
             ass_base = f'web_resources/assessments/{ass["ass_dir_name"]}'
             zf.write(ass['pdf_path'],
-                     f'{ass_base}/{ass["pdf_filename"]}')
+              f'{ass_base}/{ass["pdf_filename"]}')
             for extra in ass.get('extra_files', []):
                 rel = extra['rel_path']
                 if cache_bust:
@@ -1001,48 +998,48 @@ def export_cc(
                     busted = cache_bust_filename(fname, cache_bust)
                     rel = f'{parts[0]}/{busted}' if len(parts) > 1 else busted
                 zf.write(extra['abs_path'],
-                         f'{ass_base}/{rel}')
+                  f'{ass_base}/{rel}')
 
             aid = ass['assignment_id']
             desc_html = _assignment_description_html(ass, ass.get('brief_md'), assignment_css, valid_targets, subject_root, cache_bust=cache_bust)
             zf.writestr(f'{aid}/{aid}.html', desc_html)
 
             settings = _assignment_settings_xml(
-                identifier=aid,
-                title=ass['title'],
-                points=ass['total_marks'],
-                group_id=ass['group_id'],
-                rubric_id=ass.get('rubric_id'),
-                submission=ass['submission'],
+              identifier=aid,
+              title=ass['title'],
+              points=ass['total_marks'],
+              group_id=ass['group_id'],
+              rubric_id=ass.get('rubric_id'),
+              submission=ass['submission'],
             )
             zf.writestr(f'{aid}/assignment_settings.xml', settings)
 
         if has_course_settings:
             zf.writestr('course_settings/canvas_export.txt',
-                        'Common Cartridge generated by torrenzo\n')
+              'Common Cartridge generated by torrenzo\n')
             zf.writestr('course_settings/assignment_groups.xml',
-                        _assignment_groups_xml(assessment_items))
+              _assignment_groups_xml(assessment_items))
             zf.writestr('course_settings/rubrics.xml',
-                        _rubrics_xml(assessment_items))
+              _rubrics_xml(assessment_items))
             zf.writestr('course_settings/module_meta.xml',
-                        _module_meta_xml(module_pages, assessment_items,
-                                         lecturer_notes=lecturer_notes,
-                                         module_labels=module_labels))
+              _module_meta_xml(module_pages, assessment_items,
+                lecturer_notes=lecturer_notes,
+                module_labels=module_labels))
             zf.writestr('course_settings/course_settings.xml',
-                        _course_settings_xml(subject_code, subject_title))
+              _course_settings_xml(subject_code, subject_title))
 
         for asset in assets:
             zf.write(asset['path'],
-                     f'web_resources/assets/{asset["filename"]}')
+              f'web_resources/assets/{asset["filename"]}')
 
         for note in lecturer_notes:
             zf.write(note['path'],
-                     f'web_resources/lecturer_notes/{note["filename"]}')
+              f'web_resources/lecturer_notes/{note["filename"]}')
 
     page_count = sum(len(v) for v in module_pages.values())
     diagnostics.insert(0,
-        f'Common Cartridge -> {output_path.name} '
-        f'({page_count} pages, {len(assessment_items)} assessments, '
-        f'{len(assets)} assets)'
+      f'Common Cartridge -> {output_path.name} '
+      f'({page_count} pages, {len(assessment_items)} assessments, '
+      f'{len(assets)} assets)'
     )
     return output_path, diagnostics
