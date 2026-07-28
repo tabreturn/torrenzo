@@ -24,8 +24,8 @@ from ...components import PARAMETERIZED_COMPONENTS, build_component_tags
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 
-DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`\[\]]+))?`?')
-BARE_TAG_RE = re.compile(r'(?<!=)\[\[([^\]]+)\]\](?:\.([^\s`\[\]]+))?')
+DATAVIEW_RE = re.compile(r'`?=\s*\[\[([^\]]+)\]\](?:\.([^\s`\[\]*]+))?`?')
+BARE_TAG_RE = re.compile(r'(?<!=)\[\[([^\]]+)\]\](?:\.([^\s`\[\]*]+))?')
 DATAVIEW_BLOCK_RE = re.compile(
   r'```dataview\s+LIST without id slo\[x\]\s+FROM "outline"\s+'
   r'FLATTEN ([^\s]+) AS x\s+```',
