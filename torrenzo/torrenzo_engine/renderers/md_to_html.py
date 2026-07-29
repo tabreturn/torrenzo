@@ -294,6 +294,6 @@ def render(
     )
 
     if missing_keys:
-        warnings.append(f'Missing citations: {', '.join(missing_keys)}')
+        warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
     return True, f'{input_path} -> {output_path}', warnings

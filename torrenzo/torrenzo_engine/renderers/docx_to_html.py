@@ -31,7 +31,7 @@ NAMESPACES = {
   'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
   'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
 }
-BLIP_TAG = f'{{{NAMESPACES['a']}}}blip'
+BLIP_TAG = f"{{{NAMESPACES['a']}}}blip"
 BR_TAG = qn('w:br')
 TEXT_TAG = qn('w:t')
 
@@ -154,7 +154,7 @@ def render(
         pass
 
     if missing_keys:
-        warnings.append(f'Missing citations: {', '.join(missing_keys)}')
+        warnings.append(f"Missing citations: {', '.join(missing_keys)}")
 
     raw_html = unicode_to_entities(raw_html)
     output_path.parent.mkdir(parents=True, exist_ok=True)
