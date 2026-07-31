@@ -50,12 +50,9 @@ def _fence_renderer(
             highlighted = _highlight(token.content, lexer, _FORMATTER)
             highlighted = highlighted.rstrip('\n')
 
-            # canvas's html sanitiser strips inline `white-space:pre`,
-            # collapsing runs of spaces inside <div>. Convert any run of
-            # 2+ consecutive spaces (outside html tags) to &nbsp; so both
-            # leading indentation and mid-line alignment (e.g. pep-8's
-            # double space before an inline `#` comment) survive. Single
-            # spaces are left as-is so copy-pasted code remains runnable.
+            # canvas strips inline white-space:pre, so runs of 2+ spaces
+            # are converted to &nbsp; for alignment. single spaces are left
+            # as-is so copy-pasted code remains runnable
             _tag_re = _re.compile(r'<[^>]*>')
             _space_run_re = _re.compile(r'  +')
 
@@ -76,7 +73,8 @@ def _fence_renderer(
             highlighted = highlighted.replace('\n', '<br>')
 
             return (
-              f'<div class="pre"><code class="language-{_html.escape(lang)}">'
+              f'<div class="pre"><code class="language-{_html.escape(lang)}" '
+              f'style="white-space:pre">'
               f'{highlighted}</code></div>\n'
             )
 

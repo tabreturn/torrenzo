@@ -329,6 +329,7 @@ def cache_bust_asset_refs(html: str, suffix: str) -> str:
 
 
 _UNICODE_TO_ENTITY = {
+  '\u00a0': '&nbsp;',
   '\u2013': '&ndash;',
   '\u2014': '&mdash;',
   '\u00d7': '&times;',
