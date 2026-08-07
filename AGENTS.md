@@ -55,7 +55,7 @@
 - `--cache-bust [TAG]` appends `_TAG` before the file extension of every asset copied to `build/` and rewrites corresponding `src`/`href` references in HTML output.
 - Omit `TAG` for an auto-generated daily stamp (`vYYYYMMDD`): `--cache-bust` → `_v20260619`.
 - Provide a custom tag: `--cache-bust cb` → `_cb`.
-- Affects **module assets** (`modules/*/assets/`), **HTML module pages**, and **CC cartridge** (both module and assessment assets).
+- Affects **module assets** (`modules/*/assets/`), **HTML module pages**, **CC cartridge** (both module and assessment assets), and **lecturer notes** (`notes/**/*`).
 - Assessment PDFs are unaffected (they reference local files, not Canvas-served URLs).
 - Designed to work around Canvas caching issues where previously uploaded images stop rendering after re-import.
 - GUI exposes a `--cache-bust` checkbox with an optional tag text field.

@@ -808,7 +808,10 @@ def _build_manifest(
 
     if lecturer_notes:
         for note in lecturer_notes:
-            cc_href = f'web_resources/lecturer_notes/{note["filename"]}'
+            fname = note['filename']
+            if cache_bust:
+                fname = cache_bust_filename(fname, cache_bust)
+            cc_href = f'web_resources/lecturer_notes/{fname}'
             res = _el(resources, f'{{{ns}}}resource',
               identifier=note['resource_id'],
               type='webcontent', href=cc_href)
@@ -1033,8 +1036,11 @@ def export_cc(
               f'web_resources/assets/{asset["filename"]}')
 
         for note in lecturer_notes:
+            fname = note['filename']
+            if cache_bust:
+                fname = cache_bust_filename(fname, cache_bust)
             zf.write(note['path'],
-              f'web_resources/lecturer_notes/{note["filename"]}')
+              f'web_resources/lecturer_notes/{fname}')
 
     page_count = sum(len(v) for v in module_pages.values())
     diagnostics.insert(0,

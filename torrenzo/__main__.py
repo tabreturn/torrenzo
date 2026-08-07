@@ -231,7 +231,8 @@ def make_jobs(
         renderer='copy_asset',
         context={},
         output_ext='',
-        output_namer=lambda p: p.name,
+        output_namer=(lambda p: cache_bust_filename(p.name, cache_bust))
+        if cache_bust else (lambda p: p.name),
       ),
     ]
 
