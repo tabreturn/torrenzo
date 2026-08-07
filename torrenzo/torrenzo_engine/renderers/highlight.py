@@ -22,6 +22,25 @@ from pygments.util import ClassNotFound
 _FORMATTER = HtmlFormatter(noclasses=True, nowrap=True)
 
 
+def _parse_info_classes(tokens: list[str]) -> list[str]:
+    """Extract CSS class names from the trailing info-string tokens.
+
+    Supports the ``markdown-it-attrs`` style ``{.class}`` group (which may
+    contain several ``.cls`` entries) and bare ``.class`` tokens. Unknown
+    tokens are ignored so the first token is always the language.
+    """
+    classes: list[str] = []
+    for tok in tokens:
+        if tok.startswith('{') and tok.endswith('}'):
+            inner = tok[1:-1]
+            classes.extend(
+              p.lstrip('.') for p in inner.split() if p.startswith('.')
+            )
+        elif tok.startswith('.') and tok[1:]:
+            classes.append(tok[1:])
+    return classes
+
+
 def _fence_renderer(
   self,
   tokens: list[Token],
@@ -33,12 +52,16 @@ def _fence_renderer(
 
     * Language-tagged blocks with a recognised Pygments lexer →
       ``<div class="pre"><code class="language-…">…</code></div>``
-      with inline colour spans.
+      with inline colour spans.  Extra ``{.class}`` tokens in the info
+      string are appended to the ``<div>``; a ``.wrap`` class switches
+      the inline ``white-space`` to ``pre-wrap`` so long lines wrap.
     * Everything else → standard ``<pre><code>…</code></pre>``.
     """
     token = tokens[idx]
     info = token.info.strip() if token.info else ''
-    lang = info.split(maxsplit=1)[0] if info else ''
+    info_parts = info.split()
+    lang = info_parts[0] if info_parts else ''
+    extra_classes = _parse_info_classes(info_parts[1:])
 
     if lang:
         try:
@@ -72,9 +95,15 @@ def _fence_renderer(
 
             highlighted = highlighted.replace('\n', '<br>')
 
+            wrap = 'wrap' in extra_classes
+            whitespace = 'white-space:pre-wrap' if wrap else 'white-space:pre'
+            div_class = 'pre'
+            if extra_classes:
+                div_class = f'pre {" ".join(extra_classes)}'
+
             return (
-              f'<div class="pre"><code class="language-{_html.escape(lang)}" '
-              f'style="white-space:pre">'
+              f'<div class="{div_class}"><code class="language-{_html.escape(lang)}" '
+              f'style="{whitespace}">'
               f'{highlighted}</code></div>\n'
             )
 
