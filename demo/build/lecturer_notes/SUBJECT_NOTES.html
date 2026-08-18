@@ -1,0 +1,77 @@
+<!-- built: 2026-08-18T14:52:55+10:00  source: SUBJECT_NOTES.md -->
+<div><h1>Instructor Notes</h1>
+<p>This document offers suggestions for running the subject. Torrenzo builds Markdown files in <code>notes</code> into HTML pages under <code>build/lecturer_notes/</code>; any other formats copy across as-is.</p>
+<h2>Delivery Overview</h2>
+<p>FRU101 runs across a single learning block with four modules. The landing page (<code>module_00</code>) introduces the subject, expectations, and key documents. Module 1 (the only one populated in this demo) uses citrus fruits as a lens for observation and cataloguing.</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Module</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Welcome</td>
+<td>Subject intro, expectations, key docs</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1.1&ndash;1.2</td>
+<td>Observation skills; the orange as a case study</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1.3&ndash;1.4</td>
+<td>Lemons and comparative notes; learning resources &amp; activities</td>
+</tr>
+</tbody>
+</table>
+<p>Assessment 1 (Seasonal Fruit Catalogue) is due at the end of Module 4.</p>
+<h2>Session Structure</h2>
+<p>Each week's facilitated session (3 hours) might follow this rhythm:</p>
+<ol>
+<li><strong>Opening (20 min)</strong> &ndash; Recap previous module; surface questions; preview this week's focus.</li>
+<li><strong>Content discussion (40 min)</strong> &ndash; Walk through the module pages together. Invite students to share observations from the readings. Use the orange/lemon examples as prompts.</li>
+<li><strong>Hands-on activity (60 min)</strong> &ndash; Students work individually or in pairs on observation and catalogue-writing exercises (see below).</li>
+<li><strong>Share-back (30 min)</strong> &ndash; A few students share draft catalogue entries. Group discusses what worked, what surprised them, what to revise.</li>
+<li><strong>Assessment check-in (20 min)</strong> &ndash; Review progress toward Assessment 1. Clarify brief requirements. Flag upcoming deadlines.</li>
+<li><strong>Close (10 min)</strong> &ndash; Summarise key takeaways. Preview next module. Assign pre-reading.</li>
+</ol>
+<h2>In-Class Activities</h2>
+<h3>Module 1: Observation Warm-Up</h3>
+<p>Bring a few actual citrus fruits to class (or ask students to bring one). Give everyone 10 minutes to write a paragraph describing the fruit in front of them &ndash; appearance, scent, texture, even sound when peeled. No phones, no Googling. Compare descriptions: what did different people notice? What vocabulary emerged?</p>
+<h3>Module 1: Mini Catalogue Entry</h3>
+<p>Supply three high-quality fruit photographs (or use the demo assets). Each student writes a 4&ndash;6 sentence catalogue entry for one fruit, pairing the image with descriptive text. Swap with a neighbour and give feedback using two questions:</p>
+<ul>
+<li>What does the description tell you that the image alone cannot?</li>
+<li>Is there anything the image shows that the description missed?</li>
+</ul>
+<h3>Module 1: Sensory Vocabulary Builder</h3>
+<p>On a whiteboard or shared doc, build a class word bank: columns for appearance, scent, texture, flavour, and sound. Students contribute terms as they encounter them in readings or during observation exercises. Return to this bank throughout the module &ndash; it grows into a shared resource.</p>
+<h2>Assessment Support</h2>
+<p>Module 1 activities build toward Assessment 1. By the end of the module, students should have:</p>
+<ul>
+<li>Practised close observation of at least two fruits.</li>
+<li>Written draft catalogue entries with images.</li>
+<li>Received peer feedback on one entry.</li>
+<li>Reviewed the Assessment 1 brief and understood the submission format (ZIP with README).</li>
+</ul>
+<p>Remind students that Assessment 1 is playful &ndash; the goal is careful observation and clear description, not formal academic referencing. Encourage them to cite image sources in captions and acknowledge borrowed descriptors.</p>
+<h2>Using the LMS Pages</h2>
+<p>The HTML pages in <code>build/modules_html/</code> are body-only snippets for pasting into your LMS. Each page includes:</p>
+<ul>
+<li><strong>Tabbed navigation</strong> &ndash; links to sibling pages within the same module.</li>
+<li><strong>Stamped build metadata</strong> &ndash; a comment at the top showing build date and source file.</li>
+<li><strong>Inlined CSS</strong> &ndash; styling travels with the content; no separate stylesheet needed in the LMS.</li>
+</ul>
+<p>Only rebuild and repaste pages that have changed. Torrenzo's incremental build tells you which files are newly built vs. up-to-date.</p>
+<h2>Extending the Subject</h2>
+<p>To add Module 2 (say, Tropical Fruits):</p>
+<pre><code class="language-bash">mkdir modules/module_02
+mkdir modules/module_02/assets
+</code></pre>
+<p>Create pages following <code>mod_02_01_&lt;name&gt;.md</code>, etc. Add entries to <code>outline.md</code> for new SLOs or assessments as needed. Run the build &ndash; new pages appear in <code>build/modules_html/</code> automatically.</p>
+</div>

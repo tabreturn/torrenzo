@@ -1,8 +1,6 @@
 # Instructor Notes
 
-This document offers suggestions for running the subject. It is not processed by Torrenzo. 
-
-Torrenzo will ignore everything in `notes`.
+This document offers suggestions for running the subject. Torrenzo builds Markdown files in `notes` into HTML pages under `build/lecturer_notes/`; any other formats copy across as-is.
 
 ## Delivery Overview
 
