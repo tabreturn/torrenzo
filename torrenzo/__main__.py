@@ -225,6 +225,23 @@ def make_jobs(
         if cache_bust else (lambda p: p.name),
       ),
       RenderJob(
+        name='lecturer_notes_md',
+        input_pattern='notes/**/*.md',
+        output_dir=Path('lecturer_notes'),
+        renderer='md_to_html',
+        context={
+          'tags': tags,
+          'subject_root': subject_root,
+          'no_css': True,
+          'plain_code': True,
+          'bib_root': subject_root / 'modules',
+          'cache_bust': cache_bust,
+        },
+        output_ext='.html',
+        output_namer=lambda p: p.with_suffix('.html').name,
+        deps=html_deps,
+      ),
+      RenderJob(
         name='lecturer_notes',
         input_pattern='notes/**/*',
         output_dir=Path('lecturer_notes'),
@@ -233,6 +250,7 @@ def make_jobs(
         output_ext='',
         output_namer=(lambda p: cache_bust_filename(p.name, cache_bust))
         if cache_bust else (lambda p: p.name),
+        input_filter=lambda p: p.suffix.lower() != '.md',
       ),
     ]
 

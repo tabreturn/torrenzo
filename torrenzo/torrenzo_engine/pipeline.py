@@ -53,6 +53,7 @@ class RenderJob:
     context: Dict[str, Any]
     output_ext: str = ''
     output_namer: Callable[[Path], str] | None = None
+    input_filter: Callable[[Path], bool] | None = None
     deps: List[Path] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -110,6 +111,8 @@ class Pipeline:
                 if input_path.is_dir():
                     continue
                 if input_path.name in ('.gitkeep', '.DS_Store', 'Thumbs.db', 'desktop.ini'):
+                    continue
+                if job.input_filter and not job.input_filter(input_path):
                     continue
                 if job.output_namer:
                     output_name = job.output_namer(input_path)

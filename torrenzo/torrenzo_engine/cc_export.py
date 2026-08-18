@@ -125,7 +125,7 @@ def _el(parent: ET.Element, tag: str, text: str | None = None,
 
 
 def _wrap_wiki_html(body: str, title: str, identifier: str, *,
-  front_page: bool = False) -> str:
+  front_page: bool = False, workflow_state: str = 'active') -> str:
     fp = '<meta name="front_page" content="true"/>\n' if front_page else ''
     return (
       '<html>\n<head>\n'
@@ -133,12 +133,17 @@ def _wrap_wiki_html(body: str, title: str, identifier: str, *,
       f'<title>{title}</title>\n'
       f'<meta name="identifier" content="{identifier}"/>\n'
       '<meta name="editing_roles" content="teachers"/>\n'
-      '<meta name="workflow_state" content="active"/>\n'
+      f'<meta name="workflow_state" content="{workflow_state}"/>\n'
       f'{fp}'
       '</head>\n<body>\n'
       f'{body}\n'
       '</body>\n</html>\n'
     )
+
+
+def _note_page_title(path: Path) -> str:
+    """Wiki-page title for a lecturer note: the filename stem, verbatim."""
+    return path.stem
 
 
 def _rewrite_html(html_text: str, page_id_map: dict[str, str],
@@ -479,9 +484,12 @@ def _module_meta_xml(
         for pi, note in enumerate(lecturer_notes):
             item = _el(items, 'item',
               identifier=_id(f'item/lecturer/{note["filename"]}'))
-            _el(item, 'content_type', 'Attachment')
+            is_page = note.get('kind') == 'page'
+            _el(item, 'content_type',
+              'WikiPage' if is_page else 'Attachment')
             _el(item, 'workflow_state', 'unpublished')
-            _el(item, 'title', note['filename'])
+            _el(item, 'title',
+              note['title'] if is_page else note['filename'])
             _el(item, 'identifierref', note['resource_id'])
             _el(item, 'position', str(pi + 1))
             _el(item, 'new_tab', 'false')
@@ -740,7 +748,8 @@ def _build_manifest(
             ni = _el(sec, f'{{{ns}}}item',
               identifier=_id(f'item/lecturer/{note["filename"]}'),
               identifierref=note['resource_id'])
-            _el(ni, f'{{{ns}}}title', note['filename'])
+            _el(ni, f'{{{ns}}}title',
+              note.get('title', note['filename']))
 
     # -- resources --
     resources = _el(manifest, f'{{{ns}}}resources')
@@ -808,10 +817,10 @@ def _build_manifest(
 
     if lecturer_notes:
         for note in lecturer_notes:
-            fname = note['filename']
-            if cache_bust:
-                fname = cache_bust_filename(fname, cache_bust)
-            cc_href = f'web_resources/lecturer_notes/{fname}'
+            if note.get('kind') == 'page':
+                cc_href = f'wiki_content/{note["filename"]}'
+            else:
+                cc_href = f'web_resources/lecturer_notes/{note["filename"]}'
             res = _el(resources, f'{{{ns}}}resource',
               identifier=note['resource_id'],
               type='webcontent', href=cc_href)
@@ -947,10 +956,13 @@ def export_cc(
         for f in sorted(lecturer_notes_dir.rglob('*')):
             if f.is_file():
                 resource_id = _id(f'resource/lecturer_notes/{f.name}')
+                is_page = f.suffix.lower() == '.html'
                 lecturer_notes.append({
                   'filename': f.name,
                   'path': f,
                   'resource_id': resource_id,
+                  'kind': 'page' if is_page else 'file',
+                  'title': _note_page_title(f) if is_page else f.name,
                 })
 
     has_course_settings = bool(assessment_items) or bool(module_pages)
@@ -1036,11 +1048,15 @@ def export_cc(
               f'web_resources/assets/{asset["filename"]}')
 
         for note in lecturer_notes:
-            fname = note['filename']
-            if cache_bust:
-                fname = cache_bust_filename(fname, cache_bust)
-            zf.write(note['path'],
-              f'web_resources/lecturer_notes/{fname}')
+            if note.get('kind') == 'page':
+                body = note['path'].read_text(encoding='utf-8')
+                body = _rewrite_html(body, page_id_map, assess_id_map)
+                wrapped = _wrap_wiki_html(body, note['title'],
+                  note['resource_id'], workflow_state='unpublished')
+                zf.writestr(f'wiki_content/{note["filename"]}', wrapped)
+            else:
+                zf.write(note['path'],
+                  f'web_resources/lecturer_notes/{note["filename"]}')
 
     page_count = sum(len(v) for v in module_pages.values())
     diagnostics.insert(0,

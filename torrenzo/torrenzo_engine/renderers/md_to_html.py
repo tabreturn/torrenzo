@@ -128,8 +128,10 @@ def replace_inline_bold(html_text: str) -> str:
 def load_bibliography(
   input_path: Path,
   warnings: list[str] | None = None,
+  modules_root: Path | None = None,
 ) -> dict[str, Any]:
-    modules_root = input_path.parent.parent
+    if modules_root is None:
+        modules_root = input_path.parent.parent
     entries: dict[str, Any] = {}
     bib_paths = [
       modules_root / 'references.bib',
@@ -226,17 +228,19 @@ def render(
     tags = context.get('tags', {})
     tags = {**tags, **build_component_tags(input_path)}
     md = MarkdownIt('commonmark').enable('table').enable('strikethrough')
-    _hl.install(md)
+    if not context.get('plain_code'):
+        _hl.install(md)
     raw = input_path.read_text(encoding='utf-8')
 
-    raw, include_warnings = resolve_includes(
-      raw, context.get('subject_root', input_path.parent.parent.parent))
+    subject_root = context.get(
+      'subject_root', input_path.parent.parent.parent)
+    raw, include_warnings = resolve_includes(raw, subject_root)
     raw = raw.replace('[[cc-section|hide-in-pdf]]', '')
     raw = raw.replace('[[cc-section]]', '')
     raw = rewrite_video_images(raw)
     raw, tag_warnings = apply_tags(raw, tags)
-    raw, link_warnings = expand_wiki_links(raw, collect_valid_outputs(
-      input_path.parent.parent.parent))
+    raw, link_warnings = expand_wiki_links(
+      raw, collect_valid_outputs(subject_root))
     raw = rewrite_md_hrefs(raw)
     raw = convert_dashes(raw)
 
@@ -244,18 +248,23 @@ def render(
     warnings.extend(include_warnings)
     warnings.extend(link_warnings)
     warnings.extend(check_asset_refs(raw, input_path))
-    bib_entries = load_bibliography(input_path, warnings)
+    bib_entries = load_bibliography(
+      input_path, warnings, modules_root=context.get('bib_root'))
     citation_numbers, ordered_keys, missing_keys = collect_citation_numbers(
       raw, bib_entries
     )
     if citation_numbers:
         raw = replace_citations(raw, citation_numbers)
 
-    css_text = load_module_css(input_path)
-    if not css_text:
-        warnings.append(
-          f'No modules/style/style.css found; {input_path.name} built unstyled'
-        )
+    if context.get('no_css'):
+        css_text = ''
+    else:
+        css_text = load_module_css(input_path)
+        if not css_text:
+            warnings.append(
+              f'No modules/style/style.css found; '
+              f'{input_path.name} built unstyled'
+            )
     css_text = substitute_css_variables(css_text)
     html_body = md.render(raw)
     html_body = apply_image_style_directives(html_body)
@@ -263,7 +272,8 @@ def render(
         references = render_references(ordered_keys, bib_entries, warnings)
         if references:
             html_body = f'{html_body}\n{references}'
-    html_body = f'{html_body}\n{render_page_spacer()}'
+    if not context.get('no_css'):
+        html_body = f'{html_body}\n{render_page_spacer()}'
     if css_text.strip():
         try:
             import cssutils

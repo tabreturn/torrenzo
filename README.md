@@ -150,7 +150,7 @@ python -m torrenzo /path/to/your-subject
 
 - Use the **Diff** button (GUI) or `--diff LOCAL.imscc LIVE.imscc` (CLI) to [compare two cartridges](#diffing-against-a-live-course-export) and see what would change on import. This is useful when you want to apply targeted updates using the Canvas editor rather than importing an entire Common Cartridge.
 
-- Use `--cache-bust` to append a cache-busting suffix to asset filenames (module assets, assessment assets, and lecturer notes) and their HTML references. This works around an intermittent Canvas issue where previously uploaded images stop rendering after a course re-import (I'm not sure why). Provide a custom tag or omit it for an auto-generated timestamp.
+- Use `--cache-bust` to append a cache-busting suffix to asset filenames (module assets, assessment assets, and non-Markdown lecturer notes) and their HTML references. This works around an intermittent Canvas issue where previously uploaded images stop rendering after a course re-import (I'm not sure why). Provide a custom tag or omit it for an auto-generated timestamp.
 
 > 💡 Each build writes (or appends to) `build/build-log.json` listing newly built files with timestamps. This provides one way to identify which files need updating in your LMS across multiple builds (if you're not using a common catridge and need to be selective).
 
@@ -285,7 +285,7 @@ your-subject/
 │   │   └── assets/
 │   ├── style/          # stylesheet inlined into HTML output
 │   └── references.bib  # subject-level BibTeX references
-├── notes/              # lecturer-only notes (copied as-is, unpublished)
+├── notes/              # lecturer-only notes (.md → HTML; else copied as-is)
 │   └── *.md (or any format)
 ├── build/              # generated output
 │   └── ...
@@ -314,7 +314,7 @@ Subject content lives in two directories -- `assessments/` and `modules/`. Torre
 
 Use `modules/module_00/` for subject overview and introductory content (e.g., welcome page, student expectations, key documents). This typically serves as the landing page(s) content.
 
-> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. **Module folders** accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1". Uppercase letters are preserved (e.g. `the_ABC_method` -> `The ABC Method`), and hyphens and commas carry through verbatim.
+> 💡 Module files follow the pattern `mod_<module_num>_<seq>_<name>.<ext>`. For example: `mod_01_01_introduction.md`, `mod_01_02_oranges.md`, or `mod_01_03_activities.md`. **Module folders** accept an optional label suffix: `module_01_citrus_fruits/` becomes "Module 1 – Citrus Fruits" in the cartridge instead of "Module 1". Uppercase letters are preserved (e.g. `the_ABC_method` → `The ABC Method`), and hyphens and commas carry through verbatim.
 
 > 💡 Torrenzo supports writing, organising, and navigating content in [Obsidian](https://obsidian.md). The `demo/` subject includes an `.obsidian` configuration that you can copy to any working subject root -- then point a new vault at your subject directory to use it.
 
@@ -322,7 +322,7 @@ Torrenzo writes all output to `build/`. Module assets copy to `build/modules_htm
 
 ### Lecturer Notes
 
-Place lecturer-only materials (teaching notes, facilitation guides, etc.) in `notes/`. These files copy to `build/lecturer_notes/` retaining their original format -- no conversion applies (`.md` stays `.md`, `.docx` stays `.docx`, and so forth). When exporting a Common Cartridge (via `--cc`), lecturer notes end up in the `.imscc` package under an **unpublished** module, hidden from students.
+Place lecturer-only materials (teaching notes, facilitation guides, etc.) in `notes/`. Markdown files build to HTML pages in `build/lecturer_notes/` (plain semantic HTML, no stylesheet inlined); any other format copies as-is (`.docx` stays `.docx`, and so forth). When exporting a Common Cartridge (via `--cc`), lecturer notes end up in the `.imscc` package under an **unpublished** module, hidden from students.
 
 ### Module Styling & Assessment Branding
 
@@ -370,7 +370,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
     - **Pages** -- All module pages appear as WikiPages. The first page in `Module_00` includes a `front_page` meta tag, though you may need to set it manually in Canvas via *Pages → View All Pages → ⁝ → Use as Front Page*.
     - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the ***last table*** in the brief markdown).
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
-    - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); notes retain their original format.
+    - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); Markdown notes arrive as unpublished wiki pages, other formats as file attachments.
 
 > 💡 Observation note: When importing cartridges into Canvas, module content is overwritten *unless* it has been modified in the Canvas editor. However, assets may be duplicated during the process. Recommended approach: before bulk importing, delete all items in **Files** (in Canvas), except for the `course_image` folder.
 

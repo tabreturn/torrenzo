@@ -29,7 +29,7 @@
 
 - `torrenzo/__main__.py`: CLI entry; builds tag map from `outline.md`, registers renderers, constructs job specs, and runs the pipeline.
 - `torrenzo/torrenzo_engine/`: renderer registry and pipeline execution; renderers include `md_to_pdf`, `md_to_html`, `bib_to_html`.
-- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_<seq>_<name>.[md|docx]` → HTML; `notes/**/*` → `build/lecturer_notes/` (copied as-is, no conversion).
+- Subject: `assessments/assessment_<n>/ass_<n>_brief.md` → PDF; `modules/module_<n>/mod_<n>_<seq>_<name>.[md|docx]` → HTML; `notes/**/*` → `build/lecturer_notes/` (`.md` → plain unstyled HTML; other formats copied as-is).
 - `modules/style/style.css` is inlined into module HTML; output HTML is body-only for LMS pasting.
 - `assessments/style/` is copied alongside each brief; `logo.svg` injected into the PDF header; swap to change branding.
 - `modules/references.bib` contains subject-level BibTeX sources.
@@ -55,7 +55,7 @@
 - `--cache-bust [TAG]` appends `_TAG` before the file extension of every asset copied to `build/` and rewrites corresponding `src`/`href` references in HTML output.
 - Omit `TAG` for an auto-generated daily stamp (`vYYYYMMDD`): `--cache-bust` → `_v20260619`.
 - Provide a custom tag: `--cache-bust cb` → `_cb`.
-- Affects **module assets** (`modules/*/assets/`), **HTML module pages**, **CC cartridge** (both module and assessment assets), and **lecturer notes** (`notes/**/*`).
+- Affects **module assets** (`modules/*/assets/`), **HTML module pages**, **CC cartridge** (both module and assessment assets), and **non-Markdown lecturer notes** (notes built to HTML keep plain filenames).
 - Assessment PDFs are unaffected (they reference local files, not Canvas-served URLs).
 - Designed to work around Canvas caching issues where previously uploaded images stop rendering after re-import.
 - GUI exposes a `--cache-bust` checkbox with an optional tag text field.
@@ -67,4 +67,4 @@
 ## Extensibility
 
 - Plugin-style renderers; register new renderer names and job specs for additional targets (e.g., `.docx` → HTML, Marp `.md` → PDF, extended Markdown widgets).
-- `--cc` exports Common Cartridge; lecturer notes included as unpublished module hidden from students. CC import overwrites (not additive).
+- `--cc` exports Common Cartridge; lecturer notes included as unpublished module hidden from students (HTML notes as wiki pages, other formats as attachments). CC import overwrites (not additive).

@@ -44,7 +44,8 @@ class TestBuild:
         assert (BUILD / 'modules_html' / 'mod_00_01_welcome.html').exists()
         assert (BUILD / 'modules_html' / 'mod_01_01_introduction.html').exists()
         assert (BUILD / 'modules_html' / 'mod_01_03_lemons.html').exists()
-        assert (BUILD / 'lecturer_notes' / 'SUBJECT_NOTES.md').exists()
+        assert (BUILD / 'lecturer_notes' / 'SUBJECT_NOTES.html').exists()
+        assert not (BUILD / 'lecturer_notes' / 'SUBJECT_NOTES.md').exists()
 
     def test_incremental_skips(self):
         run_torrenzo('--force')
