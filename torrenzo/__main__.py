@@ -24,6 +24,7 @@ from .torrenzo_engine.renderers import (
   render_md_to_html,
   render_docx_to_html,
   render_copy_asset,
+  render_assessment_html,
 )
 from .torrenzo_engine.build_stamp import now_iso
 from .torrenzo_engine.cc_diff import diff_cc
@@ -252,6 +253,20 @@ def make_jobs(
         if cache_bust else (lambda p: p.name),
         input_filter=lambda p: p.suffix.lower() != '.md',
       ),
+      RenderJob(
+        name='assessment_briefs_html',
+        input_pattern=briefs_pattern,
+        output_dir=Path('assessments_html'),
+        renderer='assessment_html',
+        context={
+          'tags': tags,
+          'subject_root': subject_root,
+          'cache_bust': cache_bust,
+        },
+        output_ext='.html',
+        output_namer=lambda p: f'{p.parent.name}.html',
+        deps=pdf_deps,
+      ),
     ]
 
 
@@ -278,6 +293,9 @@ def run_build(
       registry, 'docx_to_html', lambda _: render_docx_to_html
     )
     register_renderer(registry, 'copy_asset', lambda _: render_copy_asset)
+    register_renderer(
+      registry, 'assessment_html', lambda _: render_assessment_html
+    )
 
     pipeline = Pipeline(subject_root, build_dir, registry)
     diagnostics = pipeline.execute(

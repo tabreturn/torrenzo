@@ -183,15 +183,15 @@ Keys in `outline.[md|yaml]` define your subject metadata and automatically popul
 
 Use wiki-style `[[...]]` syntax to create links between modules and assessments. Torrenzo automatically derives the display label unless you explicitly provide one using a `|` character.
 
-| Syntax                               | Renders as                                      |
-|--------------------------------------|-------------------------------------------------|
-| `[[mod_01_02_oranges]]`              | `[Module 1.2: Oranges](mod_01_02_oranges.html)` |
-| `[[mod_01_02_oranges\|Oranges]]`     | `[Oranges](mod_01_02_oranges.html)`             |
-| `[[mod_02_02_mangoes\|Mangoes]]`     | `[Mangoes](mod_02_02_mangoes.html)`             |
-| `[[assessment_01]]`                  | `[Assessment 1](assessment_01.html)`            |
-| `[[assessment_01\|Brief]]`           | `[Brief](assessment_01.html)`                   |
+| Syntax                           | Renders as                                               |
+|----------------------------------|----------------------------------------------------------|
+| `[[mod_01_02_oranges]]`          | `[Module 1.2: Oranges](mod_01_02_oranges.html)`          |
+| `[[mod_01_02_oranges\|Oranges]]` | `[Oranges](mod_01_02_oranges.html)`                      |
+| `[[mod_02_02_mangoes\|Mangoes]]` | `[Mangoes](mod_02_02_mangoes.html)`                      |
+| `[[assessment_01]]`              | `[Assessment 1](../assessments_html/assessment_01.html)` |
+| `[[assessment_01\|Brief]]`       | `[Brief](../assessments_html/assessment_01.html)`        |
 
-Wiki links expand before Markdown rendering and before Common Cartridge export, so they work in the browser preview. However, *Assessment* link targets won't preview as those pages are built for the cartridge only.
+Wiki links expand before Markdown rendering and before Common Cartridge export. In the browser preview, assessment links point at an HTML description page in `build/assessments_html/` (emulating what students see on Canvas).
 
 > 💡 Wiki links (`[[...]]`) are syntactic sugar, and regular Markdown links like `[Mangoes](../module_02/mod_02_02_mangoes.md)` work too -- the build rewrites `.md` to `.html` automatically. Use raw  `<a href="path.md">` if you must retain the `.md` extension.
 

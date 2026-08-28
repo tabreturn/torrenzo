@@ -98,7 +98,11 @@ def expand_wiki_links(
             return m.group(0)
         if not m.group(2):
             display = _display_name(target)
-        href = target if '.' in target.split('/')[-1] else f'{target}.html'
+        am = re.match(r'^assessment_0*(\d+)$', target.split('/')[-1])
+        if am:
+            href = f'../assessments_html/assessment_{int(am.group(1)):02d}.html'
+        else:
+            href = target if '.' in target.split('/')[-1] else f'{target}.html'
         if valid_targets is not None:
             basename = href.rsplit('/', 1)[-1]
             if basename not in valid_targets:
