@@ -13,32 +13,70 @@ VIDEO_EXTS: tuple[str, ...] = (
 )
 
 
+_CHICAGO_LOWERCASE = frozenset({
+    'a', 'an', 'the',
+    'and', 'but', 'or', 'nor', 'for', 'yet', 'so',
+    'as', 'at', 'by', 'in', 'of', 'on', 'to', 'with',
+    'from', 'into', 'onto', 'upon', 'within', 'without',
+    'about', 'above', 'across', 'after', 'against', 'along',
+    'among', 'around', 'before', 'behind', 'below', 'beneath',
+    'beside', 'between', 'beyond', 'during', 'except', 'inside',
+    'near', 'outside', 'over', 'through', 'toward', 'under',
+    'until', 'via',
+})
+
+
+def _titlecase_segment(seg: str) -> str:
+    """Upper-case the first alpha char; preserve any interior uppercase."""
+    chars: list[str] = []
+    seen_alpha = False
+    for ch in seg:
+        if ch.isupper():
+            chars.append(ch)
+        elif ch.islower():
+            chars.append(ch.upper() if not seen_alpha else ch)
+            seen_alpha = True
+            continue
+        else:
+            chars.append(ch)
+        seen_alpha = seen_alpha or ch.isalpha()
+    return ''.join(chars)
+
+
 def _titlecase_slug_part(word: str) -> str:
     """Title-case one slug word; preserve hyphens and existing uppercase."""
-    segments: list[str] = []
-    for seg in word.split('-'):
-        if not seg:
-            segments.append('')
-            continue
-        cased_chars: list[str] = []
-        seen_alpha = False
-        for ch in seg:
-            if ch.isupper():
-                cased_chars.append(ch)
-            elif ch.islower():
-                cased_chars.append(ch.upper() if not seen_alpha else ch)
-                seen_alpha = True
-                continue
-            else:
-                cased_chars.append(ch)
-            seen_alpha = seen_alpha or ch.isalpha()
-        segments.append(''.join(cased_chars))
-    return '-'.join(segments)
+    return '-'.join(_titlecase_segment(seg) for seg in word.split('-'))
 
 
 def _titlecase_slug(slug: str) -> str:
-    """Title-case a full module-name slug (underscores -> spaces)."""
-    return ' '.join(_titlecase_slug_part(w) for w in slug.split('_'))
+    """Title-case a full slug (underscores -> spaces) with Chicago rules.
+
+    First and last words are always cased. Middle words matching
+    Chicago's lowercase set (articles, coordinating conjunctions, short
+    prepositions) stay lowercase, provided they don't already contain
+    an uppercase letter (which preserves acronyms like ``CMS`` and
+    proper-noun capitalisations like ``WordPress``).
+    """
+    words = slug.split('_')
+    result: list[str] = []
+    for i, word in enumerate(words):
+        segments = word.split('-')
+        cased: list[str] = []
+        for j, seg in enumerate(segments):
+            is_first = i == 0 and j == 0
+            is_last = i == len(words) - 1 and j == len(segments) - 1
+            if (
+                seg
+                and not is_first
+                and not is_last
+                and seg == seg.lower()
+                and seg in _CHICAGO_LOWERCASE
+            ):
+                cased.append(seg)
+            else:
+                cased.append(_titlecase_segment(seg))
+        result.append('-'.join(cased))
+    return ' '.join(result)
 
 
 def _parse_module_filename(filepath: Path) -> tuple[int, str] | None:
