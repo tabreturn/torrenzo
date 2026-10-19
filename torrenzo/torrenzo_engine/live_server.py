@@ -6,6 +6,14 @@ Serves files from a build directory and injects a tiny script into HTML
 responses that listens on ``/_sse`` for reload events.  Call
 ``notify_reload()`` after a build completes to push a reload to every
 connected browser tab.
+
+Also injects a preview-only subtitles shim: video iframes whose source
+has a sibling ``.vtt`` in the build output are swapped client-side for a
+native ``<video>`` element with a subtitles ``<track>``.  This exists
+because the built HTML deliberately uses iframes (Canvas breaks native
+``<video>`` embeds on cartridge import; subtitles travel via
+``media_tracks.xml`` instead) -- the shim lets authors preview them
+locally.  Neither script is ever written to ``build/`` or the cartridge.
 """
 
 import io
@@ -21,6 +29,37 @@ _RELOAD_JS = b"""<script>
   var es = new EventSource('/_sse');
   es.onmessage = function(e){ location.reload(); };
   es.onerror = function(){ setTimeout(function(){ es.close(); }, 5000); };
+})();
+</script>
+<script>
+(function(){
+  function swap(iframe, vttUrl){
+    var video = document.createElement('video');
+    video.controls = true;
+    video.preload = 'metadata';
+    video.style.cssText = iframe.style.cssText;
+    video.title = iframe.title;
+    var source = document.createElement('source');
+    source.src = iframe.src;
+    var track = document.createElement('track');
+    track.kind = 'subtitles';
+    track.src = vttUrl;
+    track.srclang = 'en';
+    track.label = 'English (preview)';
+    video.appendChild(source);
+    video.appendChild(track);
+    iframe.replaceWith(video);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('iframe[data-media-type=\"video\"]')
+      .forEach(function(iframe){
+        var vttUrl = iframe.src.replace(/\\.[a-z0-9]+(\\?.*)?$/i, '.vtt');
+        if (vttUrl === iframe.src) return;
+        fetch(vttUrl, {method: 'HEAD'}).then(function(resp){
+          if (resp.ok) swap(iframe, vttUrl);
+        }).catch(function(){});
+      });
+  });
 })();
 </script>"""
 

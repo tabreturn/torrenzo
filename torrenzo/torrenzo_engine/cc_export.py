@@ -7,8 +7,9 @@ structure, generates imsmanifest.xml, rewrites HTML asset paths, and zips
 everything into a .imscc file.  Rebuilt from scratch every run.
 
 Canvas-specific extensions (assignment_settings.xml, rubrics.xml,
-assignment_groups.xml) are included so that Canvas imports recreate
-assignments with correct marks, weighting, and rubrics.
+assignment_groups.xml, media_tracks.xml) are included so that Canvas
+imports recreate assignments with correct marks, weighting, and rubrics,
+and attach subtitles to videos that ship with a sibling .vtt file.
 
 References:
   https://www.imsglobal.org/cc/ccv1p1/imscc_profilev1p1-Implementation.html
@@ -28,7 +29,7 @@ from markdown_it import MarkdownIt
 from .renderers import highlight as _hl
 from .renderers.md_to_pdf import apply_tags
 from .preprocess import convert_dashes, expand_wiki_links, rewrite_md_hrefs, collect_valid_outputs, apply_image_style_directives, resolve_includes, cache_bust_filename, rewrite_video_images
-from ..components import build_component_tags, _titlecase_slug
+from ..components import VIDEO_EXTS, build_component_tags, _titlecase_slug
 
 
 CC_NS = 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1'
@@ -514,6 +515,28 @@ def _assignment_groups_xml(assessments: list[dict]) -> str:
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml + '\n'
 
 
+def _media_tracks_xml(media_tracks: list[dict]) -> str:
+    """Build Canvas media_tracks.xml attaching .vtt subtitles to videos.
+
+    Each entry pairs a video resource id with the inline WebVTT content of
+    its sibling subtitle file, mirroring the structure Canvas itself emits
+    on course export.  Canvas's CC importer reads this to recreate the
+    subtitles on its native media player.
+    """
+    root = ET.Element('media_tracks')
+    root.set('xmlns', CANVAS_NS)
+    root.set('xmlns:xsi', XSI_NS)
+    root.set('xsi:schemaLocation', f'{CANVAS_NS} {CANVAS_XSD}')
+    for mt in media_tracks:
+        media = _el(root, 'media', identifierref=mt['video_resource_id'])
+        track = _el(media, 'track', mt['vtt_content'],
+          kind='subtitles', locale='en',
+          identifierref=mt['track_id'])
+    ET.indent(root)
+    xml = ET.tostring(root, encoding='unicode', xml_declaration=False)
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml + '\n'
+
+
 def _course_settings_xml(subject_code: str, subject_title: str) -> str:
     root = ET.Element('course', identifier=_id('course'))
     root.set('xmlns', CANVAS_NS)
@@ -667,6 +690,7 @@ def _build_manifest(
   lecturer_notes: list[dict] | None = None,
   module_labels: dict[int, str] | None = None,
   has_course_settings: bool = False,
+  has_media_tracks: bool = False,
   cache_bust: str = '',
 ) -> str:
     ET.register_namespace('', CC_NS)
@@ -769,6 +793,9 @@ def _build_manifest(
           href='course_settings/module_meta.xml')
         _el(cs_res, f'{{{ns}}}file',
           href='course_settings/course_settings.xml')
+        if has_media_tracks:
+            _el(cs_res, f'{{{ns}}}file',
+              href='course_settings/media_tracks.xml')
 
     for mod_num in sorted(module_pages):
         for page in module_pages[mod_num]:
@@ -950,6 +977,21 @@ def export_cc(
                   'resource_id': resource_id,
                 })
 
+    media_tracks: list[dict] = []
+    asset_by_name = {a['filename']: a for a in assets}
+    for asset in assets:
+        if not asset['filename'].lower().endswith(VIDEO_EXTS):
+            continue
+        vtt_name = str(Path(asset['filename']).with_suffix('.vtt'))
+        vtt = asset_by_name.get(vtt_name)
+        if vtt is None:
+            continue
+        media_tracks.append({
+          'video_resource_id': asset['resource_id'],
+          'track_id': _id(f'media_track/{vtt_name}'),
+          'vtt_content': vtt['path'].read_text(encoding='utf-8'),
+        })
+
     lecturer_notes: list[dict] = []
     lecturer_notes_dir = build_dir / 'lecturer_notes'
     if lecturer_notes_dir.exists():
@@ -976,6 +1018,7 @@ def export_cc(
       lecturer_notes=lecturer_notes,
       module_labels=module_labels,
       has_course_settings=has_course_settings,
+      has_media_tracks=bool(media_tracks),
       cache_bust=cache_bust,
     )
 
@@ -1042,6 +1085,9 @@ def export_cc(
                 module_labels=module_labels))
             zf.writestr('course_settings/course_settings.xml',
               _course_settings_xml(subject_code, subject_title))
+            if media_tracks:
+                zf.writestr('course_settings/media_tracks.xml',
+                  _media_tracks_xml(media_tracks))
 
         for asset in assets:
             zf.write(asset['path'],
@@ -1062,6 +1108,6 @@ def export_cc(
     diagnostics.insert(0,
       f'Common Cartridge -> {output_path.name} '
       f'({page_count} pages, {len(assessment_items)} assessments, '
-      f'{len(assets)} assets)'
+      f'{len(assets)} assets, {len(media_tracks)} subtitle track(s))'
     )
     return output_path, diagnostics
