@@ -57,9 +57,9 @@ MD_LINK_RE = re.compile(
   r'(?<!!)\[(?:[^\]\\]|\\.)*?\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)'
 )
 PAGE_HREF_RE = re.compile(
-  r'(href=["\'])(?:.*?/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
+  r'(href=["\'])(?:[^"\']*/)?(mod_\d+_\d+_[^"\']+\.html)(["\'])')
 ASSESS_HREF_RE = re.compile(
-  r'(href=["\'])(?:.*?/)?(assessment_\d+)\.(?:html|pdf)(["\'])')
+  r'(href=["\'])(?:[^"\']*/)?(assessment_\d+)\.(?:html|pdf)(["\'])')
 ITALIC_WEIGHT_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*%\*\s*$')
 ITALIC_RANGE_RE = re.compile(r'^(.+?)\s*\*(\d+)\s*[-–]+\s*(\d+)\s*%\*\s*$')
 
