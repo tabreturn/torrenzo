@@ -361,6 +361,7 @@ def _assignment_settings_xml(
     _el(root, 'assignment_group_identifierref', group_id)
     if rubric_id:
         _el(root, 'rubric_identifierref', rubric_id)
+        _el(root, 'rubric_use_for_grading', 'true')
     if submission:
         _el(root, 'description', submission)
     ET.indent(root)
@@ -389,6 +390,7 @@ def _rubrics_xml(assessments: list[dict]) -> str:
             _el(crit, 'criterion_id', crit_id)
             _el(crit, 'description', crit_data['description'])
             _el(crit, 'points', str(crit_data['points']))
+            _el(crit, 'criterion_use_range', 'true')
 
             for ri, rat_data in enumerate(crit_data['ratings']):
                 rat = _el(crit, 'rating')

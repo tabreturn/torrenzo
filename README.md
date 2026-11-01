@@ -370,7 +370,7 @@ Pass `--cc` to generate an **IMS Common Cartridge** package alongside the normal
 3. Canvas will prompt you to select *All content* or *Specific content*. Importing all content populates:
     - **Modules** -- Grouped, numbered modules containing related pages; assessments appear in a separate *Assessments* module.
     - **Pages** -- All module pages appear as WikiPages. The first page in `Module_00` includes a `front_page` meta tag, though you may need to set it manually in Canvas via *Pages → View All Pages → ⁝ → Use as Front Page*.
-    - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the ***last table*** in the brief markdown).
+    - **Assignments** -- A submission point with its total marks, weighting, and configured rubric (parsed from the ***last table*** in the brief markdown; criteria use Canvas range grading, so each rating accepts a mark range instead of a single score).
     - **Files** -- assessment PDFs and image assets uploaded to course *Files*.
     - **Lecturer Notes** -- Lecturer-only materials set to `unpublished` (hidden from students); Markdown notes arrive as unpublished wiki pages, other formats as file attachments.
     - **Subtitles** -- Videos with a sibling `.vtt` file get a `course_settings/media_tracks.xml` entry (Canvas's own export format, with the WebVTT content inlined), so Canvas attaches English subtitles to its native media player on import.
