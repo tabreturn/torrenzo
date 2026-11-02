@@ -116,7 +116,9 @@ class MainWindow(QMainWindow):
         self._opt_cc = QCheckBox('--cc')
         self._opt_cc.setToolTip('Export a Common Cartridge (.imscc) package after building')
         self._opt_clean = QCheckBox('--clean')
-        self._opt_clean.setToolTip('Wipe the build/ directory first, then rebuild all files')
+        self._opt_clean.setToolTip(
+          'Wipe the build/ directory first, then rebuild all files; '
+          'with --watch, cleans only at watch start')
         self._opt_force = QCheckBox('--force')
         self._opt_force.setToolTip('Rebuild all files even if outputs are up-to-date')
         self._opt_optimize = QCheckBox('--optimize-assets')
@@ -126,13 +128,17 @@ class MainWindow(QMainWindow):
         self._opt_watch.toggled.connect(self._on_watch_toggled)
         self._opt_cache_bust = QCheckBox('--cache-bust')
         self._opt_cache_bust.setToolTip(
-            'Append a cache-busting suffix to asset filenames; '
-            'leave tag empty for auto-generated date stamp')
+          'Append a cache-busting suffix to asset filenames; '
+          'requires --cc; forces --clean; '
+          'leave tag empty for auto-generated date stamp')
+        self._opt_cache_bust.setEnabled(False)
+        self._opt_cc.toggled.connect(self._on_cc_toggled)
         self._cache_bust_tag = QLineEdit()
         self._cache_bust_tag.setPlaceholderText('tag (optional)')
         self._cache_bust_tag.setMaximumWidth(100)
         self._cache_bust_tag.setEnabled(False)
         self._opt_cache_bust.toggled.connect(self._cache_bust_tag.setEnabled)
+        self._opt_cache_bust.toggled.connect(self._on_cache_bust_toggled)
         opts_layout.addWidget(self._opt_cc)
         opts_layout.addWidget(self._opt_clean)
         opts_layout.addWidget(self._opt_force)
@@ -173,6 +179,18 @@ class MainWindow(QMainWindow):
 
     # --- slots ---
 
+    def _on_cc_toggled(self, checked):
+        self._opt_cache_bust.setEnabled(checked)
+        if not checked:
+            self._opt_cache_bust.setChecked(False)
+
+    def _on_cache_bust_toggled(self, checked):
+        if checked:
+            self._opt_clean.setChecked(True)
+            self._opt_clean.setEnabled(False)
+        else:
+            self._opt_clean.setEnabled(True)
+
     def _load_history(self):
         paths = self._settings.value('subject_paths', [])
         if isinstance(paths, str):
@@ -212,11 +230,13 @@ class MainWindow(QMainWindow):
         self._preview_btn.setEnabled(is_dir and (path / 'build').is_dir())
 
     def _on_watch_toggled(self, checked: bool):
-        self._opt_clean.setEnabled(not checked)
         self._opt_force.setEnabled(not checked)
+        self._opt_cc.setEnabled(not checked)
+        self._opt_optimize.setEnabled(not checked)
         if checked:
-            self._opt_clean.setChecked(False)
             self._opt_force.setChecked(False)
+            self._opt_cc.setChecked(False)
+            self._opt_optimize.setChecked(False)
 
     def _start_build(self):
         if self._watching:
@@ -247,7 +267,7 @@ class MainWindow(QMainWindow):
             args.append('--cc')
         if self._opt_watch.isChecked():
             args.append('--live')
-        if self._opt_cache_bust.isChecked():
+        if self._opt_cc.isChecked() and self._opt_cache_bust.isChecked():
             tag = self._cache_bust_tag.text().strip()
             if tag:
                 args.extend(['--cache-bust', tag])

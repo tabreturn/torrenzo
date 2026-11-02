@@ -57,8 +57,9 @@
 - Provide a custom tag: `--cache-bust cb` → `_cb`.
 - Affects **module assets** (`modules/*/assets/`), **HTML module pages**, **CC cartridge** (both module and assessment assets), and **non-Markdown lecturer notes** (notes built to HTML keep plain filenames).
 - Assessment PDFs are unaffected (they reference local files, not Canvas-served URLs).
+- `build/.cache_bust` records the active suffix and is added to HTML job deps, so HTML pages rebuild automatically when the suffix changes (orphan pruning skips dotfiles to preserve it). This keeps incremental runs correct without `--clean`.
 - Designed to work around Canvas caching issues where previously uploaded images stop rendering after re-import.
-- GUI exposes a `--cache-bust` checkbox with an optional tag text field.
+- GUI exposes a `--cache-bust` checkbox with an optional tag text field; it is enabled only while `--cc` is checked.
 
 ## Testing & Validation
 

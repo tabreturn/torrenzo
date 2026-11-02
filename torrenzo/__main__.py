@@ -167,8 +167,11 @@ def make_jobs(
     assess_logo = subject_root / 'assessments' / 'style' / 'logo.svg'
     includes_dir = subject_root / 'includes'
 
+    cache_bust_stamp = subject_root / 'build' / '.cache_bust'
     html_deps = [
-      p for p in [outline, module_css, module_bib, includes_dir] if p.exists()
+      p for p in [
+        outline, module_css, module_bib, includes_dir, cache_bust_stamp,
+      ] if p.exists()
     ]
     pdf_deps = [
       p for p in [outline, assess_css, assess_js, assess_logo, includes_dir]
@@ -298,6 +301,14 @@ def run_build(
     )
 
     pipeline = Pipeline(subject_root, build_dir, registry)
+    cache_bust_stamp = build_dir / '.cache_bust'
+    previous_stamp = (
+      cache_bust_stamp.read_text().strip()
+      if cache_bust_stamp.exists() else None
+    )
+    if previous_stamp != cache_bust:
+        build_dir.mkdir(parents=True, exist_ok=True)
+        cache_bust_stamp.write_text(cache_bust)
     diagnostics = pipeline.execute(
       make_jobs(tags, subject_root=subject_root, built=built,
         version_stamp=version_stamp, cache_bust=cache_bust),

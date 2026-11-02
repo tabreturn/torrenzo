@@ -209,7 +209,8 @@ class Pipeline:
         """Remove files in build_dir that are no longer expected outputs."""
         removed = 0
         for existing in list(self.build_dir.rglob('*')):
-            if existing.is_file() and existing not in expected_outputs:
+            if (existing.is_file() and not existing.name.startswith('.')
+              and existing not in expected_outputs):
                 existing.unlink()
                 removed += 1
         for existing in sorted(self.build_dir.rglob('*'), reverse=True):
